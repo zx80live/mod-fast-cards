@@ -2,4 +2,4 @@
 
 root=~/work/mod-fast-cards
 
-java -jar $root/target/scala-2.11/mod-fast-cards.jar $0 $1
+java -jar $root/target/scala-2.11/mod-fast-cards.jar $1 $2

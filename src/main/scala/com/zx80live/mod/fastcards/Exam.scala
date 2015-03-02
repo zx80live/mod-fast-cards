@@ -25,7 +25,7 @@ object Exam {
     var stock: List[Card] = Random.shuffle(cards)
     val con: ConsoleReader = new ConsoleReader()
     var run = true
-    val limit = 3
+    val limit = 1
 
     var pointer = 0
 
@@ -76,15 +76,21 @@ object Exam {
             stock = next(stock)
             viewer = valueViewer
         }
-        case 10 if viewer.isInstanceOf[ValueViewer] => // TRUE, remove card
-          if (current(stock).statistic < limit) {
-            current(stock).statistic = current(stock).statistic + 1
-            stock = next(stock)
-            viewer = valueViewer
-          } else if (stock.length > 1) {
-            stock = remove(stock)
-          } else {
-            run = false
+        case 10 => // TRUE, remove card
+
+          viewer match {
+            case v: ExampleViewer => viewer = valueViewer
+            case v: ValueViewer => viewer = transViewer
+            case v: TransViewer =>
+              if (current(stock).statistic < limit) {
+                current(stock).statistic = current(stock).statistic + 1
+                stock = next(stock)
+              } else if (stock.length > 1) {
+                stock = remove(stock)
+              } else {
+                run = false
+              }
+              viewer = valueViewer
           }
 
         case 105 =>
