@@ -1,7 +1,5 @@
 package com.zx80live.mod.fastcards
 
-import com.zx80live.mod.fastcards.util.Circular
-
 import scala.tools.jline.console.ConsoleReader
 import scala.util.Random
 
