@@ -29,6 +29,7 @@ object Exam {
     var viewer: Viewer = valueViewer
 
     printHelp()
+
     while (run) {
       clearLine()
       print(s"\r\u001b[90m[stock: ${stock.length + 1}] -${current(stock).statistic}- " + Console.RESET + viewer.view(current(stock)))
@@ -36,7 +37,7 @@ object Exam {
       con.readVirtualKey() match {
         case 2 => stock = prev(stock)
         case 6 => stock = next(stock)
-        case 10 | 102 => viewer match {
+        case 32 => viewer match {
           //FALSE, next
           case v: ExampleViewer => viewer = valueViewer
           case v: ValueViewer => viewer = transViewer
@@ -45,7 +46,7 @@ object Exam {
             stock = next(stock)
             viewer = valueViewer
         }
-        case 49 | 121 | 32 => // TRUE, remove card
+        case 10 => // TRUE, remove card
           if (viewer.isInstanceOf[TransViewer]) {
 
             if (current(stock).statistic < limit) {
