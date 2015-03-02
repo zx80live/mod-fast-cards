@@ -85,7 +85,7 @@ object Exam {
   def remove(stock: List[Card]): List[Card] = stock.tail
 
   def printHelp(): Unit = {
-    println("\n\n\nPress CTRL+D to exit\n")
+    println("\n\n\n\u001b[38;5;127mPress CTRL+D to exit\n" + Console.RESET)
 
     println("      ←/→: \t next/prev card")
     println("        i: \t card info")
