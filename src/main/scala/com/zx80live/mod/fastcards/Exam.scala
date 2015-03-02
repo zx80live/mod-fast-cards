@@ -3,6 +3,7 @@ package com.zx80live.mod.fastcards
 import scala.tools.jline.console.ConsoleReader
 import scala.util.Random
 
+//todo refactoring: cyclic list and pointers
 object Exam {
 
   val defaultExamFile = "words.txt"
