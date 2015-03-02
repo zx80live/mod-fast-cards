@@ -38,6 +38,7 @@ object Exam {
         case 6 => stock = next(stock)
         case 10 | 102 => viewer match {
           //FALSE, next
+          case v: ExampleViewer => viewer = valueViewer
           case v: ValueViewer => viewer = transViewer
           case v: TransViewer =>
             current(stock).statistic = 0
@@ -58,11 +59,19 @@ object Exam {
             }
           }
 
+        case 105 =>
+          viewer match {
+            case v: ValueViewer => viewer = exampleViewer
+            case _ => viewer = valueViewer
+          }
+
+        case 119 =>
+          viewer = valueViewer
 
         case scala.tools.jline.console.Key.CTRL_D.code =>
           //print("bye")
           run = false
-        case k@_ => //println("\n\r" + k)
+        case k@_ => println("\n\r" + k)
       }
     }
   }
@@ -79,7 +88,8 @@ object Exam {
     println("\n\n\nPress CTRL+D to exit\n")
 
     println("      ←/→: \t next/prev card")
-    println(Console.RED + "    Enter" + Console.RESET + ": \t false/skip card")
+    println("        i: \t card info")
+    println(Console.RED + "    Enter" + Console.RESET + ": \t flip card -> false/skip card")
     println(Console.GREEN + "    Space" + Console.RESET + ": \t true/remove card\n")
   }
 
@@ -101,7 +111,12 @@ object Exam {
     def view(c: Card): String = c.translations.mkString(" | ")
   }
 
+  class ExampleViewer extends Viewer {
+    def view(c: Card): String = "\u001b[38;5;107m" + c.examples.map(_.text.trim).mkString("* ") + Console.RESET
+  }
+
   val valueViewer = new ValueViewer
   val transViewer = new TransViewer
+  val exampleViewer = new ExampleViewer
 
 }
