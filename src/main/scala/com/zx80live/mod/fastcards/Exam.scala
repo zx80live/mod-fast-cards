@@ -1,5 +1,7 @@
 package com.zx80live.mod.fastcards
 
+import com.zx80live.mod.fastcards.util.Circular
+
 import scala.tools.jline.console.ConsoleReader
 import scala.util.Random
 
@@ -27,17 +29,46 @@ object Exam {
     var run = true
     val limit = 3
 
+    var pointer = 0
+
+    def current(stock: List[Card]): Card = stock.head
+
+    def next(stock: List[Card]): List[Card] = {
+      if (pointer == stock.length - 1)
+        pointer = 0
+      else
+        pointer = pointer + 1
+      stock.tail :+ stock.head
+    }
+
+    def prev(stock: List[Card]): List[Card] = {
+      if (pointer == 0)
+        pointer = stock.length - 1
+      else
+        pointer = pointer - 1
+      stock.last :: stock.take(stock.length - 1)
+    }
+
+    def remove(stock: List[Card]): List[Card] = stock.tail
+
+    def pointerView = {
+      stock.zipWithIndex.map { e =>
+        if (e._2 == pointer) Console.BOLD + "\u001b[90m|" + Console.RESET else "\u001b[38;5;235m|" + Console.RESET
+      }.mkString("")
+    }
+
     var viewer: Viewer = valueViewer
 
     printHelp()
 
     while (run) {
       clearLine()
-      print(s"\r\u001b[90m[stock: ${stock.length + 1}] -${current(stock).statistic}- " + Console.RESET + viewer.view(current(stock)))
+      print(s"\r\u001b[90m[stock: ${pointer + 1}/${stock.length + 1}] -${current(stock).statistic}- " + Console.RESET + viewer.view(current(stock)))
+
 
       con.readVirtualKey() match {
-        case 2 => stock = prev(stock)
-        case 6 => stock = next(stock)
+        case 2 if viewer.isInstanceOf[ValueViewer] => stock = prev(stock)
+        case 6 if viewer.isInstanceOf[ValueViewer] => stock = next(stock)
         case 32 => viewer match {
           //FALSE, next
           case v: ExampleViewer => viewer = valueViewer
@@ -47,18 +78,15 @@ object Exam {
             stock = next(stock)
             viewer = valueViewer
         }
-        case 10 => // TRUE, remove card
-          if (viewer.isInstanceOf[TransViewer]) {
-
-            if (current(stock).statistic < limit) {
-              current(stock).statistic = current(stock).statistic + 1
-              stock = next(stock)
-              viewer = valueViewer
-            } else if (stock.length > 1) {
-              stock = remove(stock)
-            } else {
-              run = false
-            }
+        case 10 if viewer.isInstanceOf[ValueViewer] => // TRUE, remove card
+          if (current(stock).statistic < limit) {
+            current(stock).statistic = current(stock).statistic + 1
+            stock = next(stock)
+            viewer = valueViewer
+          } else if (stock.length > 1) {
+            stock = remove(stock)
+          } else {
+            run = false
           }
 
         case 105 =>
@@ -78,13 +106,6 @@ object Exam {
     }
   }
 
-  def current(stock: List[Card]): Card = stock.head
-
-  def next(stock: List[Card]): List[Card] = stock.tail :+ stock.head
-
-  def prev(stock: List[Card]): List[Card] = stock.last :: stock.take(stock.length - 1)
-
-  def remove(stock: List[Card]): List[Card] = stock.tail
 
   def printHelp(): Unit = {
     //println("\n\n\n\u001bPress CTRL+D to exit\n" + Console.RESET)
@@ -92,8 +113,8 @@ object Exam {
     println("\n\n\n   \u001b[38;5;127mCTRL+D" + Console.RESET + "\u001b[90m: \t exit")
     println("      ←/→\u001b[90m: \t next/prev card" + Console.RESET)
     println("        i\u001b[90m: \t card info" + Console.RESET)
-    println(Console.RED + "    Enter" + Console.RESET + "\u001b[90m: \t flip card -> false/skip card" + Console.RESET)
-    println(Console.GREEN + "    Space" + Console.RESET + "\u001b[90m: \t true/remove card\n" + Console.RESET)
+    println(Console.RED + "    Enter" + Console.RESET + "\u001b[90m: \t true/remove card" + Console.RESET)
+    println(Console.GREEN + "    Space" + Console.RESET + "\u001b[90m: \t flip card -> false/skip card\n" + Console.RESET)
   }
 
 
