@@ -71,7 +71,7 @@ object Exam {
         case scala.tools.jline.console.Key.CTRL_D.code =>
           //print("bye")
           run = false
-        case k@_ => println("\n\r" + k)
+        case k@_ => //println("\n\r" + k)
       }
     }
   }
@@ -85,12 +85,13 @@ object Exam {
   def remove(stock: List[Card]): List[Card] = stock.tail
 
   def printHelp(): Unit = {
-    println("\n\n\n\u001b[38;5;127mPress CTRL+D to exit\n" + Console.RESET)
+    //println("\n\n\n\u001bPress CTRL+D to exit\n" + Console.RESET)
 
-    println("      ←/→: \t next/prev card")
-    println("        i: \t card info")
-    println(Console.RED + "    Enter" + Console.RESET + ": \t flip card -> false/skip card")
-    println(Console.GREEN + "    Space" + Console.RESET + ": \t true/remove card\n")
+    println("\n\n\n   \u001b[38;5;127mCTRL+D" + Console.RESET + "\u001b[90m: \t exit")
+    println("      ←/→\u001b[90m: \t next/prev card" + Console.RESET)
+    println("        i\u001b[90m: \t card info" + Console.RESET)
+    println(Console.RED + "    Enter" + Console.RESET + "\u001b[90m: \t flip card -> false/skip card" + Console.RESET)
+    println(Console.GREEN + "    Space" + Console.RESET + "\u001b[90m: \t true/remove card\n" + Console.RESET)
   }
 
 
