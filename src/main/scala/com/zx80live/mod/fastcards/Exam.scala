@@ -1,9 +1,13 @@
 package com.zx80live.mod.fastcards
 
+import com.zx80live.mod.fastcards.util.ConsoleCSS
+
 import scala.tools.jline.console.ConsoleReader
 import scala.util.Random
 
 object Exam {
+
+  import ConsoleCSS._
 
   val defaultExamFile = "words.txt"
 
@@ -113,7 +117,14 @@ object Exam {
   def printHelp(): Unit = {
     //println("\n\n\n\u001bPress CTRL+D to exit\n" + Console.RESET)
 
-    println("\n\n\n   \u001b[38;5;127mCTRL+D" + Console.RESET + "\u001b[90m: \t exit")
+    //println("\n\n\n   \u001b[38;5;127mCTRL+D" + Console.RESET + "\u001b[90m: \t exit")
+
+    val css = Format.Blink | Format.Bold | Foreground.color(105) | Background.color(35)
+
+    //println( s""" first ${"second".attr(css)} ${"hello".attr(Background.LightBlue, Foreground.Red, Console.BOLD, Console.UNDERLINED)} second """)
+    printStyled("Some string", Format.Underlined | Foreground.Blue | Background.Cyan)
+
+    println( s"""\n\n\n   ${"CTRL+D".foreground(127)}: \t ${"exit".attr(Foreground.DarkGray)}""")
     println("      ←/→\u001b[90m: \t next/prev card" + Console.RESET)
     println("        i\u001b[90m: \t card info" + Console.RESET)
     println(Console.RED + "    Enter" + Console.RESET + "\u001b[90m: \t true/remove card" + Console.RESET)
