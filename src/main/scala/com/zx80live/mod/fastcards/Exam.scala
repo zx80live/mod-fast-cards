@@ -14,6 +14,15 @@ object Exam {
   val cssWordType = Foreground.Yellow
   val cssStatusBar = Foreground.DarkGray
 
+  val cssBest = Foreground.color(246)
+  val cssMid = Foreground.color(246)
+  val cssBad = Foreground.color(246)
+
+  val cssHead = Foreground.DarkGray | Format.Underlined | Format.Bold
+  val cssBestHead = cssHead
+  val cssMidHead = cssHead
+  val cssBadHead = cssHead
+
   def main(args: Array[String]): Unit =
 
     args.toList match {
@@ -92,13 +101,19 @@ object Exam {
       midWords = grow(midWords, maxSize)
       lowWords = grow(lowWords, maxSize)
 
-      println("--")
-      topWords foreach println
-      println("--")
-      midWords foreach println
-      println("--")
-      lowWords foreach println
+      val result: List[((String, String), String)] = topWords.zip(midWords).zip(lowWords)
+
+
+      val w = 40
+      val h = "  "
+      println("\n\n")
+      printf(s"\n$h%${w}s $h%${w}s $h%${w}s", "good".attr(cssBestHead), "middle".attr(cssMidHead), "bad".attr(cssBadHead))
+      result foreach { case ((t, m), l) =>
+        printf(s"\n%${w}s %${w}s %${w}s", t.attr(cssBest), m.attr(cssMid), l.attr(cssBad))
+      }
+
       println("\n")
+      printHelp()
     }
 
     var viewer: Viewer = valueViewer
