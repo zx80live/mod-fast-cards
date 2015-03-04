@@ -39,6 +39,9 @@ object Exam {
 
 
   def exam(cards: List[Card]): Unit = {
+
+    println("\nstart exam".attr(Format.Bold | Foreground.color(70)) + "\n")
+
     var stock: List[Card] = Random.shuffle(cards)
     var discard: List[Card] = Nil
     val con: ConsoleReader = new ConsoleReader()
