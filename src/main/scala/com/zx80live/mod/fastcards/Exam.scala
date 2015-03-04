@@ -192,12 +192,7 @@ object Exam {
     //println( s"""    ${"Enter".attr(Foreground.Red)}${": \t true/remove card".attr(cssStatusBar)}""")
     //println( s"""    ${"Space".attr(Foreground.Green)}${": \t flip card -> false/skip card\n".attr(cssStatusBar)}""")
 
-    val bg = Background.color(234)
 
-    def btn(name: String, text: String) =
-      name.attr(Foreground.DarkGray | bg | Format.Bold) + s" - $text ".attr(Foreground.DarkGray | bg)
-
-    val delim = " | ".attr(Foreground.color(237) | bg)
 
     println(
       btn(" Enter", "flip/true") + delim +
@@ -209,6 +204,13 @@ object Exam {
     println()
   }
 
+
+  val cssCtxBg = Background.color(234)
+
+  def btn(name: String, text: String) =
+    name.attr(Foreground.DarkGray | cssCtxBg | Format.Bold) + s" - $text ".attr(Foreground.DarkGray | cssCtxBg)
+
+  val delim = " | ".attr(Foreground.color(237) | cssCtxBg)
 
   def clearLine(): Unit = {
     print("\r")
