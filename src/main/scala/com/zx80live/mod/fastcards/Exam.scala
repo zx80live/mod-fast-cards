@@ -1,5 +1,7 @@
 package com.zx80live.mod.fastcards
 
+import com.zx80live.mod.fastcards.util.Timer
+
 import scala.tools.jline.console.ConsoleReader
 import scala.util.Random
 
@@ -29,6 +31,7 @@ object Exam {
 
   def exam(cards: List[Card]): Unit = {
     var stock: List[Card] = Random.shuffle(cards)
+    var discard: List[Card] = Nil
     val con: ConsoleReader = new ConsoleReader()
     var run = true
     val limit = 1
@@ -38,6 +41,7 @@ object Exam {
     def current(stock: List[Card]): Card = stock.head
 
     def next(stock: List[Card]): List[Card] = {
+      Timer.start
       if (pointer == stock.length - 1)
         pointer = 0
       else
@@ -45,13 +49,13 @@ object Exam {
       stock.tail :+ stock.head
     }
 
-    def prev(stock: List[Card]): List[Card] = {
-      if (pointer == 0)
-        pointer = stock.length - 1
-      else
-        pointer = pointer - 1
-      stock.last :: stock.take(stock.length - 1)
-    }
+    //    def prev(stock: List[Card]): List[Card] = {
+    //      if (pointer == 0)
+    //        pointer = stock.length - 1
+    //      else
+    //        pointer = pointer - 1
+    //      stock.last :: stock.take(stock.length - 1)
+    //    }
 
     def remove(stock: List[Card]): List[Card] = stock.tail
 
@@ -59,6 +63,42 @@ object Exam {
       stock.zipWithIndex.map { e =>
         if (e._2 == pointer) Console.BOLD + "\u001b[90m|" + Console.RESET else "\u001b[38;5;235m|" + Console.RESET
       }.mkString("")
+    }
+
+    def printStatistic(): Unit = {
+      val xs = discard ::: stock
+      val top = 2000
+      val low = 7000
+
+      def average(list: List[Long]): Double = if (list.nonEmpty) {
+        list.sum / list.length
+      } else Long.MaxValue
+
+      def grow(xs: List[String], max: Int): List[String] = {
+        var gs: List[String] = Nil
+        for (i <- 0 until scala.math.abs(xs.length - max)) {
+          gs = "_" :: gs
+        }
+        xs ::: gs
+      }
+
+      var topWords = xs.filter(e => average(e.times) <= top).map(_.value)
+      var midWords = xs.filter(e => average(e.times) > top && average(e.times) < low).map(_.value)
+      var lowWords = xs.filter(e => average(e.times) >= low).map(_.value)
+
+
+      val maxSize = List(topWords.length, midWords.length, lowWords.length).max
+      topWords = grow(topWords, maxSize)
+      midWords = grow(midWords, maxSize)
+      lowWords = grow(lowWords, maxSize)
+
+      println("--")
+      topWords foreach println
+      println("--")
+      midWords foreach println
+      println("--")
+      lowWords foreach println
+      println("\n")
     }
 
     var viewer: Viewer = valueViewer
@@ -71,8 +111,8 @@ object Exam {
 
 
       con.readVirtualKey() match {
-        case 2 if viewer.isInstanceOf[ValueViewer] => stock = prev(stock)
-        case 6 if viewer.isInstanceOf[ValueViewer] => stock = next(stock)
+        //case 2 if viewer.isInstanceOf[ValueViewer] => stock = prev(stock)
+        //case 6 if viewer.isInstanceOf[ValueViewer] => stock = next(stock)
         case 32 => viewer match {
           //FALSE, next
           case v: ExampleViewer => viewer = valueViewer
@@ -88,11 +128,15 @@ object Exam {
             case v: ExampleViewer => viewer = valueViewer
             case v: ValueViewer => viewer = transViewer
             case v: TransViewer =>
-              if (current(stock).statistic < limit) {
-                current(stock).statistic = current(stock).statistic + 1
+              val card = current(stock)
+              card.times = Timer.stop :: card.times
+
+              if (card.statistic < limit) {
+                card.statistic = card.statistic + 1
                 stock = next(stock)
               } else if (stock.length > 1) {
                 stock = remove(stock)
+                discard = card :: discard
               } else {
                 printStatistic()
                 run = false
@@ -122,15 +166,12 @@ object Exam {
 
   def printHelp(): Unit = {
     println( s"""\n\n\n   ${"CTRL+D".foreground(127)}: \t ${"exit".attr(cssStatusBar)}""")
-    println( s"""      ←/→${": \t next/prev card".attr(cssStatusBar)}.""")
+    //println( s"""      ←/→${": \t next/prev card".attr(cssStatusBar)}.""")
     println( s"""        i${": \t card info".attr(cssStatusBar)} """)
     println( s"""    ${"Enter".attr(Foreground.Red)}${": \t true/remove card".attr(cssStatusBar)}""")
     println( s"""    ${"Space".attr(Foreground.Green)}${": \t flip card -> false/skip card\n".attr(cssStatusBar)}""")
   }
 
-  def printStatistic():Unit = {
-    println("print statistic")
-  }
 
   def clearLine(): Unit = {
     print("\r")
