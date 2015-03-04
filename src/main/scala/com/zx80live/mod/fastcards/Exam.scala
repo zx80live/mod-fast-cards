@@ -90,7 +90,7 @@ object Exam {
       def grow(xs: List[String], max: Int): List[String] = {
         var gs: List[String] = Nil
         for (i <- 0 until scala.math.abs(xs.length - max)) {
-          gs = "_" :: gs
+          gs = "-" :: gs
         }
         xs ::: gs
       }
