@@ -139,6 +139,7 @@ object Exam {
           case v: ValueViewer => viewer = transViewer
           case v: TransViewer =>
             current(stock).statistic = 0
+            current(stock).times = Nil
             stock = next(stock)
             viewer = valueViewer
         }
