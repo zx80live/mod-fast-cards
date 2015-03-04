@@ -104,6 +104,7 @@ object Exam {
       val result: List[((String, String), String)] = topWords.zip(midWords).zip(lowWords)
 
 
+      clearLine()
       val w = 40
       val h = "  "
       println("\n\n")
@@ -180,11 +181,27 @@ object Exam {
 
 
   def printHelp(): Unit = {
-    println( s"""\n\n\n   ${"CTRL+D".foreground(127)}: \t ${"exit".attr(cssStatusBar)}""")
+    //println( s"""\n\n\n   ${"CTRL+D".foreground(127)}: \t ${"exit".attr(cssStatusBar)}""")
     //println( s"""      ←/→${": \t next/prev card".attr(cssStatusBar)}.""")
-    println( s"""        i${": \t card info".attr(cssStatusBar)} """)
-    println( s"""    ${"Enter".attr(Foreground.Red)}${": \t true/remove card".attr(cssStatusBar)}""")
-    println( s"""    ${"Space".attr(Foreground.Green)}${": \t flip card -> false/skip card\n".attr(cssStatusBar)}""")
+    //println( s"""        i${": \t card info".attr(cssStatusBar)} """)
+    //println( s"""    ${"Enter".attr(Foreground.Red)}${": \t true/remove card".attr(cssStatusBar)}""")
+    //println( s"""    ${"Space".attr(Foreground.Green)}${": \t flip card -> false/skip card\n".attr(cssStatusBar)}""")
+
+    val bg = Background.color(234)
+
+    def btn(name: String, text: String) =
+      name.attr(Foreground.DarkGray | bg | Format.Bold) + s" - $text ".attr(Foreground.DarkGray | bg)
+
+    val delim = " | ".attr(Foreground.color(237) | bg)
+
+    println(
+      btn(" Enter", "flip/true") + delim +
+        btn("Space", "flip/false") + delim +
+        btn("i", "card examples") + delim +
+        btn("s", "statistic") + delim +
+
+        btn("CTRL+D", "exit"))
+    println()
   }
 
 
@@ -202,7 +219,7 @@ object Exam {
   }
 
   class TransViewer extends Viewer {
-    def view(c: Card): String = c.translations.mkString(" | ")
+    def view(c: Card): String = c.translations.mkString(" | ").foreground(103)
   }
 
   class ExampleViewer extends Viewer {
