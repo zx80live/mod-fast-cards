@@ -8,6 +8,9 @@ object Exam {
   import com.zx80.mod.util.console.ConsoleCSS._
 
   val defaultExamFile = "words.txt"
+  val cssWord = Foreground.Cyan
+  val cssWordType = Foreground.Yellow
+  val cssStatusBar = Foreground.DarkGray
 
   def main(args: Array[String]): Unit =
 
@@ -115,20 +118,11 @@ object Exam {
 
 
   def printHelp(): Unit = {
-    //println("\n\n\n\u001bPress CTRL+D to exit\n" + Console.RESET)
-
-    //println("\n\n\n   \u001b[38;5;127mCTRL+D" + Console.RESET + "\u001b[90m: \t exit")
-
-    val css = Format.Blink | Format.Bold | Foreground.color(105) | Background.color(35)
-
-    //println( s""" first ${"second".attr(css)} ${"hello".attr(Background.LightBlue, Foreground.Red, Console.BOLD, Console.UNDERLINED)} second """)
-    printStyled("Some string", Format.Underlined | Foreground.Blue | Background.Cyan)
-
-    println( s"""\n\n\n   ${"CTRL+D".foreground(127)}: \t ${"exit".attr(Foreground.DarkGray)}""")
-    println("      ←/→\u001b[90m: \t next/prev card" + Console.RESET)
-    println("        i\u001b[90m: \t card info" + Console.RESET)
-    println(Console.RED + "    Enter" + Console.RESET + "\u001b[90m: \t true/remove card" + Console.RESET)
-    println(Console.GREEN + "    Space" + Console.RESET + "\u001b[90m: \t flip card -> false/skip card\n" + Console.RESET)
+    println( s"""\n\n\n   ${"CTRL+D".foreground(127)}: \t ${"exit".attr(cssStatusBar)}""")
+    println( s"""      ←/→${": \t next/prev card".attr(cssStatusBar)}.""")
+    println( s"""        i${": \t card info".attr(cssStatusBar)} """)
+    println( s"""    ${"Enter".attr(Foreground.Red)}${": \t true/remove card".attr(cssStatusBar)}""")
+    println( s"""    ${"Space".attr(Foreground.Green)}${": \t flip card -> false/skip card\n".attr(cssStatusBar)}""")
   }
 
 
