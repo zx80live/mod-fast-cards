@@ -1,27 +1,27 @@
 package com.zx80live.mod.fastcards
 
-import com.zx80live.mod.fastcards.util.ConsoleCSS
-
 import scala.tools.jline.console.ConsoleReader
 import scala.util.Random
 
 object Exam {
 
-  import ConsoleCSS._
+  import com.zx80.mod.util.console.ConsoleCSS._
 
   val defaultExamFile = "words.txt"
 
-  def main(args: Array[String]): Unit = args.toList match {
-    case file :: tail =>
-      val cards = CardsReader.read(file)
+  def main(args: Array[String]): Unit =
 
-      tail match {
-        case kind :: Nil => exam(cards.filter(_.kind == Some(kind)))
-        case _ => exam(cards)
-      }
+    args.toList match {
+      case file :: tail =>
+        val cards = CardsReader.read(file)
 
-    case _ => println("[ERROR] enter cards file")
-  }
+        tail match {
+          case kind :: Nil => exam(cards.filter(_.kind == Some(kind)))
+          case _ => exam(cards)
+        }
+
+      case _ => println("[ERROR] enter cards file")
+    }
 
 
   def exam(cards: List[Card]): Unit = {

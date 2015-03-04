@@ -21,7 +21,6 @@ object CardsReader {
 
     NIOUtils.readDelimitedStrings(new File(filename), '\n') {
       case wordPattern(value, kind, trans) =>
-
         if (card.isDefined)
           xs = card.get :: xs
 

@@ -26,21 +26,19 @@ object NIOUtils {
   }
 
   def readDelimitedStrings(file: File, delimiter: Char)(elementHandler: String => Unit): Unit = {
-    import LoanPattern.using
+    import resource._
 
-    using(new FileInputStream(file)) { is =>
-      using(is.getChannel) { channel =>
-        val b: MappedByteBuffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size)
-        var cursor = 0
-        while (b.hasRemaining) {
-          if (b.get == delimiter) {
-            val length = b.position - cursor
-            val bytes = Array.fill[Byte](length)(0)
-            b.position(cursor)
-            b.get(bytes)
-            cursor = b.position
-            elementHandler(new String(bytes))
-          }
+    for (is <- managed(new FileInputStream(file)); channel <- managed(is.getChannel)) {
+      val b: MappedByteBuffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size)
+      var cursor = 0
+      while (b.hasRemaining) {
+        if (b.get == delimiter) {
+          val length = b.position - cursor
+          val bytes = Array.fill[Byte](length)(0)
+          b.position(cursor)
+          b.get(bytes)
+          cursor = b.position
+          elementHandler(new String(bytes))
         }
       }
     }
