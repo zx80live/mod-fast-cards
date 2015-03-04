@@ -94,7 +94,7 @@ object Exam {
               } else if (stock.length > 1) {
                 stock = remove(stock)
               } else {
-                printStatistic
+                printStatistic()
                 run = false
               }
               viewer = valueViewer
@@ -109,10 +109,10 @@ object Exam {
         case 119 =>
           viewer = valueViewer
 
-        case 115 => printStatistic
+        case 115 => printStatistic()
 
         case scala.tools.jline.console.Key.CTRL_D.code =>
-          printStatistic
+          printStatistic()
           run = false
         case k@_ => //println("\n" + k)
       }
