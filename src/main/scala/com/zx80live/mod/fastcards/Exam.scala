@@ -40,6 +40,7 @@ object Exam {
 
   def exam(cards: List[Card]): Unit = {
 
+    Timer.start
     println("\nstart exam".attr(Format.Bold | Foreground.color(70)) + "\n")
 
     var stock: List[Card] = Random.shuffle(cards)
