@@ -91,9 +91,9 @@ object Exam {
         xs ::: gs
       }
 
-      var topWords = xs.filter(e => average(e.times) <= top).map(_.value)
-      var midWords = xs.filter(e => average(e.times) > top && average(e.times) < low).map(_.value)
-      var lowWords = xs.filter(e => average(e.times) >= low).map(_.value)
+      var topWords = xs.filter(e => average(e.times) <= top).map(_.value).sorted
+      var midWords = xs.filter(e => average(e.times) > top && average(e.times) < low).map(_.value).sorted
+      var lowWords = xs.filter(e => average(e.times) >= low).map(_.value).sorted
 
 
       val maxSize = List(topWords.length, midWords.length, lowWords.length).max
