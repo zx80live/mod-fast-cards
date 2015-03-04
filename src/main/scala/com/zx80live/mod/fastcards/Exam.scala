@@ -18,7 +18,7 @@ object Exam {
   val cssMid = Foreground.color(246)
   val cssBad = Foreground.color(246)
 
-  val cssHead = Foreground.DarkGray | Format.Underlined | Format.Bold
+  val cssHead = Foreground.color(236) | Format.Underlined | Format.Bold
   val cssBestHead = cssHead
   val cssMidHead = cssHead
   val cssBadHead = cssHead
@@ -106,7 +106,7 @@ object Exam {
 
       clearLine()
       val w = 40
-      val h = "  "
+      val h = "        "
       println("\n\n")
       printf(s"\n$h%${w}s $h%${w}s $h%${w}s", "good".attr(cssBestHead), "middle".attr(cssMidHead), "bad".attr(cssBadHead))
       result foreach { case ((t, m), l) =>
@@ -123,7 +123,7 @@ object Exam {
 
     while (run) {
       clearLine()
-      print(s"\r\u001b[90m[stock: ${pointer + 1}/${stock.length + 1}] -${current(stock).statistic}- " + Console.RESET + viewer.view(current(stock)))
+      print(s"\r\u001b[90m[${pointer + 1}/${stock.length + 1}] -${current(stock).statistic}- " + Console.RESET + viewer.view(current(stock)))
 
 
       con.readVirtualKey() match {
