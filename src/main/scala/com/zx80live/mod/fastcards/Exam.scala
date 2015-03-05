@@ -176,6 +176,8 @@ object Exam {
 
         case 115 => printStatistic()
 
+        case 100 => stock = remove(stock)
+
         case scala.tools.jline.console.Key.CTRL_D.code =>
           printStatistic()
           run = false
@@ -190,6 +192,7 @@ object Exam {
       btn(" Enter", "flip/true") + delim +
         btn("Space", "flip/false") + delim +
         btn("i", "card examples") + delim +
+        btn("d", "drop card") + delim +
         btn("s", "statistic") + delim +
 
         btn("CTRL+D", "exit"))
@@ -200,7 +203,7 @@ object Exam {
   val cssCtxBg = Background.color(234)
 
   def btn(name: String, text: String) =
-    name.attr(Foreground.DarkGray | cssCtxBg | Format.Bold) + s" - $text ".attr(Foreground.DarkGray | cssCtxBg)
+    name.attr(Foreground.DarkGray | cssCtxBg | Format.Bold) + s"-$text".attr(Foreground.DarkGray | cssCtxBg)
 
   val delim = " | ".attr(Foreground.color(237) | cssCtxBg)
 
