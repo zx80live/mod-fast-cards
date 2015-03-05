@@ -178,6 +178,10 @@ object Exam {
 
         case 100 => stock = remove(stock)
 
+        case 109 => //todo drop all except mid
+
+        case 98 => //todo drop all except bad
+
         case scala.tools.jline.console.Key.CTRL_D.code =>
           printStatistic()
           run = false
