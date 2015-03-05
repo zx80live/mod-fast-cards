@@ -186,14 +186,6 @@ object Exam {
 
 
   def printHelp(): Unit = {
-    //println( s"""\n\n\n   ${"CTRL+D".foreground(127)}: \t ${"exit".attr(cssStatusBar)}""")
-    //println( s"""      ←/→${": \t next/prev card".attr(cssStatusBar)}.""")
-    //println( s"""        i${": \t card info".attr(cssStatusBar)} """)
-    //println( s"""    ${"Enter".attr(Foreground.Red)}${": \t true/remove card".attr(cssStatusBar)}""")
-    //println( s"""    ${"Space".attr(Foreground.Green)}${": \t flip card -> false/skip card\n".attr(cssStatusBar)}""")
-
-
-
     println(
       btn(" Enter", "flip/true") + delim +
         btn("Space", "flip/false") + delim +
