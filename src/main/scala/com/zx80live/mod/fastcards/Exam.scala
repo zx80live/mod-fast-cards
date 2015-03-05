@@ -229,7 +229,14 @@ object Exam {
   }
 
   class ExampleViewer extends Viewer {
-    def view(c: Card): String = "\u001b[38;5;107m" + c.examples.map(e => "*" + e.text.trim).mkString(" ") + Console.RESET
+    def view(c: Card): String = {
+      //"\u001b[38;5;107m" + c.examples.map(e => "*" + e.text.trim).mkString(" ") + Console.RESET
+
+      (if (c.examples.nonEmpty)
+        c.examples.map(e => "*" + e.text.trim).mkString(" ")
+      else
+        "<has not examples>").foreground(107)
+    }
   }
 
   val valueViewer = new ValueViewer
