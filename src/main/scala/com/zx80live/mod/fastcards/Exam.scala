@@ -23,6 +23,10 @@ object Exam {
   val cssMidHead = cssHead
   val cssBadHead = cssHead
 
+  val passCount = 1
+  val topLimitMs = 3000
+  val lowLimitMs = 8000
+
   def main(args: Array[String]): Unit =
 
     args.toList match {
@@ -47,7 +51,7 @@ object Exam {
     var discard: List[Card] = Nil
     val con: ConsoleReader = new ConsoleReader()
     var run = true
-    val trueAttempts = 1
+    
 
     var pointer = 0
 
@@ -80,8 +84,7 @@ object Exam {
 
     def printStatistic(): Unit = {
       val xs = discard ::: stock
-      val top = 2000
-      val low = 7000
+      
 
       def average(list: List[Long]): Double = if (list.nonEmpty) {
         list.sum / list.length
@@ -95,9 +98,9 @@ object Exam {
         xs ::: gs
       }
 
-      var topWords = xs.filter(e => average(e.times) <= top).map(_.value).sorted
-      var midWords = xs.filter(e => average(e.times) > top && average(e.times) < low).map(_.value).sorted
-      var lowWords = xs.filter(e => average(e.times) >= low).map(_.value).sorted
+      var topWords = xs.filter(e => average(e.times) <= topLimitMs).map(_.value).sorted
+      var midWords = xs.filter(e => average(e.times) > topLimitMs && average(e.times) < lowLimitMs).map(_.value).sorted
+      var lowWords = xs.filter(e => average(e.times) >= lowLimitMs).map(_.value).sorted
 
 
       val maxSize = List(topWords.length, midWords.length, lowWords.length).max
@@ -152,7 +155,7 @@ object Exam {
               val card = current(stock)
               card.times = Timer.stop :: card.times
 
-              if (card.statistic < trueAttempts) {
+              if (card.statistic < passCount) {
                 card.statistic = card.statistic + 1
                 stock = next(stock)
               } else if (stock.length > 1) {
