@@ -146,7 +146,7 @@ object Exam {
     //printHelp()
 
     val cssProgress = Foreground.color(236) | cssCtxBg
-
+    var previousViewer: Option[Viewer] = None
     while (run) {
       clearLine()
       print("\r" + s"${pointer + 1}/${stock.length + 1} ".attr(cssProgress) + viewer.view(current(stock)))
@@ -188,9 +188,12 @@ object Exam {
           }
 
         case 105 =>
+
           viewer match {
-            case v: ValueViewer => viewer = exampleViewer
-            case _ => viewer = valueViewer
+            case v: ExampleViewer => viewer = previousViewer.getOrElse(valueViewer)
+            case _ =>
+              previousViewer = Some(viewer)
+              viewer = exampleViewer
           }
 
         case 119 =>
@@ -258,7 +261,7 @@ object Exam {
 
   class ValueViewer extends Viewer {
     def view(c: Card): String = {
-      btn("enter", "flip") + delim + btn("space", "flip ") + "" + " ▹".attr(Foreground.color(22)|cssCtxBg) + " " + sideValue(c, ruEn)
+      btn("enter", "flip") + delim + btn("space", "flip ") + "" + " ▹".attr(Foreground.color(22) | cssCtxBg) + " " + sideValue(c, ruEn)
       //      c.value.attr(Format.Bold | Foreground.Cyan) +
       //        c.transcript.map(t => ("[" + t + "]").foreground(24)).getOrElse("") + " " +
       //        c.kind.getOrElse("").attr(Foreground.Yellow)
@@ -267,7 +270,7 @@ object Exam {
 
   class TransViewer extends Viewer {
     def view(c: Card): String =
-      btn("enter", "true") + delim + btn("space", "false") + "" +  " ▸".attr(Foreground.color(22)|cssCtxBg) + " " + sideValue(c, !ruEn)
+      btn("enter", "true") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg) + " " + sideValue(c, !ruEn)
 
     //c.translations.mkString(" | ").foreground(103)
   }
