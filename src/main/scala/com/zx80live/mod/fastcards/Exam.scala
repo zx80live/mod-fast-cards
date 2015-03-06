@@ -243,7 +243,6 @@ object Exam {
       c.value.attr(Format.Bold | Foreground.Cyan) +
         c.transcript.map(t => ("[" + t + "]").foreground(24)).getOrElse("") + " " +
         c.kind.getOrElse("").attr(Foreground.Yellow)
-      //Console.BOLD + Console.CYAN + c.value + Console.RESET + Console.YELLOW + " " + c.kind.getOrElse("") + Console.RESET + " "
   }
 
   class TransViewer extends Viewer {
@@ -252,8 +251,6 @@ object Exam {
 
   class ExampleViewer extends Viewer {
     def view(c: Card): String = {
-      //"\u001b[38;5;107m" + c.examples.map(e => "*" + e.text.trim).mkString(" ") + Console.RESET
-
       (if (c.examples.nonEmpty)
         c.examples.map(e => "*" + e.text.trim).mkString(" ")
       else
