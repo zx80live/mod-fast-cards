@@ -47,7 +47,7 @@ object Exam {
     var discard: List[Card] = Nil
     val con: ConsoleReader = new ConsoleReader()
     var run = true
-    val limit = 1
+    val trueAttempts = 1
 
     var pointer = 0
 
@@ -152,7 +152,7 @@ object Exam {
               val card = current(stock)
               card.times = Timer.stop :: card.times
 
-              if (card.statistic < limit) {
+              if (card.statistic < trueAttempts) {
                 card.statistic = card.statistic + 1
                 stock = next(stock)
               } else if (stock.length > 1) {
