@@ -138,16 +138,16 @@ object Exam {
       }
 
       println("\n")
-      printHelp()
+      //printHelp()
     }
 
     var viewer: Viewer = valueViewer
 
-    printHelp()
+    //printHelp()
 
     while (run) {
       clearLine()
-      print(s"\r\u001b[90m[${pointer + 1}/${stock.length + 1}] -${current(stock).statistic}- " + Console.RESET + viewer.view(current(stock)))
+      print(s"\r\u001b[90m[${pointer + 1}/${stock.length + 1}]" + Console.RESET + viewer.view(current(stock)))
 
 
       con.readVirtualKey() match {
@@ -224,12 +224,15 @@ object Exam {
   }
 
 
-  val cssCtxBg = Background.color(234)
+  //val cssCtxBg = Background.color(234)
+  //val cssCtxBg = Background.color(0)
+  val cssCtxBg = Background.color(233)
+  val ccsCtxFg = Foreground.color(234)
 
   def btn(name: String, text: String) =
-    name.attr(Foreground.DarkGray | cssCtxBg | Format.Bold) + s"-$text".attr(Foreground.DarkGray | cssCtxBg)
+    name.attr(ccsCtxFg | cssCtxBg | Format.Bold) + s"-$text".attr(ccsCtxFg | cssCtxBg)
 
-  val delim = " | ".attr(Foreground.color(237) | cssCtxBg)
+  val delim = "|".attr(Foreground.color(237) | cssCtxBg)
 
   def clearLine(): Unit = {
     print("\r")
@@ -252,7 +255,7 @@ object Exam {
 
   class ValueViewer extends Viewer {
     def view(c: Card): String = {
-      sideValue(c, ruEn)
+      btn("enter", "flip") + delim + btn("space", "flip ") + "  " +  sideValue(c, ruEn)
       //      c.value.attr(Format.Bold | Foreground.Cyan) +
       //        c.transcript.map(t => ("[" + t + "]").foreground(24)).getOrElse("") + " " +
       //        c.kind.getOrElse("").attr(Foreground.Yellow)
@@ -261,7 +264,7 @@ object Exam {
 
   class TransViewer extends Viewer {
     def view(c: Card): String =
-      sideValue(c, !ruEn)
+      btn("enter", "true") + delim + btn("space", "false") + "  " + sideValue(c, !ruEn)
 
     //c.translations.mkString(" | ").foreground(103)
   }
