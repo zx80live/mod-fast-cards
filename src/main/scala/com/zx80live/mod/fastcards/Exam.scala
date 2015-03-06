@@ -27,6 +27,20 @@ object Exam {
   val topLimitMs = 3000
   val lowLimitMs = 8000
 
+
+  def average(list: List[Long]): Double = if (list.nonEmpty) {
+    list.sum / list.length
+  } else Long.MaxValue
+
+  implicit class CardListExtension(val xs: List[Card]) {
+    def filterTop = xs.filter(e => average(e.times) <= topLimitMs)
+
+    def filterMid = xs.filter(e => average(e.times) > topLimitMs && average(e.times) < lowLimitMs)
+
+    def filterLow = xs.filter(e => average(e.times) >= lowLimitMs)
+  }
+
+
   def main(args: Array[String]): Unit =
 
     args.toList match {
@@ -51,7 +65,7 @@ object Exam {
     var discard: List[Card] = Nil
     val con: ConsoleReader = new ConsoleReader()
     var run = true
-    
+
 
     var pointer = 0
 
@@ -84,11 +98,11 @@ object Exam {
 
     def printStatistic(): Unit = {
       val xs = discard ::: stock
-      
 
-      def average(list: List[Long]): Double = if (list.nonEmpty) {
-        list.sum / list.length
-      } else Long.MaxValue
+
+
+
+
 
       def grow(xs: List[String], max: Int): List[String] = {
         var gs: List[String] = Nil
@@ -98,9 +112,10 @@ object Exam {
         xs ::: gs
       }
 
-      var topWords = xs.filter(e => average(e.times) <= topLimitMs).map(_.value).sorted
-      var midWords = xs.filter(e => average(e.times) > topLimitMs && average(e.times) < lowLimitMs).map(_.value).sorted
-      var lowWords = xs.filter(e => average(e.times) >= lowLimitMs).map(_.value).sorted
+
+      var topWords = xs.filterTop.map(_.value).sorted
+      var midWords = xs.filterMid.map(_.value).sorted
+      var lowWords = xs.filterLow.map(_.value).sorted
 
 
       val maxSize = List(topWords.length, midWords.length, lowWords.length).max
@@ -181,9 +196,9 @@ object Exam {
 
         case 100 => stock = remove(stock)
 
-        case 109 => //todo drop all except mid
+        case 109 => stock.filterMid
 
-        case 98 => //todo drop all except bad
+        case 98 => stock = stock.filterLow
 
         case scala.tools.jline.console.Key.CTRL_D.code =>
           printStatistic()
