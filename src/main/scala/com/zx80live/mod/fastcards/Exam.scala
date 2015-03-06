@@ -27,6 +27,8 @@ object Exam {
   val topLimitMs = 3000
   val lowLimitMs = 8000
 
+  var ruEn = true
+
 
   def average(list: List[Long]): Double = if (list.nonEmpty) {
     list.sum / list.length
@@ -203,7 +205,7 @@ object Exam {
         case scala.tools.jline.console.Key.CTRL_D.code =>
           printStatistic()
           run = false
-        case k@_ => //println("\n" + k)
+        case k@_ => println("\n" + k)
       }
     }
   }
@@ -238,15 +240,30 @@ object Exam {
     def view(c: Card): String
   }
 
-  class ValueViewer extends Viewer {
-    def view(c: Card): String =
+  def sideValue(c: Card, mode: Boolean) = {
+    if (mode)
+      c.translations.mkString(" | ").foreground(103)
+    else {
       c.value.attr(Format.Bold | Foreground.Cyan) +
         c.transcript.map(t => ("[" + t + "]").foreground(24)).getOrElse("") + " " +
         c.kind.getOrElse("").attr(Foreground.Yellow)
+    }
+  }
+
+  class ValueViewer extends Viewer {
+    def view(c: Card): String = {
+      sideValue(c, ruEn)
+      //      c.value.attr(Format.Bold | Foreground.Cyan) +
+      //        c.transcript.map(t => ("[" + t + "]").foreground(24)).getOrElse("") + " " +
+      //        c.kind.getOrElse("").attr(Foreground.Yellow)
+    }
   }
 
   class TransViewer extends Viewer {
-    def view(c: Card): String = c.translations.mkString(" | ").foreground(103)
+    def view(c: Card): String =
+      sideValue(c, !ruEn)
+
+    //c.translations.mkString(" | ").foreground(103)
   }
 
   class ExampleViewer extends Viewer {
