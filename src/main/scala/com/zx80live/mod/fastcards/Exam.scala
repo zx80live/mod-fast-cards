@@ -270,7 +270,7 @@ object Exam {
 
   class TransViewer extends Viewer {
     def view(c: Card): String =
-      btn("enter", "true") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg) + " " + sideValue(c, !ruEn)
+      btn("enter", " ok ") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg) + " " + sideValue(c, !ruEn)
 
     //c.translations.mkString(" | ").foreground(103)
   }
