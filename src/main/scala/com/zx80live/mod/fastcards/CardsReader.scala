@@ -14,18 +14,19 @@ object CardsReader {
   }
 
   def read(filename: String): List[Card] = {
-    val wordPattern = """^([\w\s]+)\:([\s\w]*)\:([\s\|\wа-яА-Я]*)$""".r
+    val wordPattern = """^([\w\s]+)(\[[\w\sа-яА-Я]+\])*\:([\s\w]*)\:([\s\|\wа-яА-Я]*)$""".r
     val examplePattern = """^\s*\*([\w\s]+)\s*\:*([\s\|\wа-яА-Я]*)\s*$""".r
     var card: Option[Card] = None
     var xs: List[Card] = Nil
 
     NIOUtils.readDelimitedStrings(new File(filename), '\n') {
-      case wordPattern(value, kind, trans) =>
+      case wordPattern(value, transcript, kind, trans) =>
         if (card.isDefined)
           xs = card.get :: xs
 
+        val t = if (transcript != null) Some(transcript.tail.take(transcript.length - 2)) else None
 
-        card = Some(Card(value, kind: Option[String], trans.split("\\|").map(_.trim).toList))
+        card = Some(Card(value, kind: Option[String], trans.split("\\|").map(_.trim).toList, Nil, t))
 
       case examplePattern(text, trans) =>
         val e = Example(text, trans.split("\\|").map(_.trim).toList)

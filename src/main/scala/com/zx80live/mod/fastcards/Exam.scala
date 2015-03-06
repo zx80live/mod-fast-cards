@@ -239,7 +239,11 @@ object Exam {
   }
 
   class ValueViewer extends Viewer {
-    def view(c: Card): String = Console.BOLD + Console.CYAN + c.value + Console.RESET + Console.YELLOW + " " + c.kind.getOrElse("") + Console.RESET + " "
+    def view(c: Card): String =
+      c.value.attr(Format.Bold | Foreground.Cyan) +
+        c.transcript.map(t => ("[" + t + "]").foreground(24)).getOrElse("") + " " +
+        c.kind.getOrElse("").attr(Foreground.Yellow)
+      //Console.BOLD + Console.CYAN + c.value + Console.RESET + Console.YELLOW + " " + c.kind.getOrElse("") + Console.RESET + " "
   }
 
   class TransViewer extends Viewer {
