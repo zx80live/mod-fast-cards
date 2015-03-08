@@ -77,26 +77,12 @@ object Exam {
           cards.filter(c => filter.contains(c.kind))
         } else cards
 
+        exam(filtered)
 
       case None =>
         println("[ERROR] enter cards file")
     }
   }
-
-  def main3(args: Array[String]): Unit =
-
-    args.toList match {
-      case file :: tail =>
-        val cards = CardsReader.read(file)
-
-        tail match {
-          case kind :: Nil => exam(cards.filter(_.kind == Some(kind)))
-          case _ => exam(cards)
-        }
-
-      case _ => println("[ERROR] enter cards file")
-    }
-
 
   def exam(cards: List[Card]): Unit = {
 
