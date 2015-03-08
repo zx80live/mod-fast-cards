@@ -67,14 +67,19 @@ object Exam {
 
     parser.parse(args, Config()) match {
       case Some(config) =>
+        val badMode = config.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true}.length > 0
+        val badFileName = config.files.map(_.getName).mkString("_") + ".bad"
 
-        getFileExtension(config.files.head) match {
-          case Some("bad") => println("bad mode")
-          case Some("mid") => println("mid mode")
-          case _ => println("all mode")
-        }
+        val cards: List[Card] = config.files.map(CardsReader.read).flatten.toList
+
+        val filtered = if (config.filter.nonEmpty) {
+          val filter: Seq[Some[String]] = config.filter.map(Some(_))
+          cards.filter(c => filter.contains(c.kind))
+        } else cards
+
 
       case None =>
+        println("[ERROR] enter cards file")
     }
   }
 
