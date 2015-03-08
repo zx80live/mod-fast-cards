@@ -5,6 +5,7 @@ import java.io.File
 import com.zx80live.mod.fastcards.util.NIOUtils
 
 import scala.language.implicitConversions
+import scala.util.matching.Regex
 
 object CardsReader {
 
@@ -14,8 +15,9 @@ object CardsReader {
   }
 
   def read(filename: String): List[Card] = {
-    val wordPattern = """^([\w\s]+)(\s*\[[\w\sа-яА-Я]+\]\s*)*\:([\s\w]*)\:([\s\|\wа-яА-Я]*)$""".r
-    val examplePattern = """^\s*\*([\w\s]+)\s*\:*([\s\|\wа-яА-Я]*)\s*$""".r
+    val textContent = """\w\s|'\(\)\=\-а-яА-Я,\."""
+    val wordPattern = ("""^([""" + textContent + """]+)(\s*\[[\w\sа-яА-Я]+\]\s*)*\:([\s\w]*)\:([""" + textContent + """]*)$""").r
+    val examplePattern = ("""^\s*\*([""" + textContent + """]+)\s*\:*([""" + textContent + """]*)\s*$""").r
     var card: Option[Card] = None
     var xs: List[Card] = Nil
 
