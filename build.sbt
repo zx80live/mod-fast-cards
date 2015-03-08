@@ -18,11 +18,14 @@ organization := "com.zx80.mod"
 
 version := "1.0"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.11.6"
+
+resolvers += Resolver.sonatypeRepo("public")
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 libraryDependencies += "com.zx80.util" %% "console-utils" % "1.0"
 libraryDependencies += "com.jsuereth" % "scala-arm_2.11" % "1.4"
+libraryDependencies += "com.github.scopt" %% "scopt" % "3.3.0"
 
 
 

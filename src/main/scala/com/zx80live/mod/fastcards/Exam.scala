@@ -43,8 +43,42 @@ object Exam {
     def filterLow = xs.filter(e => average(e.times) >= lowLimitMs)
   }
 
+  import java.io.File
 
-  def main(args: Array[String]): Unit =
+  case class Config(files: Seq[File] = Seq(), enRu: Boolean = false, filter: Seq[String] = Seq())
+
+  val parser = new scopt.OptionParser[Config]("scopt") {
+    head("Fast-cards", "3.x")
+    arg[File]("<file>...") unbounded() optional() action { (x, c) =>
+      c.copy(files = c.files :+ x)
+    } text "optional unbounded args"
+    opt[Unit]("en-ru") action { (_, c) =>
+      c.copy(enRu = true)
+    } text "en-ru mode"
+    opt[Seq[String]]('f', "filter") valueName "<jar1>,<jar2>..." action { (x, c) =>
+      c.copy(filter = x)
+    } text "jars to include"
+  }
+
+  def getFileExtension(file: File): Option[String] = file.getName.split( """\.""").lastOption
+
+
+  def main(args: Array[String]): Unit = {
+
+    parser.parse(args, Config()) match {
+      case Some(config) =>
+
+        getFileExtension(config.files.head) match {
+          case Some("bad") => println("bad mode")
+          case Some("mid") => println("mid mode")
+          case _ => println("all mode")
+        }
+
+      case None =>
+    }
+  }
+
+  def main3(args: Array[String]): Unit =
 
     args.toList match {
       case file :: tail =>
