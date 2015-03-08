@@ -26,13 +26,14 @@ object Exam {
   val passCount = 1
   val topLimitMs = 3000
   val lowLimitMs = 8000
+  val badTime = 1000 * 60 * 60
 
   var ruEn = true
 
 
   def average(list: List[Long]): Double = if (list.nonEmpty) {
     list.sum / list.length
-  } else Long.MaxValue
+  } else badTime
 
   implicit class CardListExtension(val xs: List[Card]) {
     def filterTop = xs.filter(e => average(e.times) <= topLimitMs)
@@ -160,8 +161,8 @@ object Exam {
           case v: ExampleViewer => viewer = valueViewer
           case v: ValueViewer => viewer = transViewer
           case v: TransViewer =>
-            current(stock).statistic = 0
-            current(stock).times = Nil
+            current(stock).passCount = 0
+            current(stock).times = badTime :: current(stock).times
             stock = next(stock)
             viewer = valueViewer
         }
@@ -174,8 +175,8 @@ object Exam {
               val card = current(stock)
               card.times = Timer.stop :: card.times
 
-              if (card.statistic < passCount) {
-                card.statistic = card.statistic + 1
+              if (card.passCount < passCount) {
+                card.passCount = card.passCount + 1
                 stock = next(stock)
               } else if (stock.length > 1) {
                 stock = remove(stock)
