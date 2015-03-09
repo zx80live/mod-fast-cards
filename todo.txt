@@ -10,3 +10,5 @@ TODO поддерживать синонимы типов: adv=adverb, modal=mod
 TODO [xx/yy] - неправильный счетчик xx
 
 TODO exam *.bad|*.mid
+
+TODO exam w0 w1 w2 w3 w4 words.txt ->  (badFilePrefix,Some(w0_w1))
