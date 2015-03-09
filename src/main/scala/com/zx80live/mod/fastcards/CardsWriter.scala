@@ -11,7 +11,6 @@ object CardsWriter {
 
     val str = c.value + c.transcript.map(t => s"[$t]").getOrElse("") + ":" + c.kind.getOrElse("") + ":" + c.translations.mkString("|") +
       c.examples.map { e =>
-        println(e.text.length, e.text)
         "\n\t* " + e.text + (if (e.translations.nonEmpty) {
           ":" + e.translations.map(_.trim).mkString("|")
         })
