@@ -90,9 +90,8 @@ object Exam {
   }
 
   def exam(cards: List[Card], badFilePrefixOpt: Option[String]): Unit = {
-
     Timer.start
-    println("\nstart exam".attr(Format.Bold | Foreground.color(70)) + "\n")
+    println("\nstart exam".attr(Format.Bold | Foreground.color(70)) + badFilePrefixOpt.map(_ => "").getOrElse(" " + "repeat bad".attr(Foreground.color(22)) ) + "\n")
 
     var stock: List[Card] = Random.shuffle(cards)
     var discard: List[Card] = Nil
