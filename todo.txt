@@ -10,4 +10,3 @@ TODO поддерживать синонимы типов: adv=adverb, modal=mod
 TODO [xx/yy] - неправильный счетчик xx
 
 TODO exam *.bad|*.mid
-TODO repeat bad: неправильная статистика
