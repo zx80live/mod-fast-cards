@@ -2,10 +2,10 @@ package com.zx80live.mod.fastcards
 
 import com.zx80live.mod.fastcards.util.Timer
 
-import scala.tools.jline.console.ConsoleReader
+import scala.tools.jline.console.{ConsoleReader => R}
 import scala.util.Random
 
-object Exam extends Styles {
+object Exam extends Styles with ExamController {
 
   import com.zx80.mod.util.console.ConsoleCSS._
 
@@ -52,32 +52,32 @@ object Exam extends Styles {
 
 
   def main(args: Array[String]): Unit = {
-
-    parser.parse(args, Config()) match {
-      case Some(config) =>
-
-        println("\n" + config.files.map(_.getName).mkString(", ").attr(Foreground.color(237)))
-
-
-        val badMode = config.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true}.length > 0
-        val badFilePrefix =
-          if (!badMode)
-            Some(config.files.map(_.getName).mkString("_"))
-          else None
-
-
-        val cards: List[Card] = config.files.map(CardsReader.read).flatten.toList
-
-        val filtered = if (config.filter.nonEmpty) {
-          val filter: Seq[Some[String]] = config.filter.map(Some(_))
-          cards.filter(c => filter.contains(c.kind))
-        } else cards
-
-        exam(filtered, badFilePrefix)
-
-      case None =>
-        println("[ERROR] enter cards file")
-    }
+    start
+    //    parser.parse(args, Config()) match {
+    //      case Some(config) =>
+    //
+    //        println("\n" + config.files.map(_.getName).mkString(", ").attr(Foreground.color(237)))
+    //
+    //
+    //        val badMode = config.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true}.length > 0
+    //        val badFilePrefix =
+    //          if (!badMode)
+    //            Some(config.files.map(_.getName).mkString("_"))
+    //          else None
+    //
+    //
+    //        val cards: List[Card] = config.files.map(CardsReader.read).flatten.toList
+    //
+    //        val filtered = if (config.filter.nonEmpty) {
+    //          val filter: Seq[Some[String]] = config.filter.map(Some(_))
+    //          cards.filter(c => filter.contains(c.kind))
+    //        } else cards
+    //
+    //        exam(filtered, badFilePrefix)
+    //
+    //      case None =>
+    //        println("[ERROR] enter cards file")
+    //    }
   }
 
   def exam(cards: List[Card], badFilePrefixOpt: Option[String]): Unit = {
@@ -86,7 +86,7 @@ object Exam extends Styles {
 
     var stock: List[Card] = Random.shuffle(cards)
     var discard: List[Card] = Nil
-    val con: ConsoleReader = new ConsoleReader()
+    val con = new R()
     var run = true
 
 
@@ -245,8 +245,6 @@ object Exam extends Styles {
         btn("CTRL+D", "exit"))
     println()
   }
-
-
 
 
   def clearLine(): Unit = {
