@@ -85,7 +85,6 @@ object Exam {
           cards.filter(c => filter.contains(c.kind))
         } else cards
 
-        println("badFilePrefix", badFilePrefix)
         exam(filtered, badFilePrefix)
 
       case None =>
