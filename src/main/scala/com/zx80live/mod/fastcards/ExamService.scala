@@ -3,6 +3,8 @@ package com.zx80live.mod.fastcards
 import scala.util.Random
 
 trait ExamService {
+  val topLimitMs = 3000
+  val lowLimitMs = 8000
 
   implicit class ImmutableCardListExt(xs: List[Card]) {
 
