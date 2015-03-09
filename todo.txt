@@ -8,3 +8,5 @@ TODO лимит ответа = время прочтения слова (f(w.len
 TODO поддерживать синонимы типов: adv=adverb, modal=modal verb etc.
 
 TODO [xx/yy] - неправильный счетчик xx
+
+TODO exam *.bad|*.mid
