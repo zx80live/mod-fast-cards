@@ -16,7 +16,6 @@ trait ExamService {
 
     def drop: (Option[Card], List[Card]) = (xs.headOption, xs.tail)
 
-
     def filterTop: List[Card] = xs.filter(e => averageTime(e.times).exists(_ <= topLimitMs))
 
     def filterMid: List[Card] = xs.filter { e => averageTime(e.times).exists(t => t > topLimitMs && t <= lowLimitMs)}
