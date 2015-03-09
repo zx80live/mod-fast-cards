@@ -68,7 +68,11 @@ object Exam {
     parser.parse(args, Config()) match {
       case Some(config) =>
         val badMode = config.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true}.length > 0
-        val badFileName = config.files.map(_.getName).mkString("_") + ".bad"
+        val badFilePrefix =
+          if (!badMode)
+            Some(config.files.map(_.getName).mkString("_"))
+          else None
+
 
         val cards: List[Card] = config.files.map(CardsReader.read).flatten.toList
 
@@ -77,14 +81,15 @@ object Exam {
           cards.filter(c => filter.contains(c.kind))
         } else cards
 
-        exam(filtered)
+        println("badFilePrefix", badFilePrefix)
+        exam(filtered, badFilePrefix)
 
       case None =>
         println("[ERROR] enter cards file")
     }
   }
 
-  def exam(cards: List[Card]): Unit = {
+  def exam(cards: List[Card], badFilePrefixOpt: Option[String]): Unit = {
 
     Timer.start
     println("\nstart exam".attr(Format.Bold | Foreground.color(70)) + "\n")
@@ -238,6 +243,19 @@ object Exam {
           run = false
         case k@_ => println("\n" + k)
       }
+    }
+
+
+    badFilePrefixOpt.foreach { name =>
+      val xs = discard ::: stock
+      val xsMid = xs.filterMid
+      val xsBad = xs.filterLow
+
+      if (xsMid.nonEmpty)
+        CardsWriter.write(xsMid, new File(name + ".mid"))
+
+      if (xsBad.nonEmpty)
+        CardsWriter.write(xsBad, new File(name + ".bad"))
     }
   }
 

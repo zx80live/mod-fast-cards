@@ -34,7 +34,7 @@ object CardsReader {
         card = Some(Card(value.trim, kind: Option[String], trans.split("\\|").map(_.trim).toList, Nil, t))
 
       case examplePattern(text, trans) =>
-        val e = Example(text, trans.split("\\|").map(_.trim).toList)
+        val e = Example(text.trim, trans.split("\\|").map(_.trim).collect{case s if !s.isEmpty => s}.toList)
         card match {
           case Some(c) =>
             card = Some(c.copy(examples = e :: c.examples))
