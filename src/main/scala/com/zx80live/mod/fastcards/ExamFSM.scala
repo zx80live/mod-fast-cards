@@ -53,15 +53,15 @@ trait ExamFSM {
       }).asEmptyStock
 
 
-    def estimate(value: Boolean, time: Option[Long] = None)(implicit truePassLimit: Int) =
+    def estimate(value: Boolean, time: Option[Long] = None)(implicit truePassLimit: Int): State =
       s.stock.headOption.map { head =>
         val c = head.addPass(Pass(value, time))
 
         (c.truePassesCount < truePassLimit, s.replaceCurrent(c)) match {
           case (true, state) => state.next
-          case (false, state) => state.discard
+          case (false, state) => state.drop
         }
-      }.getOrElse(s.asEmptyStock)
+      }.getOrElse(s).asEmptyStock
   }
 
 }
