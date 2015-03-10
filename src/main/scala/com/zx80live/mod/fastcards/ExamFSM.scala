@@ -87,7 +87,6 @@ trait ExamFSM {
 
     def badCards: List[Card] = deck.filter(c => c.averagePassTime.getOrElse(BAD_TIME_IN_MS.toDouble) > limitBadMs)
 
-    //todo test
     def statistic: Statistic = Statistic(bestCards, middleCards, badCards)
   }
 
