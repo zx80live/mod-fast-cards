@@ -76,7 +76,6 @@ trait ExamFSM {
       s.replaceCurrent(c.addPass()).next
     }.getOrElse(s).asEmptyStock
 
-    //todo test
     def deck: List[Card] = s.stock ::: s.discard
 
     //todo test

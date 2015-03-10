@@ -197,6 +197,16 @@ class ExamFSMSpec extends WordSpec with Matchers {
         s0.copy(stock = List(c0)).isInstanceOf[EmptyStock] shouldEqual false
         s0.copy(stock = List(c0)).asEmptyStock.isInstanceOf[EmptyStock] shouldEqual false
       }
+
+      "deck" in {
+        State(Nil, Nil).deck shouldEqual Nil
+        State(Nil, List(c0)).deck shouldEqual List(c0)
+        State(Nil, List(c0, c1)).deck shouldEqual List(c0, c1)
+        State(List(c0), Nil).deck shouldEqual List(c0)
+        State(List(c0, c1), Nil).deck shouldEqual List(c0, c1)
+        State(List(c0), List(c1, c2)).deck shouldEqual List(c0, c1, c2)
+        State(List(c0, c1), List(c2)).deck shouldEqual List(c0, c1, c2)
+      }
     }
 
     "Card extensions" should {
