@@ -152,4 +152,10 @@ class ExamFSMSpec extends FlatSpec with Matchers {
     State(stock = List(c0)).current shouldEqual Some(c0)
     State(stock = List(c0, c1, c2)).current shouldEqual Some(c0)
   }
+
+  "ExamFSM" should "replaceCurrent" in {
+    State(stock = Nil).replaceCurrent(c0) shouldEqual State(Nil, Nil)
+    State(stock = List(c0)).replaceCurrent(c1) shouldEqual State(List(c1), Nil)
+    State(stock = List(c0, c1, c2)).replaceCurrent(c3) shouldEqual State(List(c3, c1, c2), Nil)
+  }
 }
