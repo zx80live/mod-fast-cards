@@ -78,16 +78,13 @@ trait ExamFSM {
 
     def deck: List[Card] = s.stock ::: s.discard
 
-    //todo test
     def bestCards: List[Card] = deck.filter(c => c.averagePassTime.getOrElse(BAD_TIME_IN_MS.toDouble) < limitBestMs)
 
-    //todo test
     def middleCards: List[Card] = deck.filter(c => {
       val avg = c.averagePassTime.getOrElse(BAD_TIME_IN_MS.toDouble)
       avg >= limitBestMs && avg <= limitBadMs
     })
 
-    //todo test
     def badCards: List[Card] = deck.filter(c => c.averagePassTime.getOrElse(BAD_TIME_IN_MS.toDouble) > limitBadMs)
 
     //todo test

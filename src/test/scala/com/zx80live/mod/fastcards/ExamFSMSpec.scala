@@ -342,6 +342,12 @@ class ExamFSMSpec extends WordSpec with Matchers {
         State(List(badC0, badC1, midC2, bestC3, bestC4)).bestCards shouldEqual List(bestC3, bestC4)
       }
 
+      "statistic" in {
+        State(List(badC0, badC1, midC2, bestC3, bestC4)).statistic shouldEqual Statistic(
+          best = List(bestC3, bestC4),
+          middle = List(midC2),
+          bad = List(badC0, badC1))
+      }
 
     }
   }
