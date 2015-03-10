@@ -190,6 +190,13 @@ class ExamFSMSpec extends WordSpec with Matchers {
         s4 shouldEqual State(stock = Nil, discard = List(c2, c1, c0))
         s4.isInstanceOf[EmptyStock] shouldEqual true
       }
+
+      "change state" in {
+        val s0 = State(Nil, Nil).asEmptyStock
+        s0.isInstanceOf[EmptyStock] shouldEqual true
+        s0.copy(stock = List(c0)).isInstanceOf[EmptyStock] shouldEqual false
+        s0.copy(stock = List(c0)).asEmptyStock.isInstanceOf[EmptyStock] shouldEqual false
+      }
     }
   }
 
