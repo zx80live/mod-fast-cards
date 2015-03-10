@@ -223,6 +223,12 @@ class ExamFSMSpec extends WordSpec with Matchers {
         c0.addPass(Some(1000)).addPass().addPass(Some(2000)).addPass().addPass(Some(3000)).truePassesCount shouldEqual 3
       }
     }
+
+    "extend functional" should {
+      "estimateFalse" in {}
+
+      "estimateTrue" in {}
+    }
   }
 
 
