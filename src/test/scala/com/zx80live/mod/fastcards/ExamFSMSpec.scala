@@ -141,4 +141,9 @@ class ExamFSMSpec extends FlatSpec with Matchers {
     s1.discard shouldEqual Nil
     s2.discard shouldEqual Nil
   }
+
+  "ExamFSM" should "asEmptyStock" in {
+    State(stock = Nil).asEmptyStock.isInstanceOf[EmptyStock] shouldEqual true
+    State(stock = List(c0)).asEmptyStock.isInstanceOf[EmptyStock] shouldEqual false
+  }
 }
