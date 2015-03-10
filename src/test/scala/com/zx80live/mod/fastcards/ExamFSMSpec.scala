@@ -225,9 +225,15 @@ class ExamFSMSpec extends WordSpec with Matchers {
     }
 
     "extend functional" should {
-      "estimateFalse" in {}
+      "estimateFalse" in {
+        val s0 = State(stock = List(c0, c1, c2, c3))
+        val s1: ExamFSM.State = s0.estimateFalse
+        s1.stock.last shouldEqual Card(c0.data, List(None))
+        s1 shouldEqual State(stock = List(c1, c2, c3, Card(c0.data, List(None))))
 
-      "estimateTrue" in {}
+        val s2: ExamFSM.State = s1.estimateFalse.estimateFalse.estimateFalse.estimateFalse
+        s2.stock.last shouldEqual Card(c0.data, List(None, None))
+      }
     }
   }
 
