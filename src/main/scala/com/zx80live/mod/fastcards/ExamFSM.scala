@@ -42,14 +42,12 @@ trait ExamFSM {
 
     def prev: State = s.copy(stock = s.stock.lastOption.map(l => l :: s.stock.take(s.stock.length - 1)).getOrElse(Nil)).asEmptyStock
 
-    def discard: State =
-      s.stock match {
-        case head :: tail if tail.nonEmpty =>
+    def drop: State =
+      (s.stock match {
+        case head :: tail =>
           s.copy(stock = tail, discard = head :: s.discard)
-        case head :: tail if tail.isEmpty =>
-          new State(Nil, head :: s.discard) with EmptyStock
-        case Nil => s
-      }
+        case _ => s
+      }).asEmptyStock
 
 
     def estimate(value: Boolean, time: Option[Long] = None)(implicit truePassLimit: Int) =

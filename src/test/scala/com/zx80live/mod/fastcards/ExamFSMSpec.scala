@@ -158,4 +158,34 @@ class ExamFSMSpec extends FlatSpec with Matchers {
     State(stock = List(c0)).replaceCurrent(c1) shouldEqual State(List(c1), Nil)
     State(stock = List(c0, c1, c2)).replaceCurrent(c3) shouldEqual State(List(c3, c1, c2), Nil)
   }
+
+  "ExamFSM" should "drop on empty" in {
+    val s0: ExamFSM.State = State(stock = Nil, discard = Nil).drop
+    s0 shouldEqual State(stock = Nil, discard = Nil)
+    s0.isInstanceOf[EmptyStock] shouldEqual true
+  }
+
+  "ExamFSM" should "drop on one" in {
+    val s1 = State(stock = List(c0), discard = Nil).drop
+    s1 shouldEqual State(stock = Nil, discard = List(c0))
+    s1.isInstanceOf[EmptyStock] shouldEqual true
+  }
+
+  "ExamFSM" should "drop on nonempty with empty drop" in {
+    val s1 = State(stock = List(c0, c1, c2), discard = Nil).drop
+    s1 shouldEqual State(stock = List(c1, c2), discard = List(c0))
+    s1.isInstanceOf[EmptyStock] shouldEqual false
+
+    val s2 = s1.drop
+    s2 shouldEqual State(stock = List(c2), discard = List(c1, c0))
+    s2.isInstanceOf[EmptyStock] shouldEqual false
+
+    val s3 = s2.drop
+    s3 shouldEqual State(stock = Nil, discard = List(c2, c1, c0))
+    s3.isInstanceOf[EmptyStock] shouldEqual true
+
+    val s4 = s3.drop
+    s4 shouldEqual State(stock = Nil, discard = List(c2, c1, c0))
+    s4.isInstanceOf[EmptyStock] shouldEqual true
+  }
 }
