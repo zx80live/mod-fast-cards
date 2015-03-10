@@ -13,6 +13,12 @@ class ExamFSMSpec extends WordSpec with Matchers {
   val c3 = Card(Data(value = "v3", translations = List("t3")))
   val c4 = Card(Data(value = "v4", translations = List("t4")))
 
+  val badC0 = c0.copy(times = List(None, None, None))
+  val badC1 = c1.copy(times = List(None, Some(1000), Some(1000)))
+  val midC2 = c2.copy(times = List(Some(1000), Some(5000), Some(4000)))
+  val bestC3 = c3.copy(times = List(Some(500), Some(1000)))
+  val bestC4 = c4.copy(times = List(Some(100), Some(700)))
+
   "ExamFSM" when {
     "base functional" should {
       "navigate.one.next" in {
@@ -323,6 +329,20 @@ class ExamFSMSpec extends WordSpec with Matchers {
         s5.isInstanceOf[EmptyStock] shouldEqual true
         s5 shouldEqual s3
       }
+
+      "badCards" in {
+        State(List(badC0, badC1, midC2, bestC3, bestC4)).badCards shouldEqual List(badC0, badC1)
+      }
+
+      "middleCards" in {
+        State(List(badC0, badC1, midC2, bestC3, bestC4)).middleCards shouldEqual List(midC2)
+      }
+
+      "bestCards" in {
+        State(List(badC0, badC1, midC2, bestC3, bestC4)).bestCards shouldEqual List(bestC3, bestC4)
+      }
+
+
     }
   }
 
