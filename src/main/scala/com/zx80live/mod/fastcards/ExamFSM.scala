@@ -30,9 +30,7 @@ trait ExamFSM {
       Some(times.sum / times.length)
     } else None
 
-    def truePassesCount: Int = c.times.count(_.isDefined)
-
-    def isPassCompleted(implicit passCount: Int): Boolean = {
+    def isExamCompleted(implicit passCount: Int): Boolean = {
       if (c.times.length >= passCount) {
         c.times.takeRight(passCount).count(_.isDefined) >= passCount
       } else {
@@ -64,7 +62,7 @@ trait ExamFSM {
       s.stock.headOption.map { head =>
         val c = head.addPass(Some(time))
 
-        (c.truePassesCount < truePassLimit, s.replaceCurrent(c)) match {
+        (c.isExamCompleted, s.replaceCurrent(c)) match {
           case (true, state) => state.next
           case (false, state) => state.drop
         }
