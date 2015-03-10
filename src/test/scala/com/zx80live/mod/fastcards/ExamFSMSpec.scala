@@ -13,6 +13,35 @@ class ExamFSMSpec extends FlatSpec with Matchers {
   val c3 = Card(Data(value = "v3", translations = List("t3")))
   val c4 = Card(Data(value = "v4", translations = List("t4")))
 
+  "ExamFSM" should "navigate.one.next" in {
+    val s0 = State(stock = List(c0))
+    val s1 = s0.next
+    val s2 = s1.next
+
+    s1 shouldEqual State(stock = List(c0))
+    s2 shouldEqual State(stock = List(c0))
+
+    s1.isInstanceOf[EmptyStock] shouldEqual false
+    s2.isInstanceOf[EmptyStock] shouldEqual false
+
+    s1.discard shouldEqual Nil
+    s2.discard shouldEqual Nil
+  }
+
+  "ExamFSM" should "navigate.one.prev" in {
+    val s0 = State(stock = List(c0))
+    val s1 = s0.prev
+    val s2 = s1.prev
+
+    s1 shouldEqual State(stock = List(c0))
+    s2 shouldEqual State(stock = List(c0))
+
+    s1.isInstanceOf[EmptyStock] shouldEqual false
+    s2.isInstanceOf[EmptyStock] shouldEqual false
+
+    s1.discard shouldEqual Nil
+    s2.discard shouldEqual Nil
+  }
 
   "ExamFSM" should "navigate.nonEmpty.next" in {
     val s0 = State(stock = List(c0, c1, c2, c3, c4))
@@ -81,4 +110,35 @@ class ExamFSMSpec extends FlatSpec with Matchers {
   }
 
 
+  "ExamFSM" should "navigate.empty.next" in {
+    val s0 = State(stock = Nil)
+    val s1 = s0.next
+    val s2 = s1.next
+
+    s1 shouldEqual State(stock = Nil)
+    s2 shouldEqual State(stock = Nil)
+
+    s0.isInstanceOf[EmptyStock] shouldEqual false
+    s1.isInstanceOf[EmptyStock] shouldEqual true
+    s2.isInstanceOf[EmptyStock] shouldEqual true
+
+    s1.discard shouldEqual Nil
+    s2.discard shouldEqual Nil
+  }
+
+  "ExamFSM" should "navigate.empty.prev" in {
+    val s0 = State(stock = Nil)
+    val s1 = s0.prev
+    val s2 = s1.prev
+
+    s1 shouldEqual State(stock = Nil)
+    s2 shouldEqual State(stock = Nil)
+
+    s0.isInstanceOf[EmptyStock] shouldEqual false
+    s1.isInstanceOf[EmptyStock] shouldEqual true
+    s2.isInstanceOf[EmptyStock] shouldEqual true
+
+    s1.discard shouldEqual Nil
+    s2.discard shouldEqual Nil
+  }
 }

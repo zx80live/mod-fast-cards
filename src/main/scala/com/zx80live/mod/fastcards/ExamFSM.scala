@@ -38,9 +38,9 @@ trait ExamFSM {
 
     def replaceCurrent(c: Card): State = s.stock.headOption.map(h => s.copy(stock = c :: s.stock.tail)).getOrElse(s)
 
-    def next: State = s.copy(stock = s.stock.headOption.map(h => s.stock.tail :+ h).getOrElse(Nil))
+    def next: State = s.copy(stock = s.stock.headOption.map(h => s.stock.tail :+ h).getOrElse(Nil)).asEmptyStock
 
-    def prev: State = s.copy(stock = s.stock.lastOption.map(l => l :: s.stock.take(s.stock.length - 1)).getOrElse(Nil))
+    def prev: State = s.copy(stock = s.stock.lastOption.map(l => l :: s.stock.take(s.stock.length - 1)).getOrElse(Nil)).asEmptyStock
 
     def discard: State =
       s.stock match {
