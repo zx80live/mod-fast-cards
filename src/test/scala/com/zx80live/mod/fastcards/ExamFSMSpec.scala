@@ -188,4 +188,7 @@ class ExamFSMSpec extends FlatSpec with Matchers {
     s4 shouldEqual State(stock = Nil, discard = List(c2, c1, c0))
     s4.isInstanceOf[EmptyStock] shouldEqual true
   }
+
+  "ExamFSM" should "estimate" in {
+  }
 }

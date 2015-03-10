@@ -1,11 +1,10 @@
-package com.zx80live.mod.fastcards
+package com.zx80live.mod.fastcards.util
 
 import java.io.File
 
-import com.zx80live.mod.fastcards.util.NIOUtils
+import com.zx80live.mod.fastcards.{Card, Example}
 
 import scala.language.implicitConversions
-import scala.util.matching.Regex
 
 object CardsReader {
 

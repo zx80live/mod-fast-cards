@@ -2,6 +2,7 @@ package com.zx80live.mod.fastcards
 
 import scala.util.Random
 
+@deprecated
 trait ExamService {
   val topLimitMs = 3000
   val lowLimitMs = 8000

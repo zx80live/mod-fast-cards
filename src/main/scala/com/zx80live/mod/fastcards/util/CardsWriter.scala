@@ -1,7 +1,8 @@
-package com.zx80live.mod.fastcards
+package com.zx80live.mod.fastcards.util
 
-import java.io.{FileOutputStream, FileInputStream, File, OutputStream}
+import java.io.{File, FileOutputStream, OutputStream}
 
+import com.zx80live.mod.fastcards.Card
 import resource._
 
 object CardsWriter {
