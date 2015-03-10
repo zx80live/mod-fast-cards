@@ -235,11 +235,83 @@ class ExamFSMSpec extends WordSpec with Matchers {
       "estimateFalse" in {
         val s0 = State(stock = List(c0, c1, c2, c3))
         val s1: ExamFSM.State = s0.estimateFalse
+        s1.stock.length shouldEqual s0.stock.length
+        s1.discard shouldEqual Nil
         s1.stock.last shouldEqual Card(c0.data, List(None))
         s1 shouldEqual State(stock = List(c1, c2, c3, Card(c0.data, List(None))))
 
         val s2: ExamFSM.State = s1.estimateFalse.estimateFalse.estimateFalse.estimateFalse
+        s2.stock.length shouldEqual s0.stock.length
         s2.stock.last shouldEqual Card(c0.data, List(None, None))
+        s2.discard shouldEqual Nil
+      }
+
+      "estimateTrue with all true passes" in {
+        implicit val passCount: Int = 3
+
+        val s0 = State(stock = List(c0, c1, c2))
+        val s1: ExamFSM.State = s0.estimateTrue(1000)
+        s1.stock.length shouldEqual s0.stock.length
+        s1.discard.length shouldEqual s0.discard.length
+        s1.stock.last shouldEqual Card(c0.data, List(Some(1000)))
+
+        val s2: ExamFSM.State = s1.estimateTrue(1000).estimateTrue(1000).estimateTrue(2000)
+        s2.stock.length shouldEqual s0.stock.length
+        s2.discard.length shouldEqual s0.discard.length
+        s2.stock.last shouldEqual Card(c0.data, List(Some(1000), Some(2000)))
+
+        val s3: ExamFSM.State = s2.estimateTrue(1000).estimateTrue(1000).estimateTrue(3000)
+        s3.stock.length shouldEqual s0.stock.length - 1
+        s3.discard.length shouldEqual s0.discard.length + 1
+
+        s3.stock shouldEqual List(Card(c1.data, List(Some(1000), Some(1000))), Card(c2.data, List(Some(1000), Some(1000))))
+        s3.discard shouldEqual List(Card(c0.data, List(Some(1000), Some(2000), Some(3000))))
+      }
+
+      "estimateTrue with reset true passes" in {
+        implicit val passCount: Int = 3
+        val s0 = State(stock = List(c0, c1, c2))
+        val s1: ExamFSM.State = s0.estimateTrue(1000)
+        s1.stock.length shouldEqual s0.stock.length
+        s1.discard.length shouldEqual s0.discard.length
+        s1.stock.last shouldEqual Card(c0.data, List(Some(1000)))
+
+        val s2: ExamFSM.State = s1.estimateTrue(1000).estimateTrue(1000).estimateTrue(2000)
+        val s3: ExamFSM.State = s2.estimateTrue(1000).estimateTrue(1000).estimateFalse
+        s3.stock.length shouldEqual s0.stock.length
+        s3.discard.length shouldEqual s0.discard.length
+
+        s3.stock shouldEqual List(Card(c1.data, List(Some(1000), Some(1000))), Card(c2.data, List(Some(1000), Some(1000))), Card(c0.data, List(Some(1000), Some(2000), None)))
+        s3.discard shouldEqual Nil
+      }
+
+      "estimateTrue with true passes and empty stock" in {
+        implicit val passCount: Int = 2
+        val s0 = State(stock = List(c0, c1, c2))
+
+
+        val s1 = s0.estimateTrue(1000).estimateTrue(1000).estimateTrue(1000).estimateTrue(1000) // c1, c2, -> drop: c0
+        s1.isInstanceOf[EmptyStock] shouldEqual false
+        s1.stock.length shouldEqual s0.stock.length - 1
+        s1.discard.length shouldEqual s0.discard.length + 1
+
+        val s2 = s1.estimateTrue(1000) // c2, -> drop: c1
+        s2.isInstanceOf[EmptyStock] shouldEqual false
+        s2.stock.length shouldEqual s1.stock.length - 1
+        s2.discard.length shouldEqual s1.discard.length + 1
+
+        val s3 = s2.estimateTrue(1000).estimateTrue(1000) // -> drop: c2
+        s3.stock.length shouldEqual s2.stock.length - 1
+        s3.discard.length shouldEqual s2.discard.length + 1
+        s3.isInstanceOf[EmptyStock] shouldEqual true
+
+        val s4: ExamFSM.State = s3.estimateTrue(1000)
+        s4.isInstanceOf[EmptyStock] shouldEqual true
+        s4 shouldEqual s3
+
+        val s5: ExamFSM.State = s3.estimateFalse
+        s5.isInstanceOf[EmptyStock] shouldEqual true
+        s5 shouldEqual s3
       }
     }
   }

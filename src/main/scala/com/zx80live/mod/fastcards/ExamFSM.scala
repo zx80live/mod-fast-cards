@@ -63,8 +63,8 @@ trait ExamFSM {
         val c = head.addPass(Some(time))
 
         (c.isExamCompleted, s.replaceCurrent(c)) match {
-          case (true, state) => state.next
-          case (false, state) => state.drop
+          case (true, state) => state.drop
+          case (false, state) => state.next
         }
       }.getOrElse(s).asEmptyStock
 
