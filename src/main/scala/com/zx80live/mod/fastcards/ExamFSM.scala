@@ -31,6 +31,14 @@ trait ExamFSM {
     } else None
 
     def truePassesCount: Int = c.times.count(_.isDefined)
+
+    def isPassCompleted(implicit passCount: Int): Boolean = {
+      if (c.times.length >= passCount) {
+        c.times.takeRight(passCount).count(_.isDefined) >= passCount
+      } else {
+        false
+      }
+    }
   }
 
   implicit class StateExtensions(s: State) {

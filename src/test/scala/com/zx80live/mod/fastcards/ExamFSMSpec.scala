@@ -222,6 +222,18 @@ class ExamFSMSpec extends WordSpec with Matchers {
         c0.addPass(Some(1000)).addPass(Some(2000)).addPass(Some(3000)).truePassesCount shouldEqual 3
         c0.addPass(Some(1000)).addPass().addPass(Some(2000)).addPass().addPass(Some(3000)).truePassesCount shouldEqual 3
       }
+
+      "isPassCompleted" in {
+        implicit val passCount: Int = 2
+        c0.isPassCompleted shouldEqual false
+        c0.addPass(Some(1000)).isPassCompleted shouldEqual false
+        c0.addPass(Some(1000)).addPass(Some(2000)).addPass(Some(3000)).isPassCompleted shouldEqual true
+        c0.addPass(Some(1000)).addPass(Some(2000)).isPassCompleted shouldEqual true
+        c0.addPass(Some(1000)).addPass(Some(2000)).addPass().isPassCompleted shouldEqual false
+        c0.addPass(Some(1000)).addPass(Some(2000)).addPass().addPass(Some(1000)).isPassCompleted shouldEqual false
+        c0.addPass(Some(1000)).addPass(Some(2000)).addPass().addPass(Some(1000)).addPass(Some(2000)).isPassCompleted shouldEqual true
+        c0.addPass(Some(1000)).addPass(Some(2000)).addPass().addPass(Some(1000)).addPass(Some(2000)).addPass(Some(3000)).isPassCompleted shouldEqual true
+      }
     }
 
     "extend functional" should {
