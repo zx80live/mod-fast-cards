@@ -11,17 +11,50 @@ trait ConsoleReader {
     val I = 105
     val S = 115
     val D = 100
+    val M = 109
+    val B = 98
     val CTRL_D = scala.tools.jline.console.Key.CTRL_D.code
   }
 
-  trait ConsoleEvent
+  object Events {
 
-  sealed trait BreakEvent extends ConsoleEvent
+    trait ConsoleEvent
 
-  sealed trait ContinueEvent extends ConsoleEvent
+    sealed trait BreakEvent extends ConsoleEvent
 
-  val BreakEvent = new BreakEvent {}
-  val ContinueEvent = new ContinueEvent {}
+    sealed trait ContinueEvent extends ConsoleEvent
+
+    sealed trait NextEvent extends ContinueEvent
+
+    sealed trait PrevEvent extends ContinueEvent
+
+    sealed trait TrueCardEvent extends ContinueEvent
+
+    sealed trait FalseCardEvent extends ContinueEvent
+
+    sealed trait StatisticEvent extends ContinueEvent
+
+    sealed trait DropEvent extends ContinueEvent
+
+    object BreakEvent extends BreakEvent
+
+    object ContinueEvent extends ContinueEvent
+
+    object NextEvent extends ContinueEvent
+
+    object PrevEvent extends ContinueEvent
+
+    object StatisticEvent extends ContinueEvent
+
+    object DropEvent extends ContinueEvent
+
+    object TrueCardEvent extends ContinueEvent
+
+    object FalseCardEvent extends ContinueEvent
+
+  }
+
+  import Events._
 
   implicit def unit2Event(u: Unit): ConsoleEvent = ContinueEvent
 

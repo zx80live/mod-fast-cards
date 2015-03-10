@@ -2,11 +2,7 @@ package com.zx80live.mod.fastcards
 
 trait ExamController extends ConsoleReader {
 
-  trait ExamEvent
-
-  trait ExitEvent extends ExamEvent
-
-  val ExitEvent = new ExitEvent {}
+  import Events._
 
   def start: Unit = {
     handleKeys {
@@ -16,6 +12,7 @@ trait ExamController extends ConsoleReader {
         println("EnterEvent")
       case Code.CTRL_D =>
         println("ExitEvent")
+        BreakEvent
       case code@_ =>
         println(code)
     }
