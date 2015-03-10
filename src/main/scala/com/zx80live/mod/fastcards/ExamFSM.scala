@@ -18,9 +18,13 @@ trait ExamFSM {
 
   case class State(stock: List[Card], discard: List[Card] = Nil)
 
+  case class Statistic(best: List[Card], middle: List[Card], bad: List[Card])
+
   sealed trait EmptyStock
 
   val BAD_TIME_IN_MS: Long = 1000 * 60L
+  val limitBadMs: Long = 8000
+  val limitBestMs: Long = 3000
 
   implicit class CardExtensions(c: Card) {
     def addPass(p: Option[Long] = None): Card = c.copy(times = c.times :+ p)
@@ -71,6 +75,24 @@ trait ExamFSM {
     def estimateFalse: State = s.stock.headOption.map { c =>
       s.replaceCurrent(c.addPass()).next
     }.getOrElse(s).asEmptyStock
+
+    //todo test
+    def deck: List[Card] = s.stock ::: s.discard
+
+    //todo test
+    def bestCards: List[Card] = deck.filter(c => c.averagePassTime.getOrElse(BAD_TIME_IN_MS.toDouble) < limitBestMs)
+
+    //todo test
+    def middleCards: List[Card] = deck.filter(c => {
+      val avg = c.averagePassTime.getOrElse(BAD_TIME_IN_MS.toDouble)
+      avg >= limitBestMs && avg <= limitBadMs
+    })
+
+    //todo test
+    def badCards: List[Card] = deck.filter(c => c.averagePassTime.getOrElse(BAD_TIME_IN_MS.toDouble) > limitBadMs)
+
+    //todo test
+    def statistic: Statistic = Statistic(bestCards, middleCards, badCards)
   }
 
 }
