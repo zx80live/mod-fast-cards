@@ -23,7 +23,7 @@ trait ExamFSM {
   sealed trait EmptyStock
 
   implicit class CardExtensions(c: Card) {
-    def addPass(p: Pass): Card = c.copy(passes = p :: c.passes)
+    def addPass(p: Pass): Card = c.copy(passes = c.passes :+ p)
 
     def averagePassTime: Option[Double] = if (c.passes.nonEmpty) {
       val times: List[Long] = c.passes.map(_.time).flatten

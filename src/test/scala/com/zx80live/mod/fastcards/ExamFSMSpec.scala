@@ -198,6 +198,25 @@ class ExamFSMSpec extends WordSpec with Matchers {
         s0.copy(stock = List(c0)).asEmptyStock.isInstanceOf[EmptyStock] shouldEqual false
       }
     }
+
+    "Card extensions" should {
+      "addPass" in {
+        c0.passes shouldEqual Nil
+        c0.addPass(Pass(estimate = true)).passes shouldEqual List(Pass(estimate = true))
+        c0.addPass(Pass(estimate = true)).addPass(Pass(estimate = false)).passes shouldEqual List(Pass(estimate = true), Pass(estimate = false))
+      }
+
+      "averagePassTime" in {
+      }
+
+      "truePassesCount" in {
+        c0.addPass(Pass(estimate = true))
+          .addPass(Pass(estimate = false))
+          .addPass(Pass(estimate = true))
+          .addPass(Pass(estimate = false))
+          .addPass(Pass(estimate = true)).truePassesCount shouldEqual 3
+      }
+    }
   }
 
 
