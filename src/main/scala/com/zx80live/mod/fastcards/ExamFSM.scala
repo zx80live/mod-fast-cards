@@ -1,5 +1,8 @@
 package com.zx80live.mod.fastcards
 
+/**
+ * Finite State Machine for exam
+ */
 trait ExamFSM {
 
   case class Card(data: Data, passes: List[Pass] = Nil)
