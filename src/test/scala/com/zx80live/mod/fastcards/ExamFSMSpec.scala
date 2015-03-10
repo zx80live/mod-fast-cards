@@ -201,20 +201,26 @@ class ExamFSMSpec extends WordSpec with Matchers {
 
     "Card extensions" should {
       "addPass" in {
-        c0.passes shouldEqual Nil
-        c0.addPass(Pass(estimate = true)).passes shouldEqual List(Pass(estimate = true))
-        c0.addPass(Pass(estimate = true)).addPass(Pass(estimate = false)).passes shouldEqual List(Pass(estimate = true), Pass(estimate = false))
+        c0.times shouldEqual Nil
+        c0.addPass().times shouldEqual List(None)
+        c0.addPass(Some(1000)).addPass().addPass(None).addPass(Some(2000)).times shouldEqual List(Some(1000), None, None, Some(2000))
       }
 
-      "averagePassTime" in {
+      "averagePassTime with all true passes" in {
+        val cardWithPasses = c0.addPass(Some(1000)).addPass(Some(2000)).addPass(Some(3000))
+        val realTimes: List[Long] = cardWithPasses.times.flatten
+        cardWithPasses.averagePassTime shouldEqual Some(realTimes.sum / realTimes.length)
+      }
+
+      "averagePassTime with true and fail passes" in {
+        val cardWithPasses = c0.addPass(Some(1000)).addPass().addPass(Some(2000)).addPass().addPass(Some(3000))
+        val realTimes: List[Long] = cardWithPasses.times.map(_.getOrElse(BAD_TIME_IN_MS))
+        cardWithPasses.averagePassTime shouldEqual Some(realTimes.sum / realTimes.length)
       }
 
       "truePassesCount" in {
-        c0.addPass(Pass(estimate = true))
-          .addPass(Pass(estimate = false))
-          .addPass(Pass(estimate = true))
-          .addPass(Pass(estimate = false))
-          .addPass(Pass(estimate = true)).truePassesCount shouldEqual 3
+        c0.addPass(Some(1000)).addPass(Some(2000)).addPass(Some(3000)).truePassesCount shouldEqual 3
+        c0.addPass(Some(1000)).addPass().addPass(Some(2000)).addPass().addPass(Some(3000)).truePassesCount shouldEqual 3
       }
     }
   }

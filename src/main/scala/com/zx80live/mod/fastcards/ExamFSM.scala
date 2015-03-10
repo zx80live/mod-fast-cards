@@ -5,7 +5,7 @@ package com.zx80live.mod.fastcards
  */
 trait ExamFSM {
 
-  case class Card(data: Data, passes: List[Pass] = Nil)
+  case class Card(data: Data, times: List[Option[Long]] = Nil)
 
   case class Data(value: String,
                   kind: Option[String] = None,
@@ -14,23 +14,23 @@ trait ExamFSM {
                   transcript: Option[String] = None)
 
 
-  case class Pass(estimate: Boolean, time: Option[Long] = None)
-
   case class Example(text: String, translations: List[String] = Nil)
 
   case class State(stock: List[Card], discard: List[Card] = Nil)
 
   sealed trait EmptyStock
 
-  implicit class CardExtensions(c: Card) {
-    def addPass(p: Pass): Card = c.copy(passes = c.passes :+ p)
+  val BAD_TIME_IN_MS: Long = 1000 * 60L
 
-    def averagePassTime: Option[Double] = if (c.passes.nonEmpty) {
-      val times: List[Long] = c.passes.map(_.time).flatten
+  implicit class CardExtensions(c: Card) {
+    def addPass(p: Option[Long] = None): Card = c.copy(times = c.times :+ p)
+
+    def averagePassTime: Option[Double] = if (c.times.nonEmpty) {
+      val times: List[Long] = c.times.map(t => t.getOrElse(BAD_TIME_IN_MS))
       Some(times.sum / times.length)
     } else None
 
-    def truePassesCount: Int = c.passes.count(_.estimate)
+    def truePassesCount: Int = c.times.count(_.isDefined)
   }
 
   implicit class StateExtensions(s: State) {
@@ -52,16 +52,19 @@ trait ExamFSM {
         case _ => s
       }).asEmptyStock
 
-
-    def estimate(value: Boolean, time: Option[Long] = None)(implicit truePassLimit: Int): State =
+    def estimateTrue(time: Long)(implicit truePassLimit: Int): State =
       s.stock.headOption.map { head =>
-        val c = head.addPass(Pass(value, time))
+        val c = head.addPass(Some(time))
 
         (c.truePassesCount < truePassLimit, s.replaceCurrent(c)) match {
           case (true, state) => state.next
           case (false, state) => state.drop
         }
       }.getOrElse(s).asEmptyStock
+
+    def estimateFalse: State = s.stock.headOption.map { c =>
+      s.replaceCurrent(c.addPass()).next
+    }.getOrElse(s).asEmptyStock
   }
 
 }
