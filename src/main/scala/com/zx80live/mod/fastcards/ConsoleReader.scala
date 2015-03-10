@@ -3,16 +3,16 @@ package com.zx80live.mod.fastcards
 import scala.language.implicitConversions
 import scala.tools.jline.console.{ConsoleReader => R}
 
-trait ConsoleReader {
+trait ConsoleReader extends ExamFSM {
 
   object Code {
+    val LEFT = 2
+    val RIGHT = 6
     val SPACE = 32
     val ENTER = 10
     val I = 105
     val S = 115
     val D = 100
-    val M = 109
-    val B = 98
     val CTRL_D = scala.tools.jline.console.Key.CTRL_D.code
   }
 
@@ -58,11 +58,11 @@ trait ConsoleReader {
 
   implicit def unit2Event(u: Unit): ConsoleEvent = ContinueEvent
 
-  def handleKeys(f: Int => ConsoleEvent): Unit = {
+  def handleKeys(f: Int => State): Unit = {
     val con = new R()
     while (f(con.readVirtualKey()) match {
-      case e: ContinueEvent => true
-      case e: BreakEvent => false
+      case e: EmptyStock => false
+      case e: State => true
     }) {}
   }
 }

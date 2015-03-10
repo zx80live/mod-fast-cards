@@ -22,6 +22,8 @@ trait ExamFSM {
 
   sealed trait EmptyStock
 
+  object EmptyStock extends EmptyStock
+
   val BAD_TIME_IN_MS: Long = 1000 * 60L
   val limitBadMs: Long = 8000
   val limitBestMs: Long = 3000
