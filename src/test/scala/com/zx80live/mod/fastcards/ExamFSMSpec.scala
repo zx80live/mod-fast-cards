@@ -146,4 +146,10 @@ class ExamFSMSpec extends FlatSpec with Matchers {
     State(stock = Nil).asEmptyStock.isInstanceOf[EmptyStock] shouldEqual true
     State(stock = List(c0)).asEmptyStock.isInstanceOf[EmptyStock] shouldEqual false
   }
+
+  "ExamFSM" should "current" in {
+    State(stock = Nil).current shouldEqual None
+    State(stock = List(c0)).current shouldEqual Some(c0)
+    State(stock = List(c0, c1, c2)).current shouldEqual Some(c0)
+  }
 }
