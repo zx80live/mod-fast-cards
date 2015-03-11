@@ -64,6 +64,9 @@ trait ExamFSM {
         case _ => s
       }).asEmptyStock
 
+    //todo test
+    def dropAll: State = s.copy(stock = Nil, discard = s.stock ::: s.discard).asEmptyStock
+
     def estimateTrue(time: Long)(implicit truePassLimit: Int): State =
       s.stock.headOption.map { head =>
         val c = head.addPass(Some(time))

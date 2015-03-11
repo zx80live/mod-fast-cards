@@ -1,9 +1,19 @@
 package com.zx80live.mod.fastcards
 
-object ExamController extends ConsoleReader with ExamFSM {
+import scala.tools.jline.console.{ConsoleReader => R}
 
+object ExamController extends ExamFSM {
 
-  import Events._
+  object Code {
+    val LEFT = 2
+    val RIGHT = 6
+    val SPACE = 32
+    val ENTER = 10
+    val I = 105
+    val S = 115
+    val D = 100
+    val CTRL_D = scala.tools.jline.console.Key.CTRL_D.code
+  }
 
   def main(args: Array[String]): Unit = {
     val c0 = Card(Data(value = "v0", translations = List("t0")))
@@ -16,41 +26,44 @@ object ExamController extends ConsoleReader with ExamFSM {
     start(List(c0, c1, c2, c3, c4))
   }
 
+  case class Event(code: Int, state: State)
+
+  def fsm(initState: State)(f: Event => State): Unit = {
+    val con = new R()
+    var state = initState
+
+    while (!state.isInstanceOf[EmptyStock]) {
+      state = f(Event(con.readVirtualKey(), state))
+    }
+  }
+
   def start(cards: List[Card]): Unit = {
 
     implicit val passLimit: Int = 2
-    var state = State(cards)
 
-    handleKeys { code =>
 
-      print("\r" + state.current.map(_.data.value) + "                      ")
+    fsm(State(cards)) { evt =>
 
-      code match {
+      print("\r" + evt.state.current.map(_.data.value) + "                      ")
+
+      evt.code match {
         case Code.RIGHT =>
-          state = state.next
-          state
+          evt.state.next
         case Code.LEFT =>
-          state = state.prev
-          state
+          evt.state.prev
         case Code.SPACE =>
-          state = state.estimateFalse
-          state
+          evt.state.estimateFalse
         case Code.ENTER =>
-          state = state.estimateTrue(0L)
-          state
+          evt.state.estimateTrue(0L)
         case Code.I =>
-          state
+          evt.state
         case Code.S =>
-          state
+          evt.state
         case Code.D =>
-          state = state.drop
-          state
-
-//        case Code.CTRL_D =>
-//          BreakEvent
-        //case code@_ => println(code)
+          evt.state
+        case Code.CTRL_D =>
+          evt.state.dropAll
       }
-
     }
   }
 }
