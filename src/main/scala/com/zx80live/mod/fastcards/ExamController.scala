@@ -43,26 +43,17 @@ object ExamController extends ExamFSM {
 
 
     fsm(State(cards)) { evt =>
-
       print("\r" + evt.state.current.map(_.data.value) + "                      ")
 
-      evt.code match {
-        case Code.RIGHT =>
-          evt.state.next
-        case Code.LEFT =>
-          evt.state.prev
-        case Code.SPACE =>
-          evt.state.estimateFalse
-        case Code.ENTER =>
-          evt.state.estimateTrue(0L)
-        case Code.I =>
-          evt.state
-        case Code.S =>
-          evt.state
-        case Code.D =>
-          evt.state
-        case Code.CTRL_D =>
-          evt.state.dropAll
+      evt match {
+        case Event(Code.RIGHT, s) => s.next
+        case Event(Code.LEFT, s) => s.prev
+        case Event(Code.SPACE, s) => s.estimateFalse
+        case Event(Code.ENTER, s) => s.estimateTrue(0L)
+        case Event(Code.I, s) => s
+        case Event(Code.S, s) => s
+        case Event(Code.D, s) => s
+        case Event(Code.CTRL_D, s) => s.dropAll
       }
     }
   }
