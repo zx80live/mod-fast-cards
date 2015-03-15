@@ -16,7 +16,7 @@ trait ExamFSM {
 
   case class Example(text: String, translations: List[String] = Nil)
 
-  case class State(stock: List[Card], discard: List[Card] = Nil)
+  case class Deck(stock: List[Card], discard: List[Card] = Nil)
 
   case class Statistic(best: List[Card], middle: List[Card], bad: List[Card])
 
@@ -45,19 +45,19 @@ trait ExamFSM {
     }
   }
 
-  implicit class StateExtensions(s: State) {
+  implicit class DeckExtensions(s: Deck) {
 
-    def asEmptyStock: State = if (s.stock.isEmpty) new State(s.stock, s.discard) with EmptyStock else s
+    def asEmptyStock: Deck = if (s.stock.isEmpty) new Deck(s.stock, s.discard) with EmptyStock else s
 
     def current: Option[Card] = s.stock.headOption
 
-    def replaceCurrent(c: Card): State = s.stock.headOption.map(h => s.copy(stock = c :: s.stock.tail)).getOrElse(s)
+    def replaceCurrent(c: Card): Deck = s.stock.headOption.map(h => s.copy(stock = c :: s.stock.tail)).getOrElse(s)
 
-    def next: State = s.copy(stock = s.stock.headOption.map(h => s.stock.tail :+ h).getOrElse(Nil)).asEmptyStock
+    def next: Deck = s.copy(stock = s.stock.headOption.map(h => s.stock.tail :+ h).getOrElse(Nil)).asEmptyStock
 
-    def prev: State = s.copy(stock = s.stock.lastOption.map(l => l :: s.stock.take(s.stock.length - 1)).getOrElse(Nil)).asEmptyStock
+    def prev: Deck = s.copy(stock = s.stock.lastOption.map(l => l :: s.stock.take(s.stock.length - 1)).getOrElse(Nil)).asEmptyStock
 
-    def drop: State =
+    def drop: Deck =
       (s.stock match {
         case head :: tail =>
           s.copy(stock = tail, discard = head :: s.discard)
@@ -65,19 +65,19 @@ trait ExamFSM {
       }).asEmptyStock
 
     //todo test
-    def dropAll: State = s.copy(stock = Nil, discard = s.stock ::: s.discard).asEmptyStock
+    def dropAll: Deck = s.copy(stock = Nil, discard = s.stock ::: s.discard).asEmptyStock
 
-    def estimateTrue(time: Long)(implicit truePassLimit: Int): State =
+    def estimateTrue(time: Long)(implicit truePassLimit: Int): Deck =
       s.stock.headOption.map { head =>
         val c = head.addPass(Some(time))
 
         (c.isExamCompleted, s.replaceCurrent(c)) match {
-          case (true, state) => state.drop
-          case (false, state) => state.next
+          case (true, deck) => deck.drop
+          case (false, deck) => deck.next
         }
       }.getOrElse(s).asEmptyStock
 
-    def estimateFalse: State = s.stock.headOption.map { c =>
+    def estimateFalse: Deck = s.stock.headOption.map { c =>
       s.replaceCurrent(c.addPass()).next
     }.getOrElse(s).asEmptyStock
 

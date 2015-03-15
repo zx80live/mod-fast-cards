@@ -22,12 +22,12 @@ class ExamFSMSpec extends WordSpec with Matchers {
   "ExamFSM" when {
     "base functional" should {
       "navigate.one.next" in {
-        val s0 = State(stock = List(c0))
+        val s0 = Deck(stock = List(c0))
         val s1 = s0.next
         val s2 = s1.next
 
-        s1 shouldEqual State(stock = List(c0))
-        s2 shouldEqual State(stock = List(c0))
+        s1 shouldEqual Deck(stock = List(c0))
+        s2 shouldEqual Deck(stock = List(c0))
 
         s1.isInstanceOf[EmptyStock] shouldEqual false
         s2.isInstanceOf[EmptyStock] shouldEqual false
@@ -37,12 +37,12 @@ class ExamFSMSpec extends WordSpec with Matchers {
       }
 
       "navigate.one.prev" in {
-        val s0 = State(stock = List(c0))
+        val s0 = Deck(stock = List(c0))
         val s1 = s0.prev
         val s2 = s1.prev
 
-        s1 shouldEqual State(stock = List(c0))
-        s2 shouldEqual State(stock = List(c0))
+        s1 shouldEqual Deck(stock = List(c0))
+        s2 shouldEqual Deck(stock = List(c0))
 
         s1.isInstanceOf[EmptyStock] shouldEqual false
         s2.isInstanceOf[EmptyStock] shouldEqual false
@@ -52,13 +52,13 @@ class ExamFSMSpec extends WordSpec with Matchers {
       }
 
       "navigate.nonEmpty.next" in {
-        val s0 = State(stock = List(c0, c1, c2, c3, c4))
-        val s1: ExamFSM.State = s0.next
-        val s2: ExamFSM.State = s1.next
-        val s3: ExamFSM.State = s2.next
-        val s4: ExamFSM.State = s3.next
-        val s5: ExamFSM.State = s4.next
-        val s6: ExamFSM.State = s5.next
+        val s0 = Deck(stock = List(c0, c1, c2, c3, c4))
+        val s1: ExamFSM.Deck = s0.next
+        val s2: ExamFSM.Deck = s1.next
+        val s3: ExamFSM.Deck = s2.next
+        val s4: ExamFSM.Deck = s3.next
+        val s5: ExamFSM.Deck = s4.next
+        val s6: ExamFSM.Deck = s5.next
 
         s0.isInstanceOf[EmptyStock] shouldEqual false
         s1.isInstanceOf[EmptyStock] shouldEqual false
@@ -76,22 +76,22 @@ class ExamFSMSpec extends WordSpec with Matchers {
         s5.discard shouldEqual Nil
         s6.discard shouldEqual Nil
 
-        s1 shouldEqual State(stock = List(c1, c2, c3, c4, c0))
-        s2 shouldEqual State(stock = List(c2, c3, c4, c0, c1))
-        s3 shouldEqual State(stock = List(c3, c4, c0, c1, c2))
-        s5 shouldEqual State(stock = List(c0, c1, c2, c3, c4))
-        s6 shouldEqual State(stock = List(c1, c2, c3, c4, c0))
-        s4 shouldEqual State(stock = List(c4, c0, c1, c2, c3))
+        s1 shouldEqual Deck(stock = List(c1, c2, c3, c4, c0))
+        s2 shouldEqual Deck(stock = List(c2, c3, c4, c0, c1))
+        s3 shouldEqual Deck(stock = List(c3, c4, c0, c1, c2))
+        s5 shouldEqual Deck(stock = List(c0, c1, c2, c3, c4))
+        s6 shouldEqual Deck(stock = List(c1, c2, c3, c4, c0))
+        s4 shouldEqual Deck(stock = List(c4, c0, c1, c2, c3))
       }
 
       "navigate.nonEmpty.prev" in {
-        val s0 = State(stock = List(c0, c1, c2, c3, c4))
-        val s1: ExamFSM.State = s0.prev
-        val s2: ExamFSM.State = s1.prev
-        val s3: ExamFSM.State = s2.prev
-        val s4: ExamFSM.State = s3.prev
-        val s5: ExamFSM.State = s4.prev
-        val s6: ExamFSM.State = s5.prev
+        val s0 = Deck(stock = List(c0, c1, c2, c3, c4))
+        val s1: ExamFSM.Deck = s0.prev
+        val s2: ExamFSM.Deck = s1.prev
+        val s3: ExamFSM.Deck = s2.prev
+        val s4: ExamFSM.Deck = s3.prev
+        val s5: ExamFSM.Deck = s4.prev
+        val s6: ExamFSM.Deck = s5.prev
 
         s0.isInstanceOf[EmptyStock] shouldEqual false
         s1.isInstanceOf[EmptyStock] shouldEqual false
@@ -109,22 +109,22 @@ class ExamFSMSpec extends WordSpec with Matchers {
         s5.discard shouldEqual Nil
         s6.discard shouldEqual Nil
 
-        s1 shouldEqual State(stock = List(c4, c0, c1, c2, c3))
-        s2 shouldEqual State(stock = List(c3, c4, c0, c1, c2))
-        s3 shouldEqual State(stock = List(c2, c3, c4, c0, c1))
-        s4 shouldEqual State(stock = List(c1, c2, c3, c4, c0))
-        s5 shouldEqual State(stock = List(c0, c1, c2, c3, c4))
-        s6 shouldEqual State(stock = List(c4, c0, c1, c2, c3))
+        s1 shouldEqual Deck(stock = List(c4, c0, c1, c2, c3))
+        s2 shouldEqual Deck(stock = List(c3, c4, c0, c1, c2))
+        s3 shouldEqual Deck(stock = List(c2, c3, c4, c0, c1))
+        s4 shouldEqual Deck(stock = List(c1, c2, c3, c4, c0))
+        s5 shouldEqual Deck(stock = List(c0, c1, c2, c3, c4))
+        s6 shouldEqual Deck(stock = List(c4, c0, c1, c2, c3))
       }
 
 
       "navigate.empty.next" in {
-        val s0 = State(stock = Nil)
+        val s0 = Deck(stock = Nil)
         val s1 = s0.next
         val s2 = s1.next
 
-        s1 shouldEqual State(stock = Nil)
-        s2 shouldEqual State(stock = Nil)
+        s1 shouldEqual Deck(stock = Nil)
+        s2 shouldEqual Deck(stock = Nil)
 
         s0.isInstanceOf[EmptyStock] shouldEqual false
         s1.isInstanceOf[EmptyStock] shouldEqual true
@@ -135,12 +135,12 @@ class ExamFSMSpec extends WordSpec with Matchers {
       }
 
       "navigate.empty.prev" in {
-        val s0 = State(stock = Nil)
+        val s0 = Deck(stock = Nil)
         val s1 = s0.prev
         val s2 = s1.prev
 
-        s1 shouldEqual State(stock = Nil)
-        s2 shouldEqual State(stock = Nil)
+        s1 shouldEqual Deck(stock = Nil)
+        s2 shouldEqual Deck(stock = Nil)
 
         s0.isInstanceOf[EmptyStock] shouldEqual false
         s1.isInstanceOf[EmptyStock] shouldEqual true
@@ -151,67 +151,67 @@ class ExamFSMSpec extends WordSpec with Matchers {
       }
 
       "asEmptyStock" in {
-        State(stock = Nil).asEmptyStock.isInstanceOf[EmptyStock] shouldEqual true
-        State(stock = List(c0)).asEmptyStock.isInstanceOf[EmptyStock] shouldEqual false
+        Deck(stock = Nil).asEmptyStock.isInstanceOf[EmptyStock] shouldEqual true
+        Deck(stock = List(c0)).asEmptyStock.isInstanceOf[EmptyStock] shouldEqual false
       }
 
       "current" in {
-        State(stock = Nil).current shouldEqual None
-        State(stock = List(c0)).current shouldEqual Some(c0)
-        State(stock = List(c0, c1, c2)).current shouldEqual Some(c0)
+        Deck(stock = Nil).current shouldEqual None
+        Deck(stock = List(c0)).current shouldEqual Some(c0)
+        Deck(stock = List(c0, c1, c2)).current shouldEqual Some(c0)
       }
 
       "replaceCurrent" in {
-        State(stock = Nil).replaceCurrent(c0) shouldEqual State(Nil, Nil)
-        State(stock = List(c0)).replaceCurrent(c1) shouldEqual State(List(c1), Nil)
-        State(stock = List(c0, c1, c2)).replaceCurrent(c3) shouldEqual State(List(c3, c1, c2), Nil)
+        Deck(stock = Nil).replaceCurrent(c0) shouldEqual Deck(Nil, Nil)
+        Deck(stock = List(c0)).replaceCurrent(c1) shouldEqual Deck(List(c1), Nil)
+        Deck(stock = List(c0, c1, c2)).replaceCurrent(c3) shouldEqual Deck(List(c3, c1, c2), Nil)
       }
 
       "drop on empty" in {
-        val s0: ExamFSM.State = State(stock = Nil, discard = Nil).drop
-        s0 shouldEqual State(stock = Nil, discard = Nil)
+        val s0: ExamFSM.Deck = Deck(stock = Nil, discard = Nil).drop
+        s0 shouldEqual Deck(stock = Nil, discard = Nil)
         s0.isInstanceOf[EmptyStock] shouldEqual true
       }
 
       "drop on one" in {
-        val s1 = State(stock = List(c0), discard = Nil).drop
-        s1 shouldEqual State(stock = Nil, discard = List(c0))
+        val s1 = Deck(stock = List(c0), discard = Nil).drop
+        s1 shouldEqual Deck(stock = Nil, discard = List(c0))
         s1.isInstanceOf[EmptyStock] shouldEqual true
       }
 
       "drop on nonempty with empty drop" in {
-        val s1 = State(stock = List(c0, c1, c2), discard = Nil).drop
-        s1 shouldEqual State(stock = List(c1, c2), discard = List(c0))
+        val s1 = Deck(stock = List(c0, c1, c2), discard = Nil).drop
+        s1 shouldEqual Deck(stock = List(c1, c2), discard = List(c0))
         s1.isInstanceOf[EmptyStock] shouldEqual false
 
         val s2 = s1.drop
-        s2 shouldEqual State(stock = List(c2), discard = List(c1, c0))
+        s2 shouldEqual Deck(stock = List(c2), discard = List(c1, c0))
         s2.isInstanceOf[EmptyStock] shouldEqual false
 
         val s3 = s2.drop
-        s3 shouldEqual State(stock = Nil, discard = List(c2, c1, c0))
+        s3 shouldEqual Deck(stock = Nil, discard = List(c2, c1, c0))
         s3.isInstanceOf[EmptyStock] shouldEqual true
 
         val s4 = s3.drop
-        s4 shouldEqual State(stock = Nil, discard = List(c2, c1, c0))
+        s4 shouldEqual Deck(stock = Nil, discard = List(c2, c1, c0))
         s4.isInstanceOf[EmptyStock] shouldEqual true
       }
 
       "change state" in {
-        val s0 = State(Nil, Nil).asEmptyStock
+        val s0 = Deck(Nil, Nil).asEmptyStock
         s0.isInstanceOf[EmptyStock] shouldEqual true
         s0.copy(stock = List(c0)).isInstanceOf[EmptyStock] shouldEqual false
         s0.copy(stock = List(c0)).asEmptyStock.isInstanceOf[EmptyStock] shouldEqual false
       }
 
       "deck" in {
-        State(Nil, Nil).deck shouldEqual Nil
-        State(Nil, List(c0)).deck shouldEqual List(c0)
-        State(Nil, List(c0, c1)).deck shouldEqual List(c0, c1)
-        State(List(c0), Nil).deck shouldEqual List(c0)
-        State(List(c0, c1), Nil).deck shouldEqual List(c0, c1)
-        State(List(c0), List(c1, c2)).deck shouldEqual List(c0, c1, c2)
-        State(List(c0, c1), List(c2)).deck shouldEqual List(c0, c1, c2)
+        Deck(Nil, Nil).deck shouldEqual Nil
+        Deck(Nil, List(c0)).deck shouldEqual List(c0)
+        Deck(Nil, List(c0, c1)).deck shouldEqual List(c0, c1)
+        Deck(List(c0), Nil).deck shouldEqual List(c0)
+        Deck(List(c0, c1), Nil).deck shouldEqual List(c0, c1)
+        Deck(List(c0), List(c1, c2)).deck shouldEqual List(c0, c1, c2)
+        Deck(List(c0, c1), List(c2)).deck shouldEqual List(c0, c1, c2)
       }
     }
 
@@ -249,14 +249,14 @@ class ExamFSMSpec extends WordSpec with Matchers {
 
     "extend functional" should {
       "estimateFalse" in {
-        val s0 = State(stock = List(c0, c1, c2, c3))
-        val s1: ExamFSM.State = s0.estimateFalse
+        val s0 = Deck(stock = List(c0, c1, c2, c3))
+        val s1: ExamFSM.Deck = s0.estimateFalse
         s1.stock.length shouldEqual s0.stock.length
         s1.discard shouldEqual Nil
         s1.stock.last shouldEqual Card(c0.data, List(None))
-        s1 shouldEqual State(stock = List(c1, c2, c3, Card(c0.data, List(None))))
+        s1 shouldEqual Deck(stock = List(c1, c2, c3, Card(c0.data, List(None))))
 
-        val s2: ExamFSM.State = s1.estimateFalse.estimateFalse.estimateFalse.estimateFalse
+        val s2: ExamFSM.Deck = s1.estimateFalse.estimateFalse.estimateFalse.estimateFalse
         s2.stock.length shouldEqual s0.stock.length
         s2.stock.last shouldEqual Card(c0.data, List(None, None))
         s2.discard shouldEqual Nil
@@ -265,18 +265,18 @@ class ExamFSMSpec extends WordSpec with Matchers {
       "estimateTrue with all true passes" in {
         implicit val passCount: Int = 3
 
-        val s0 = State(stock = List(c0, c1, c2))
-        val s1: ExamFSM.State = s0.estimateTrue(1000)
+        val s0 = Deck(stock = List(c0, c1, c2))
+        val s1: ExamFSM.Deck = s0.estimateTrue(1000)
         s1.stock.length shouldEqual s0.stock.length
         s1.discard.length shouldEqual s0.discard.length
         s1.stock.last shouldEqual Card(c0.data, List(Some(1000)))
 
-        val s2: ExamFSM.State = s1.estimateTrue(1000).estimateTrue(1000).estimateTrue(2000)
+        val s2: ExamFSM.Deck = s1.estimateTrue(1000).estimateTrue(1000).estimateTrue(2000)
         s2.stock.length shouldEqual s0.stock.length
         s2.discard.length shouldEqual s0.discard.length
         s2.stock.last shouldEqual Card(c0.data, List(Some(1000), Some(2000)))
 
-        val s3: ExamFSM.State = s2.estimateTrue(1000).estimateTrue(1000).estimateTrue(3000)
+        val s3: ExamFSM.Deck = s2.estimateTrue(1000).estimateTrue(1000).estimateTrue(3000)
         s3.stock.length shouldEqual s0.stock.length - 1
         s3.discard.length shouldEqual s0.discard.length + 1
 
@@ -286,14 +286,14 @@ class ExamFSMSpec extends WordSpec with Matchers {
 
       "estimateTrue with reset true passes" in {
         implicit val passCount: Int = 3
-        val s0 = State(stock = List(c0, c1, c2))
-        val s1: ExamFSM.State = s0.estimateTrue(1000)
+        val s0 = Deck(stock = List(c0, c1, c2))
+        val s1: ExamFSM.Deck = s0.estimateTrue(1000)
         s1.stock.length shouldEqual s0.stock.length
         s1.discard.length shouldEqual s0.discard.length
         s1.stock.last shouldEqual Card(c0.data, List(Some(1000)))
 
-        val s2: ExamFSM.State = s1.estimateTrue(1000).estimateTrue(1000).estimateTrue(2000)
-        val s3: ExamFSM.State = s2.estimateTrue(1000).estimateTrue(1000).estimateFalse
+        val s2: ExamFSM.Deck = s1.estimateTrue(1000).estimateTrue(1000).estimateTrue(2000)
+        val s3: ExamFSM.Deck = s2.estimateTrue(1000).estimateTrue(1000).estimateFalse
         s3.stock.length shouldEqual s0.stock.length
         s3.discard.length shouldEqual s0.discard.length
 
@@ -303,7 +303,7 @@ class ExamFSMSpec extends WordSpec with Matchers {
 
       "estimateTrue with true passes and empty stock" in {
         implicit val passCount: Int = 2
-        val s0 = State(stock = List(c0, c1, c2))
+        val s0 = Deck(stock = List(c0, c1, c2))
 
 
         val s1 = s0.estimateTrue(1000).estimateTrue(1000).estimateTrue(1000).estimateTrue(1000) // c1, c2, -> drop: c0
@@ -321,29 +321,29 @@ class ExamFSMSpec extends WordSpec with Matchers {
         s3.discard.length shouldEqual s2.discard.length + 1
         s3.isInstanceOf[EmptyStock] shouldEqual true
 
-        val s4: ExamFSM.State = s3.estimateTrue(1000)
+        val s4: ExamFSM.Deck = s3.estimateTrue(1000)
         s4.isInstanceOf[EmptyStock] shouldEqual true
         s4 shouldEqual s3
 
-        val s5: ExamFSM.State = s3.estimateFalse
+        val s5: ExamFSM.Deck = s3.estimateFalse
         s5.isInstanceOf[EmptyStock] shouldEqual true
         s5 shouldEqual s3
       }
 
       "badCards" in {
-        State(List(badC0, badC1, midC2, bestC3, bestC4)).badCards shouldEqual List(badC0, badC1)
+        Deck(List(badC0, badC1, midC2, bestC3, bestC4)).badCards shouldEqual List(badC0, badC1)
       }
 
       "middleCards" in {
-        State(List(badC0, badC1, midC2, bestC3, bestC4)).middleCards shouldEqual List(midC2)
+        Deck(List(badC0, badC1, midC2, bestC3, bestC4)).middleCards shouldEqual List(midC2)
       }
 
       "bestCards" in {
-        State(List(badC0, badC1, midC2, bestC3, bestC4)).bestCards shouldEqual List(bestC3, bestC4)
+        Deck(List(badC0, badC1, midC2, bestC3, bestC4)).bestCards shouldEqual List(bestC3, bestC4)
       }
 
       "statistic" in {
-        State(List(badC0, badC1, midC2, bestC3, bestC4)).statistic shouldEqual Statistic(
+        Deck(List(badC0, badC1, midC2, bestC3, bestC4)).statistic shouldEqual Statistic(
           best = List(bestC3, bestC4),
           middle = List(midC2),
           bad = List(badC0, badC1))
