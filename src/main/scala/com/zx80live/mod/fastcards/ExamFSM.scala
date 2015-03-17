@@ -5,9 +5,9 @@ package com.zx80live.mod.fastcards
  */
 trait ExamFSM {
 
-  sealed trait EmptyStock
-
-  object EmptyStock extends EmptyStock
+  sealed trait EmptyStock {
+    this: Deck =>
+  }
 
   val BAD_TIME_IN_MS: Long = 1000 * 60L
   val limitBadMs: Long = 8000
