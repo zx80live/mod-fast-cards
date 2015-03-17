@@ -221,6 +221,24 @@ class ExamFSMSpec extends WordSpec with Matchers {
     }
 
     "Card extensions" should {
+      "front" in {
+        c0.front.isInstanceOf[BackSide] shouldBe false
+        c0.back.isInstanceOf[BackSide] shouldBe true
+        c0.back.front.isInstanceOf[BackSide] shouldBe false
+      }
+
+      "back" in {
+        c0.back.isInstanceOf[BackSide] shouldBe true
+        c0.front.isInstanceOf[BackSide] shouldBe false
+        c0.front.back.isInstanceOf[BackSide] shouldBe true
+      }
+
+      "reverse" in {
+        c0.isInstanceOf[BackSide] shouldBe false
+        c0.reverse.isInstanceOf[BackSide] shouldBe true
+        c0.reverse.reverse.isInstanceOf[BackSide] shouldBe false
+      }
+
       "addPass" in {
         c0.times shouldEqual Nil
         c0.addPass().times shouldEqual List(None)

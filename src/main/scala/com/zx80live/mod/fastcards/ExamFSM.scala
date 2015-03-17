@@ -5,6 +5,10 @@ package com.zx80live.mod.fastcards
  */
 trait ExamFSM {
 
+  sealed trait BackSide {
+    this: Card =>
+  }
+
   sealed trait EmptyStock {
     this: Deck =>
   }
@@ -14,6 +18,22 @@ trait ExamFSM {
   val limitBestMs: Long = 3000
 
   implicit class CardExtensions(c: Card) {
+
+    def front: Card = c match {
+      case _: BackSide => new Card(c.data, c.times)
+      case _ => c
+    }
+
+    def back: Card = c match {
+      case _: BackSide => c
+      case _ => new Card(c.data, c.times) with BackSide
+    }
+
+    def reverse: Card = c match {
+      case _: BackSide => new Card(c.data, c.times)
+      case _ => new Card(c.data, c.times) with BackSide
+    }
+
     def addPass(p: Option[Long] = None): Card = c.copy(times = c.times :+ p)
 
     def averagePassTime: Option[Double] = if (c.times.nonEmpty) {
