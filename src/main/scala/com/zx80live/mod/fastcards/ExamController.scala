@@ -44,36 +44,40 @@ object ExamController extends ExamFSM {
 
     implicit val passLimit: Int = 2
 
-
     loop(Deck(cards)) { evt =>
-      print("\r" + evt.state.current.map {
+      printState(evt.state)
+      transition(evt)
+    }
+
+    def printState(d: Deck): Unit = {
+      print("\r" + d.current.map {
         case c: BackSide => c.data.translations.mkString("|")
         case c: Card => c.data.value
       } + "                      ")
-
-      // transition
-      evt match {
-        case Event(Code.RIGHT, s) => s.next
-        case Event(Code.LEFT, s) => s.prev
-
-        case Event(Code.SPACE, s) =>
-          s.current match {
-            case Some(c: BackSide) => s.estimateFalse
-            case _ => s.backCurrent
-          }
-
-
-        case Event(Code.ENTER, s) =>
-          s.current match {
-            case Some(c: BackSide) => s.estimateTrue(0L)
-            case _ => s.backCurrent
-          }
-
-        case Event(Code.I, s) => s
-        case Event(Code.S, s) => s
-        case Event(Code.D, s) => s
-        case Event(Code.CTRL_D, s) => s.dropAll
-      }
     }
+
+    def transition(evt: Event): Deck = evt match {
+      case Event(Code.RIGHT, s) => s.next
+      case Event(Code.LEFT, s) => s.prev
+
+      case Event(Code.SPACE, s) =>
+        s.current match {
+          case Some(c: BackSide) => s.estimateFalse
+          case _ => s.backCurrent
+        }
+
+      case Event(Code.ENTER, s) =>
+        s.current match {
+          case Some(c: BackSide) => s.estimateTrue(0L)
+          case _ => s.backCurrent
+        }
+      case Event(Code.I, s) => s
+      case Event(Code.S, s) => s
+      case Event(Code.D, s) => s
+      case Event(Code.CTRL_D, s) => s.dropAll
+      case Event(_, s) => s
+    }
+
+
   }
 }
