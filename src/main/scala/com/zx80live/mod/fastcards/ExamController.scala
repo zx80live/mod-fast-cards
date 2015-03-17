@@ -1,40 +1,48 @@
 package com.zx80live.mod.fastcards
 
+import com.zx80.mod.util.console.ConsoleCSS.Foreground
+import com.zx80live.mod.fastcards.util.CardsReader
+
 import scala.tools.jline.console.{ConsoleReader => R}
+import scala.util.{Failure, Success, Try}
 
-object ExamController extends ExamExtensions with ExamFSM {
+object ExamController extends ExamExtensions with ExamFSM with ArgumentParser {
 
-
-
-  def main(args: Array[String]): Unit = {
-    val c0 = Card(Data(value = "v0", translations = List("t0")))
-    val c1 = Card(Data(value = "v1", translations = List("t1")))
-    val c2 = Card(Data(value = "v2", translations = List("t2")))
-    val c3 = Card(Data(value = "v3", translations = List("t3")))
-    val c4 = Card(Data(value = "v4", translations = List("t4")))
+  import com.zx80.mod.util.console.ConsoleCSS._
 
 
-    start(List(c0, c1, c2, c3, c4))
+  def main(args: Array[String]): Unit = parseArgs(args).map { config =>
+    println("\n" + config.files.map(_.getName).mkString(", ").attr(Foreground.color(237)))
+
+    //    val badMode = config.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true}.length > 0
+    //    val badFilePrefix: Option[String] = if (!badMode) Some(config.files.map(_.getName).mkString("_")) else None
+    //
+
+    readCards(config) match {
+      case Success(cards) => exam(cards)
+      case Failure(f) => println(f)
+    }
   }
 
 
-  def start(cards: List[Card]): Unit = {
+  def exam(cards: List[Card]): Deck = {
     val con = new R()
     var state = Deck(cards)
+
+    def printState(d: Deck): Unit = {
+      print("\r" + d.current.map {
+        case c: InfoSide => c.data.examples.map(e => "* " + e.text).mkString("|")
+        case c: BackSide => c.data.translations.mkString("|")
+        case c: Card => c.data.value
+      }.getOrElse("<none>") + "                      ")
+    }
 
     while (!state.isInstanceOf[EmptyStock]) {
       printState(state)
 
       state = transition(Event(con.readVirtualKey(), state))
     }
-  }
-
-  private def printState(d: Deck): Unit = {
-    print("\r" + d.current.map {
-      case c: InfoSide => c.data.examples.map(e => "* " + e.text).mkString("|")
-      case c: BackSide => c.data.translations.mkString("|")
-      case c: Card => c.data.value
-    }.getOrElse("<none>") + "                      ")
+    state
   }
 
 
