@@ -6,7 +6,7 @@ object ExamController extends ExamExtensions with ExamFSM with ArgumentParser {
 
   import com.zx80.mod.util.console.ConsoleCSS._
 
-  object Renderers {
+  object Renderer {
 
     def renderStartExam(badFilePrefixOpt: Option[String]): String =
       "\nstart exam".attr(Format.Bold | Foreground.color(70)) + badFilePrefixOpt.map(_ => "").getOrElse(" " + "repeat bad".attr(Foreground.color(22))) + "\n"
@@ -25,7 +25,7 @@ object ExamController extends ExamExtensions with ExamFSM with ArgumentParser {
   }
 
 
-  import com.zx80live.mod.fastcards.ExamController.Renderers._
+  import com.zx80live.mod.fastcards.ExamController.Renderer._
 
 
   def main(args: Array[String]): Unit = parseArgs(args).map { config =>
