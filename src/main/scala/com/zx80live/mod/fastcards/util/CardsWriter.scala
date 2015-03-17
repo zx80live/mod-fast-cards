@@ -2,12 +2,12 @@ package com.zx80live.mod.fastcards.util
 
 import java.io.{File, FileOutputStream, OutputStream}
 
-import com.zx80live.mod.fastcards.Card
+import com.zx80live.mod.fastcards.OldCard
 import resource._
 
 object CardsWriter {
 
-  def write(c: Card)(implicit out: OutputStream): Unit = {
+  def write(c: OldCard)(implicit out: OutputStream): Unit = {
 
 
     val str = c.value + c.transcript.map(t => s"[$t]").getOrElse("") + ":" + c.kind.getOrElse("") + ":" + c.translations.mkString("|") +
@@ -21,7 +21,7 @@ object CardsWriter {
     out.write(str.getBytes)
   }
 
-  def write(xs: List[Card], file: File): Unit = {
+  def write(xs: List[OldCard], file: File): Unit = {
     for (out <- managed(new FileOutputStream(file))) {
       implicit val os = out
 
