@@ -14,13 +14,16 @@ object ExamController extends ExamExtensions with ExamFSM with ArgumentParser {
   def main(args: Array[String]): Unit = parseArgs(args).map { config =>
     println("\n" + config.files.map(_.getName).mkString(", ").attr(Foreground.color(237)))
 
-    //    val badMode = config.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true}.length > 0
-    //    val badFilePrefix: Option[String] = if (!badMode) Some(config.files.map(_.getName).mkString("_")) else None
-    //
 
-    readCards(config) match {
-      case Success(cards) => exam(cards)
-      case Failure(f) => println(f)
+
+
+    readCards(config).map(exam) match {
+      case Success(result: Deck) =>
+      //todo write bad results
+      //    val badMode = config.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true}.length > 0
+      //    val badFilePrefix: Option[String] = if (!badMode) Some(config.files.map(_.getName).mkString("_")) else None
+      case Failure(e) =>
+        println(e)
     }
   }
 
