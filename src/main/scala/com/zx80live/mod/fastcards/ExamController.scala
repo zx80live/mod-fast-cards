@@ -28,11 +28,14 @@ object ExamController extends ExamFSM {
 
   case class Event(code: Int, state: Deck)
 
-  def loop(initState: Deck)(transition: Event => Deck): Unit = {
+  type State = Deck
+  type EndState = EmptyStock
+
+  def loop(initState: State)(transition: Event => State): Unit = {
     val con = new R()
     var state = initState
 
-    while (!state.isInstanceOf[EmptyStock]) {
+    while (!state.isInstanceOf[EndState]) {
       state = transition(Event(con.readVirtualKey(), state))
     }
   }
