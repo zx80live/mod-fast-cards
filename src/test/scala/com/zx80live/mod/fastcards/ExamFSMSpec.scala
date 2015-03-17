@@ -218,6 +218,26 @@ class ExamFSMSpec extends WordSpec with Matchers {
         Deck(List(c0), List(c1, c2)).deck shouldEqual List(c0, c1, c2)
         Deck(List(c0, c1), List(c2)).deck shouldEqual List(c0, c1, c2)
       }
+
+      "frontCurrent" in {
+        Deck(List(c0, c1, c3), Nil).frontCurrent.current.get.isInstanceOf[BackSide] shouldEqual false
+
+        Deck(List(c0, c1, c3), Nil).current.get.isInstanceOf[BackSide] shouldEqual false
+        Deck(List(c0, c1, c3), Nil).reverseCurrent.current.get.isInstanceOf[BackSide] shouldEqual true
+      }
+
+      "backCurrent" in {
+        Deck(List(c0, c1, c3), Nil).backCurrent.current.get.isInstanceOf[BackSide] shouldEqual true
+
+        Deck(List(c0, c1, c3), Nil).current.get.isInstanceOf[BackSide] shouldEqual false
+        Deck(List(c0, c1, c3), Nil).reverseCurrent.current.get.isInstanceOf[BackSide] shouldEqual true
+      }
+
+      "reverseCurrent" in {
+        Deck(List(c0, c1, c3), Nil).current.get.isInstanceOf[BackSide] shouldEqual false
+        Deck(List(c0, c1, c3), Nil).reverseCurrent.current.get.isInstanceOf[BackSide] shouldEqual true
+        Deck(List(c0, c1, c3), Nil).reverseCurrent.reverseCurrent.current.get.isInstanceOf[BackSide] shouldEqual false
+      }
     }
 
     "Card extensions" should {

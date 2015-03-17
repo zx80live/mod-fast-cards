@@ -52,6 +52,12 @@ trait ExamFSM {
 
   implicit class DeckExtensions(d: Deck) {
 
+    def frontCurrent: Deck = d.current.map(c => d.replaceCurrent(c.front)).getOrElse(d)
+
+    def backCurrent: Deck = d.current.map(c => d.replaceCurrent(c.back)).getOrElse(d)
+
+    def reverseCurrent: Deck = d.current.map(c => d.replaceCurrent(c.reverse)).getOrElse(d)
+
     def asEmptyStock: Deck = if (d.stock.isEmpty) new Deck(d.stock, d.discard) with EmptyStock else d
 
     def current: Option[Card] = d.stock.headOption
