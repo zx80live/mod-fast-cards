@@ -2,7 +2,7 @@ package com.zx80live.mod.fastcards
 
 import scala.tools.jline.console.{ConsoleReader => R}
 
-object ExamController extends ExamFSM {
+object ExamController extends ExamExtensions {
 
   object Code {
     val LEFT = 2

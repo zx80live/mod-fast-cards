@@ -3,7 +3,7 @@ package com.zx80live.mod.fastcards
 /**
  * Finite State Machine for exam
  */
-trait ExamFSM {
+trait ExamExtensions {
 
   sealed trait BackSide {
     this: Card =>
@@ -131,4 +131,4 @@ trait ExamFSM {
 
 }
 
-object ExamFSM extends ExamFSM
+object ExamExtensions extends ExamExtensions

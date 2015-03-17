@@ -3,9 +3,9 @@ package com.zx80live.mod.fastcards
 import org.scalatest.{Matchers, _}
 
 
-class ExamFSMSpec extends WordSpec with Matchers {
+class ExamExtensionsSpec extends WordSpec with Matchers {
 
-  import ExamFSM._
+  import ExamExtensions._
 
   val c0 = Card(Data(value = "v0", translations = List("t0")))
   val c1 = Card(Data(value = "v1", translations = List("t1")))
@@ -19,7 +19,7 @@ class ExamFSMSpec extends WordSpec with Matchers {
   val bestC3 = c3.copy(times = List(Some(500), Some(1000)))
   val bestC4 = c4.copy(times = List(Some(100), Some(700)))
 
-  "ExamFSM" when {
+  "ExamExtensions" when {
     "base functional" should {
       "navigate.one.next" in {
         val s0 = Deck(stock = List(c0))
