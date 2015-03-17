@@ -28,6 +28,8 @@ object ExamController extends ExamExtensions with ExamFSM with ArgumentParser {
     var state = Deck(cards)
 
     def printState(d: Deck): Unit = {
+      clearLine()
+
       print("\r" + d.current.map {
         case c: InfoSide => c.data.examples.map(e => "* " + e.text).mkString("|")
         case c: BackSide => c.data.translations.mkString("|")
@@ -44,5 +46,7 @@ object ExamController extends ExamExtensions with ExamFSM with ArgumentParser {
     state
   }
 
+
+  def clearLine(): Unit = print("\r" + (for (i <- 0 until 155) yield " ").mkString(""))
 
 }
