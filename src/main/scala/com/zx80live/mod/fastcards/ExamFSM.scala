@@ -49,7 +49,6 @@ trait ExamFSM {
         case _ => s
       }).asEmptyStock
 
-    //todo test
     def dropAll: Deck = s.copy(stock = Nil, discard = s.stock ::: s.discard).asEmptyStock
 
     def estimateTrue(time: Long)(implicit truePassLimit: Int): Deck =

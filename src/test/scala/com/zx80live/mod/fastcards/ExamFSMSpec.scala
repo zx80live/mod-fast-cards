@@ -197,6 +197,11 @@ class ExamFSMSpec extends WordSpec with Matchers {
         s4.isInstanceOf[EmptyStock] shouldEqual true
       }
 
+      "dropAll" in {
+        val s1 = Deck(stock = List(c0, c1, c2), discard = Nil).dropAll
+        s1 shouldEqual Deck(stock = Nil, discard = List(c0, c1, c2))
+      }
+
       "change state" in {
         val s0 = Deck(Nil, Nil).asEmptyStock
         s0.isInstanceOf[EmptyStock] shouldEqual true
