@@ -15,6 +15,9 @@ object ExamController extends ExamFSM {
     val CTRL_D = scala.tools.jline.console.Key.CTRL_D.code
   }
 
+  case class Event(code: Int, state: Deck)
+
+
   def main(args: Array[String]): Unit = {
     val c0 = Card(Data(value = "v0", translations = List("t0")))
     val c1 = Card(Data(value = "v1", translations = List("t1")))
@@ -26,58 +29,54 @@ object ExamController extends ExamFSM {
     start(List(c0, c1, c2, c3, c4))
   }
 
-  case class Event(code: Int, state: Deck)
 
-  type State = Deck
-  type EndState = EmptyStock
+  implicit val passLimit: Int = 2
 
-  def loop(initState: State)(transition: Event => State): Unit = {
+  def start(cards: List[Card]): Unit = {
     val con = new R()
-    var state = initState
+    var state = Deck(cards)
 
-    while (!state.isInstanceOf[EndState]) {
+    while (!state.isInstanceOf[EmptyStock]) {
+      printState(state)
+
       state = transition(Event(con.readVirtualKey(), state))
     }
   }
 
-  def start(cards: List[Card]): Unit = {
-
-    implicit val passLimit: Int = 2
-
-    loop(Deck(cards)) { evt =>
-      printState(evt.state)
-      transition(evt)
-    }
-
-    def printState(d: Deck): Unit = {
-      print("\r" + d.current.map {
-        case c: BackSide => c.data.translations.mkString("|")
-        case c: Card => c.data.value
-      } + "                      ")
-    }
-
-    def transition(evt: Event): Deck = evt match {
-      case Event(Code.RIGHT, s) => s.next
-      case Event(Code.LEFT, s) => s.prev
-
-      case Event(Code.SPACE, s) =>
-        s.current match {
-          case Some(c: BackSide) => s.estimateFalse
-          case _ => s.backCurrent
-        }
-
-      case Event(Code.ENTER, s) =>
-        s.current match {
-          case Some(c: BackSide) => s.estimateTrue(0L)
-          case _ => s.backCurrent
-        }
-      case Event(Code.I, s) => s
-      case Event(Code.S, s) => s
-      case Event(Code.D, s) => s
-      case Event(Code.CTRL_D, s) => s.dropAll
-      case Event(_, s) => s
-    }
-
-
+  private def printState(d: Deck): Unit = {
+    print("\r" + d.current.map {
+      case c: InfoSide => c.data.value + ":info" //c.data.examples.map(e => "* " + e.text).mkString("|")
+      case c: BackSide => c.data.translations.mkString("|")
+      case c: Card => c.data.value
+    } + "                      ")
   }
+
+
+  def transition(evt: Event): Deck = evt match {
+    case Event(Code.RIGHT, s) => s.resetCurrent.next
+    case Event(Code.LEFT, s) => s.resetCurrent.prev
+
+    case Event(Code.SPACE, s) =>
+      s.current match {
+        case Some(c: BackSide) => s.estimateFalse
+        case _ => s.backCurrent
+      }
+
+    case Event(Code.ENTER, s) =>
+      s.current match {
+        case Some(c: BackSide) => s.estimateTrue(0L)
+        case _ => s.backCurrent
+      }
+    case Event(Code.I, s) =>
+      s.current match {
+        case Some(c: InfoSide) => s.reverseCurrent
+        case _ => s.infoCurrent
+      }
+
+    case Event(Code.S, s) => s
+    case Event(Code.D, s) => s
+    case Event(Code.CTRL_D, s) => s.dropAll
+    case Event(_, s) => s
+  }
+
 }

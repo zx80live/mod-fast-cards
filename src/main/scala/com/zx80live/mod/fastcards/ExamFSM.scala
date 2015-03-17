@@ -9,15 +9,29 @@ trait ExamFSM {
     this: Card =>
   }
 
+  sealed trait InfoSide {
+    this: Card =>
+  }
+
   sealed trait EmptyStock {
     this: Deck =>
   }
+
 
   val BAD_TIME_IN_MS: Long = 1000 * 60L
   val limitBadMs: Long = 8000
   val limitBestMs: Long = 3000
 
   implicit class CardExtensions(c: Card) {
+
+    //todo test
+    def reset: Card = new Card(c.data, c.times)
+
+    //todo test
+    def info: Card = c match {
+      case _: BackSide => new Card(c.data, c.times) with BackSide with InfoSide
+      case _ => new Card(c.data, c.times) with InfoSide
+    }
 
     def front: Card = c match {
       case _: BackSide => new Card(c.data, c.times)
@@ -29,8 +43,11 @@ trait ExamFSM {
       case _ => new Card(c.data, c.times) with BackSide
     }
 
+    //todo change test with InfoSide
     def reverse: Card = c match {
+      case _: BackSide with InfoSide => new Card(c.data, c.times) with BackSide
       case _: BackSide => new Card(c.data, c.times)
+      case _: Card with InfoSide => new Card(c.data, c.times)
       case _ => new Card(c.data, c.times) with BackSide
     }
 
@@ -51,6 +68,12 @@ trait ExamFSM {
   }
 
   implicit class DeckExtensions(d: Deck) {
+
+    //todo test
+    def resetCurrent: Deck = d.current.map(c => d.replaceCurrent(c.reset)).getOrElse(d)
+
+    //todo test
+    def infoCurrent: Deck = d.current.map(c => d.replaceCurrent(c.info)).getOrElse(d)
 
     def frontCurrent: Deck = d.current.map(c => d.replaceCurrent(c.front)).getOrElse(d)
 
@@ -104,6 +127,7 @@ trait ExamFSM {
 
     def statistic: Statistic = Statistic(bestCards, middleCards, badCards)
   }
+
 
 }
 
