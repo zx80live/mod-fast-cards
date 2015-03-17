@@ -1,10 +1,7 @@
 package com.zx80live.mod.fastcards
 
-import com.zx80.mod.util.console.ConsoleCSS.Foreground
-import com.zx80live.mod.fastcards.util.CardsReader
-
 import scala.tools.jline.console.{ConsoleReader => R}
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 
 object ExamController extends ExamExtensions with ExamFSM with ArgumentParser {
 
@@ -13,9 +10,6 @@ object ExamController extends ExamExtensions with ExamFSM with ArgumentParser {
 
   def main(args: Array[String]): Unit = parseArgs(args).map { config =>
     println("\n" + config.files.map(_.getName).mkString(", ").attr(Foreground.color(237)))
-
-
-
 
     readCards(config).map(exam) match {
       case Success(result: Deck) =>
@@ -39,6 +33,7 @@ object ExamController extends ExamExtensions with ExamFSM with ArgumentParser {
         case c: Card => c.data.value
       }.getOrElse("<none>") + "                      ")
     }
+
 
     while (!state.isInstanceOf[EmptyStock]) {
       printState(state)
