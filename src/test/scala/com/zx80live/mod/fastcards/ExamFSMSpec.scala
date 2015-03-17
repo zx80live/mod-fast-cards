@@ -53,12 +53,12 @@ class ExamFSMSpec extends WordSpec with Matchers {
 
       "navigate.nonEmpty.next" in {
         val s0 = Deck(stock = List(c0, c1, c2, c3, c4))
-        val s1: ExamFSM.Deck = s0.next
-        val s2: ExamFSM.Deck = s1.next
-        val s3: ExamFSM.Deck = s2.next
-        val s4: ExamFSM.Deck = s3.next
-        val s5: ExamFSM.Deck = s4.next
-        val s6: ExamFSM.Deck = s5.next
+        val s1: Deck = s0.next
+        val s2: Deck = s1.next
+        val s3: Deck = s2.next
+        val s4: Deck = s3.next
+        val s5: Deck = s4.next
+        val s6: Deck = s5.next
 
         s0.isInstanceOf[EmptyStock] shouldEqual false
         s1.isInstanceOf[EmptyStock] shouldEqual false
@@ -86,12 +86,12 @@ class ExamFSMSpec extends WordSpec with Matchers {
 
       "navigate.nonEmpty.prev" in {
         val s0 = Deck(stock = List(c0, c1, c2, c3, c4))
-        val s1: ExamFSM.Deck = s0.prev
-        val s2: ExamFSM.Deck = s1.prev
-        val s3: ExamFSM.Deck = s2.prev
-        val s4: ExamFSM.Deck = s3.prev
-        val s5: ExamFSM.Deck = s4.prev
-        val s6: ExamFSM.Deck = s5.prev
+        val s1: Deck = s0.prev
+        val s2: Deck = s1.prev
+        val s3: Deck = s2.prev
+        val s4: Deck = s3.prev
+        val s5: Deck = s4.prev
+        val s6: Deck = s5.prev
 
         s0.isInstanceOf[EmptyStock] shouldEqual false
         s1.isInstanceOf[EmptyStock] shouldEqual false
@@ -168,7 +168,7 @@ class ExamFSMSpec extends WordSpec with Matchers {
       }
 
       "drop on empty" in {
-        val s0: ExamFSM.Deck = Deck(stock = Nil, discard = Nil).drop
+        val s0: Deck = Deck(stock = Nil, discard = Nil).drop
         s0 shouldEqual Deck(stock = Nil, discard = Nil)
         s0.isInstanceOf[EmptyStock] shouldEqual true
       }
@@ -250,13 +250,13 @@ class ExamFSMSpec extends WordSpec with Matchers {
     "extend functional" should {
       "estimateFalse" in {
         val s0 = Deck(stock = List(c0, c1, c2, c3))
-        val s1: ExamFSM.Deck = s0.estimateFalse
+        val s1: Deck = s0.estimateFalse
         s1.stock.length shouldEqual s0.stock.length
         s1.discard shouldEqual Nil
         s1.stock.last shouldEqual Card(c0.data, List(None))
         s1 shouldEqual Deck(stock = List(c1, c2, c3, Card(c0.data, List(None))))
 
-        val s2: ExamFSM.Deck = s1.estimateFalse.estimateFalse.estimateFalse.estimateFalse
+        val s2: Deck = s1.estimateFalse.estimateFalse.estimateFalse.estimateFalse
         s2.stock.length shouldEqual s0.stock.length
         s2.stock.last shouldEqual Card(c0.data, List(None, None))
         s2.discard shouldEqual Nil
@@ -266,17 +266,17 @@ class ExamFSMSpec extends WordSpec with Matchers {
         implicit val passCount: Int = 3
 
         val s0 = Deck(stock = List(c0, c1, c2))
-        val s1: ExamFSM.Deck = s0.estimateTrue(1000)
+        val s1: Deck = s0.estimateTrue(1000)
         s1.stock.length shouldEqual s0.stock.length
         s1.discard.length shouldEqual s0.discard.length
         s1.stock.last shouldEqual Card(c0.data, List(Some(1000)))
 
-        val s2: ExamFSM.Deck = s1.estimateTrue(1000).estimateTrue(1000).estimateTrue(2000)
+        val s2: Deck = s1.estimateTrue(1000).estimateTrue(1000).estimateTrue(2000)
         s2.stock.length shouldEqual s0.stock.length
         s2.discard.length shouldEqual s0.discard.length
         s2.stock.last shouldEqual Card(c0.data, List(Some(1000), Some(2000)))
 
-        val s3: ExamFSM.Deck = s2.estimateTrue(1000).estimateTrue(1000).estimateTrue(3000)
+        val s3: Deck = s2.estimateTrue(1000).estimateTrue(1000).estimateTrue(3000)
         s3.stock.length shouldEqual s0.stock.length - 1
         s3.discard.length shouldEqual s0.discard.length + 1
 
@@ -287,13 +287,13 @@ class ExamFSMSpec extends WordSpec with Matchers {
       "estimateTrue with reset true passes" in {
         implicit val passCount: Int = 3
         val s0 = Deck(stock = List(c0, c1, c2))
-        val s1: ExamFSM.Deck = s0.estimateTrue(1000)
+        val s1: Deck = s0.estimateTrue(1000)
         s1.stock.length shouldEqual s0.stock.length
         s1.discard.length shouldEqual s0.discard.length
         s1.stock.last shouldEqual Card(c0.data, List(Some(1000)))
 
-        val s2: ExamFSM.Deck = s1.estimateTrue(1000).estimateTrue(1000).estimateTrue(2000)
-        val s3: ExamFSM.Deck = s2.estimateTrue(1000).estimateTrue(1000).estimateFalse
+        val s2: Deck = s1.estimateTrue(1000).estimateTrue(1000).estimateTrue(2000)
+        val s3: Deck = s2.estimateTrue(1000).estimateTrue(1000).estimateFalse
         s3.stock.length shouldEqual s0.stock.length
         s3.discard.length shouldEqual s0.discard.length
 
@@ -321,11 +321,11 @@ class ExamFSMSpec extends WordSpec with Matchers {
         s3.discard.length shouldEqual s2.discard.length + 1
         s3.isInstanceOf[EmptyStock] shouldEqual true
 
-        val s4: ExamFSM.Deck = s3.estimateTrue(1000)
+        val s4: Deck = s3.estimateTrue(1000)
         s4.isInstanceOf[EmptyStock] shouldEqual true
         s4 shouldEqual s3
 
-        val s5: ExamFSM.Deck = s3.estimateFalse
+        val s5: Deck = s3.estimateFalse
         s5.isInstanceOf[EmptyStock] shouldEqual true
         s5 shouldEqual s3
       }
