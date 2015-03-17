@@ -50,42 +50,42 @@ trait ExamFSM {
     }
   }
 
-  implicit class DeckExtensions(s: Deck) {
+  implicit class DeckExtensions(d: Deck) {
 
-    def asEmptyStock: Deck = if (s.stock.isEmpty) new Deck(s.stock, s.discard) with EmptyStock else s
+    def asEmptyStock: Deck = if (d.stock.isEmpty) new Deck(d.stock, d.discard) with EmptyStock else d
 
-    def current: Option[Card] = s.stock.headOption
+    def current: Option[Card] = d.stock.headOption
 
-    def replaceCurrent(c: Card): Deck = s.stock.headOption.map(h => s.copy(stock = c :: s.stock.tail)).getOrElse(s)
+    def replaceCurrent(c: Card): Deck = d.stock.headOption.map(h => d.copy(stock = c :: d.stock.tail)).getOrElse(d)
 
-    def next: Deck = s.copy(stock = s.stock.headOption.map(h => s.stock.tail :+ h).getOrElse(Nil)).asEmptyStock
+    def next: Deck = d.copy(stock = d.stock.headOption.map(h => d.stock.tail :+ h).getOrElse(Nil)).asEmptyStock
 
-    def prev: Deck = s.copy(stock = s.stock.lastOption.map(l => l :: s.stock.take(s.stock.length - 1)).getOrElse(Nil)).asEmptyStock
+    def prev: Deck = d.copy(stock = d.stock.lastOption.map(l => l :: d.stock.take(d.stock.length - 1)).getOrElse(Nil)).asEmptyStock
 
     def drop: Deck =
-      (s.stock match {
+      (d.stock match {
         case head :: tail =>
-          s.copy(stock = tail, discard = head :: s.discard)
-        case _ => s
+          d.copy(stock = tail, discard = head :: d.discard)
+        case _ => d
       }).asEmptyStock
 
-    def dropAll: Deck = s.copy(stock = Nil, discard = s.stock ::: s.discard).asEmptyStock
+    def dropAll: Deck = d.copy(stock = Nil, discard = d.stock ::: d.discard).asEmptyStock
 
     def estimateTrue(time: Long)(implicit truePassLimit: Int): Deck =
-      s.stock.headOption.map { head =>
+      d.stock.headOption.map { head =>
         val c = head.addPass(Some(time))
 
-        (c.isExamCompleted, s.replaceCurrent(c)) match {
+        (c.isExamCompleted, d.replaceCurrent(c)) match {
           case (true, deck) => deck.drop
           case (false, deck) => deck.next
         }
-      }.getOrElse(s).asEmptyStock
+      }.getOrElse(d).asEmptyStock
 
-    def estimateFalse: Deck = s.stock.headOption.map { c =>
-      s.replaceCurrent(c.addPass()).next
-    }.getOrElse(s).asEmptyStock
+    def estimateFalse: Deck = d.stock.headOption.map { c =>
+      d.replaceCurrent(c.addPass()).next
+    }.getOrElse(d).asEmptyStock
 
-    def deck: List[Card] = s.stock ::: s.discard
+    def deck: List[Card] = d.stock ::: d.discard
 
     def bestCards: List[Card] = deck.filter(c => c.averagePassTime.getOrElse(BAD_TIME_IN_MS.toDouble) < limitBestMs)
 
