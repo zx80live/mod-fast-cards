@@ -28,12 +28,12 @@ object ExamController extends ExamFSM {
 
   case class Event(code: Int, state: Deck)
 
-  def fsm(initState: Deck)(f: Event => Deck): Unit = {
+  def loop(initState: Deck)(transition: Event => Deck): Unit = {
     val con = new R()
     var state = initState
 
     while (!state.isInstanceOf[EmptyStock]) {
-      state = f(Event(con.readVirtualKey(), state))
+      state = transition(Event(con.readVirtualKey(), state))
     }
   }
 
@@ -42,7 +42,7 @@ object ExamController extends ExamFSM {
     implicit val passLimit: Int = 2
 
 
-    fsm(Deck(cards)) { evt =>
+    loop(Deck(cards)) { evt =>
       print("\r" + evt.state.current.map(_.data.value) + "                      ")
 
       evt match {
