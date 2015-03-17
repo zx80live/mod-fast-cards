@@ -46,13 +46,29 @@ object ExamController extends ExamFSM {
 
 
     loop(Deck(cards)) { evt =>
-      print("\r" + evt.state.current.map(_.data.value) + "                      ")
+      print("\r" + evt.state.current.map {
+        case c: BackSide => c.data.translations.mkString("|")
+        case c: Card => c.data.value
+      } + "                      ")
 
+      // transition
       evt match {
         case Event(Code.RIGHT, s) => s.next
         case Event(Code.LEFT, s) => s.prev
-        case Event(Code.SPACE, s) => s.estimateFalse
-        case Event(Code.ENTER, s) => s.estimateTrue(0L)
+
+        case Event(Code.SPACE, s) =>
+          s.current match {
+            case Some(c: BackSide) => s.estimateFalse
+            case _ => s.backCurrent
+          }
+
+
+        case Event(Code.ENTER, s) =>
+          s.current match {
+            case Some(c: BackSide) => s.estimateTrue(0L)
+            case _ => s.backCurrent
+          }
+
         case Event(Code.I, s) => s
         case Event(Code.S, s) => s
         case Event(Code.D, s) => s
