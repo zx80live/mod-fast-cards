@@ -1,9 +1,6 @@
 package com.zx80live.mod.fastcards
 
-import com.zx80live.mod.fastcards.util.{CardsWriter, Timer}
-
 import scala.tools.jline.console.{ConsoleReader => R}
-import scala.util.Random
 
 @deprecated
 object Exam extends Styles {

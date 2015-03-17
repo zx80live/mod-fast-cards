@@ -16,21 +16,37 @@ trait ExamFSM {
 
   case class Event(code: Int, state: Deck)
 
+  object Timer {
+    var time: Option[Long] = None
+
+    def start(): Unit =
+      time = Some(System.currentTimeMillis())
+
+    def stop: Long =
+      time.map(t => System.currentTimeMillis() - t).getOrElse(0)
+  }
+
+
   implicit val passLimit: Int = 2
 
   def transition(evt: Event): Deck = evt match {
-    case Event(Code.RIGHT, s) => s.resetCurrent.next
-    case Event(Code.LEFT, s) => s.resetCurrent.prev
+    case Event(Code.RIGHT, s) =>
+      s.resetCurrent.next
+    case Event(Code.LEFT, s) =>
+      s.resetCurrent.prev
 
     case Event(Code.SPACE, s) =>
       s.current match {
-        case Some(c: BackSide) => s.estimateFalse
+        case Some(c: BackSide) =>
+          s.estimateFalse
         case _ => s.backCurrent
       }
 
     case Event(Code.ENTER, s) =>
       s.current match {
-        case Some(c: BackSide) => s.estimateTrue(0L)
+        case Some(c: BackSide) =>
+          s.estimateTrue(0L)
+
         case _ => s.backCurrent
       }
     case Event(Code.I, s) =>
@@ -39,9 +55,12 @@ trait ExamFSM {
         case _ => s.infoCurrent
       }
 
-    case Event(Code.S, s) => s
-    case Event(Code.D, s) => s
-    case Event(Code.CTRL_D, s) => s.dropAll
+    case Event(Code.S, s) =>
+      s
+    case Event(Code.D, s) =>
+      s.drop
+    case Event(Code.CTRL_D, s) =>
+      s.dropAll
     case Event(_, s) => s
   }
 }
