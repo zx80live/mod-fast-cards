@@ -45,10 +45,10 @@ object ExamController extends ExamFSM {
 
   private def printState(d: Deck): Unit = {
     print("\r" + d.current.map {
-      case c: InfoSide => c.data.value + ":info" //c.data.examples.map(e => "* " + e.text).mkString("|")
+      case c: InfoSide => c.data.examples.map(e => "* " + e.text).mkString("|")
       case c: BackSide => c.data.translations.mkString("|")
       case c: Card => c.data.value
-    } + "                      ")
+    }.getOrElse("<none>") + "                      ")
   }
 
 
