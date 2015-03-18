@@ -43,6 +43,17 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     object Actions {
 
+      object Code {
+        val LEFT = 2
+        val RIGHT = 6
+        val SPACE = 32
+        val ENTER = 10
+        val I = 105
+        val S = 115
+        val D = 100
+        val CTRL_D = scala.tools.jline.console.Key.CTRL_D.code
+      }
+
       case class Event(code: Int, state: Deck)
 
       val caseRight: PartialFunction[Event, Deck] = {
@@ -112,16 +123,6 @@ object ExamController extends ExamExtensions with ArgumentParser {
     state
   }
 
-  object Code {
-    val LEFT = 2
-    val RIGHT = 6
-    val SPACE = 32
-    val ENTER = 10
-    val I = 105
-    val S = 115
-    val D = 100
-    val CTRL_D = scala.tools.jline.console.Key.CTRL_D.code
-  }
 
   object Renderer {
     val consoleWidth = 155
