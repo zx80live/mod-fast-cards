@@ -41,37 +41,73 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     implicit val passLimit: Int = 2
 
+    object Actions {
+
+      case class Event(code: Int, state: Deck)
+
+      val caseRight: PartialFunction[Event, Deck] = {
+        case Event(Code.RIGHT, s) => s.resetCurrent.next
+      }
+
+      val caseLeft: PartialFunction[Event, Deck] = {
+        case Event(Code.LEFT, s) => s.resetCurrent.prev
+      }
+
+
+      val caseSpace: PartialFunction[Event, Deck] = {
+        case Event(Code.SPACE, s) =>
+          s.current match {
+            case Some(c: BackSide) =>
+              s.estimateFalse
+            case _ => s.backCurrent
+          }
+      }
+
+      val caseEnter: PartialFunction[Event, Deck] = {
+        case Event(Code.ENTER, s) =>
+          s.current match {
+            case Some(c: BackSide) =>
+              s.estimateTrue(0L)
+
+            case _ => s.backCurrent
+          }
+      }
+
+      val caseInfo: PartialFunction[Event, Deck] = {
+        case Event(Code.I, s) =>
+          s.current match {
+            case Some(c: InfoSide) => s.reverseCurrent
+            case _ => s.infoCurrent
+          }
+      }
+
+      val caseStatistic: PartialFunction[Event, Deck] = {
+        case Event(Code.S, s) => s
+      }
+
+      val caseDrop: PartialFunction[Event, Deck] = {
+        case Event(Code.D, s) => s.drop
+      }
+
+      val caseDropAll: PartialFunction[Event, Deck] = {
+        case Event(Code.CTRL_D, s) => s.dropAll
+      }
+
+      val wildcard: PartialFunction[Event, Deck] = {
+        case Event(_, s) => s
+      }
+
+      def transition = caseRight orElse caseLeft orElse
+        caseSpace orElse caseEnter orElse
+        caseInfo orElse caseStatistic orElse caseDrop orElse caseDropAll orElse wildcard
+    }
+
+    import Actions.{Event, transition}
+
     while (!state.isInstanceOf[EmptyStock]) {
       printState(state)
 
-      state = con.readVirtualKey() match {
-        case Code.RIGHT =>
-          state.resetCurrent.next
-        case Code.LEFT =>
-          state.resetCurrent.prev
-        case Code.SPACE =>
-          state.current match {
-            case Some(c: BackSide) =>
-              state.estimateFalse
-            case _ => state.backCurrent
-          }
-        case Code.ENTER =>
-          state.current match {
-            case Some(c: BackSide) =>
-              state.estimateTrue(0L)
-
-            case _ => state.backCurrent
-          }
-        case Code.I =>
-          state.current match {
-            case Some(c: InfoSide) => state.reverseCurrent
-            case _ => state.infoCurrent
-          }
-        case Code.S => state
-        case Code.D => state.drop
-        case Code.CTRL_D => state.dropAll
-        case _ => state
-      }
+      state = transition(Event(con.readVirtualKey(), state))
     }
     state
   }
