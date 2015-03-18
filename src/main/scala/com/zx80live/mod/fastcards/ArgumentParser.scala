@@ -11,7 +11,7 @@ trait ArgumentParser {
 
   case class Config(files: Seq[File] = Seq(), enRu: Boolean = false, filter: Seq[String] = Seq())
 
-  val parser = new scopt.OptionParser[Config]("scopt") {
+  val parser = new scopt.OptionParser[Config]("exam") {
     head("Fast-cards", "3.x")
     arg[Seq[File]]("<file>...") unbounded() action { (x, c) =>
       c.copy(files = c.files.++:(x))
@@ -19,9 +19,9 @@ trait ArgumentParser {
     opt[Unit]("en-ru") action { (_, c) =>
       c.copy(enRu = true)
     } text "en-ru mode"
-    opt[Seq[String]]('f', "filter") valueName "<jar1>,<jar2>..." action { (x, c) =>
+    opt[Seq[String]]('f', "filter") valueName "<type1>,<type2>..." action { (x, c) =>
       c.copy(filter = x)
-    } text "jars to include"
+    } text "filter cards by type (verb, noun, etc)"
   }
 
   def getFileExtension(file: File): Option[String] = file.getName.split( """\.""").lastOption
