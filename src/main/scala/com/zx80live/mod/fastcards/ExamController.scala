@@ -66,7 +66,6 @@ object ExamController extends ExamExtensions with ArgumentParser {
         case Event(Code.LEFT, s) => s.resetCurrent.prev
       }
 
-
       val caseSpace: PartialFunction[Event, Deck] = {
         case Event(Code.SPACE, s) =>
           s.current match {
