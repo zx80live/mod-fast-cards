@@ -4,7 +4,7 @@ import java.io.File
 
 import scala.tools.jline.console.{ConsoleReader => R}
 
-object ExamController extends ExamExtensions with ExamFSM with ArgumentParser {
+object ExamController extends ExamExtensions with ArgumentParser {
 
   import com.zx80.mod.util.console.ConsoleCSS._
   import com.zx80live.mod.fastcards.ExamController.Renderer._
@@ -14,7 +14,7 @@ object ExamController extends ExamExtensions with ExamFSM with ArgumentParser {
     renderFiles(config.files)
 
     readCards(config).map { cards =>
-      val badMode = config.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true}.length > 0
+      val badMode = config.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true }.length > 0
       val badFilePrefixOpt: Option[String] = if (!badMode) Some(config.files.map(_.getName).mkString("_")) else None
 
       renderStartExam(badFilePrefixOpt)
@@ -39,15 +39,53 @@ object ExamController extends ExamExtensions with ExamFSM with ArgumentParser {
       }.getOrElse(renderNoneCard))
     }
 
+    implicit val passLimit: Int = 2
 
     while (!state.isInstanceOf[EmptyStock]) {
       printState(state)
 
-      state = transition(Event(con.readVirtualKey(), state))
+      state = con.readVirtualKey() match {
+        case Code.RIGHT =>
+          state.resetCurrent.next
+        case Code.LEFT =>
+          state.resetCurrent.prev
+        case Code.SPACE =>
+          state.current match {
+            case Some(c: BackSide) =>
+              state.estimateFalse
+            case _ => state.backCurrent
+          }
+        case Code.ENTER =>
+          state.current match {
+            case Some(c: BackSide) =>
+              state.estimateTrue(0L)
+
+            case _ => state.backCurrent
+          }
+        case Code.I =>
+          state.current match {
+            case Some(c: InfoSide) => state.reverseCurrent
+            case _ => state.infoCurrent
+          }
+        case Code.S => state
+        case Code.D => state.drop
+        case Code.CTRL_D => state.dropAll
+        case _ => state
+      }
     }
     state
   }
 
+  object Code {
+    val LEFT = 2
+    val RIGHT = 6
+    val SPACE = 32
+    val ENTER = 10
+    val I = 105
+    val S = 115
+    val D = 100
+    val CTRL_D = scala.tools.jline.console.Key.CTRL_D.code
+  }
 
   object Renderer {
     val consoleWidth = 155
