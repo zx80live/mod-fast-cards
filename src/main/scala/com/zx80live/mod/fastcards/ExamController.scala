@@ -8,6 +8,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
   import com.zx80.mod.util.console.ConsoleCSS._
   import com.zx80live.mod.fastcards.ExamController.Renderer._
+  import com.zx80live.mod.fastcards.util.CollectionUtils._
 
 
   def main(args: Array[String]): Unit = parseArgs(args).map { config =>
@@ -20,6 +21,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
       renderStartExam(badFilePrefixOpt)
 
       val state: Deck = exam(cards)
+      printStatistic(state.statistic)
       //todo write state
     }
   }
@@ -92,7 +94,9 @@ object ExamController extends ExamExtensions with ArgumentParser {
     }
 
     val caseStatistic: PartialFunction[Event, Deck] = {
-      case Event(Code.S, s) => s
+      case Event(Code.S, s) =>
+        printStatistic(s.statistic)
+        s
     }
 
     val caseDrop: PartialFunction[Event, Deck] = {
@@ -144,6 +148,41 @@ object ExamController extends ExamExtensions with ArgumentParser {
         case c: BackSide => renderTranslations(c.data.translations)
         case c: Card => renderCardValue(c.data)
       }.getOrElse(renderNoneCard))
+    }
+
+    def printStatistic(s: Statistic): Unit = {
+      val bestWords = s.best.map(_.data.value).sorted
+      val midWords = s.middle.map(_.data.value).sorted
+      val badWords = s.bad.map(_.data.value).sorted
+
+      val maxSize = List(bestWords.length, midWords.length, badWords.length).max
+      val result: List[((String, String), String)] =
+        bestWords.fill("-", maxSize)
+          .zip(midWords.fill("-", maxSize))
+          .zip(badWords.fill("-", maxSize))
+
+      clearLine()
+
+      val cssHead = Foreground.color(237)
+
+
+      implicit class LocalStringExt(s:String) {
+        def colored:String = s match {
+          case "-" => s.attr(Foreground.color(237))
+          case _ => s.attr(Foreground.color(247))
+        }
+      }
+
+      val w = 40
+      val h = ""
+      println("\n\n")
+      printf(s"\n$h%${w}s $h%${w}s $h%${w}s", "good".attr(cssHead), "middle".attr(cssHead), "bad".attr(cssHead))
+      result foreach { case ((t, m), l) =>
+        printf(s"\n%${w}s %${w}s %${w}s", t.colored, m.colored, l.colored)
+      }
+
+      println("\n")
+
     }
   }
 
