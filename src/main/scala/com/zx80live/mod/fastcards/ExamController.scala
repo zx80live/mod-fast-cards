@@ -39,7 +39,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
       }.getOrElse(renderNoneCard))
     }
 
-    implicit val passLimit: Int = 2
+
 
     object Actions {
 
@@ -55,6 +55,8 @@ object ExamController extends ExamExtensions with ArgumentParser {
       }
 
       case class Event(code: Int, state: Deck)
+
+      implicit val passLimit: Int = 2
 
       val caseRight: PartialFunction[Event, Deck] = {
         case Event(Code.RIGHT, s) => s.resetCurrent.next
