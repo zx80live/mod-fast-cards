@@ -16,3 +16,5 @@ TODO перенести в резюме опыт со всякими тунне�
 todo запись статистики
 
 todo current context toolbar
+
+todo current context toolbar element: timer progress bar (colored with bad|mid|best scopes)
