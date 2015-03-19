@@ -164,9 +164,18 @@ object ExamController extends ExamExtensions with ArgumentParser {
       clearLine()
 
       print("\r" + d.current.map {
-        case c: InfoSide => renderExamples(c.data.examples)
-        case c: BackSide => renderTranslations(c.data.translations)
-        case c: Card => renderCardValue(c.data)
+
+        case c: InfoSide =>
+          renderExamples(c.data.examples)
+
+        case c: BackSide =>
+          btn("enter", " ok ") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg) + " " +
+            renderTranslations(c.data.translations)
+
+        case c: Card =>
+          btn("enter", "flip") + delim + btn("space", "flip ") + "" + " ▹".attr(Foreground.color(22) | cssCtxBg) + " " +
+            renderCardValue(c.data)
+
       }.getOrElse(renderNoneCard))
     }
 
@@ -204,6 +213,14 @@ object ExamController extends ExamExtensions with ArgumentParser {
       println("\n")
 
     }
+
+    val cssCtxBg = Background.color(233)
+    val ccsCtxFg = Foreground.color(236)
+
+    def btn(name: String, text: String) =
+      name.attr(ccsCtxFg | cssCtxBg | Format.Bold) + s"-$text".attr(ccsCtxFg | cssCtxBg)
+
+    val delim = "|".attr(Foreground.color(234) | cssCtxBg)
   }
 
 
