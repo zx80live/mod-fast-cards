@@ -31,8 +31,9 @@ object ExamController extends ExamExtensions with ArgumentParser {
     val con = new R()
     var state = Deck(cards)
 
-    import Actions.{Event, transition}
+    import Actions.{Event, transition, Timer}
 
+    Timer.start()
     while (!state.isInstanceOf[EmptyStock]) {
       printState(state)
 
@@ -42,6 +43,14 @@ object ExamController extends ExamExtensions with ArgumentParser {
   }
 
   object Actions {
+
+    object Timer {
+      var t0: Option[Long] = None
+
+      def start(): Unit = t0 = Some(System.currentTimeMillis())
+
+      def getTime: Long = t0.map(t => System.currentTimeMillis() - t).getOrElse(0L)
+    }
 
     object Code {
       val LEFT = 2
@@ -59,17 +68,22 @@ object ExamController extends ExamExtensions with ArgumentParser {
     implicit val passLimit: Int = 2
 
     val caseRight: PartialFunction[Event, Deck] = {
-      case Event(Code.RIGHT, s) => s.resetCurrent.next
+      case Event(Code.RIGHT, s) =>
+        Timer.start()
+        s.resetCurrent.next
     }
 
     val caseLeft: PartialFunction[Event, Deck] = {
-      case Event(Code.LEFT, s) => s.resetCurrent.prev
+      case Event(Code.LEFT, s) =>
+        Timer.start()
+        s.resetCurrent.prev
     }
 
     val caseSpace: PartialFunction[Event, Deck] = {
       case Event(Code.SPACE, s) =>
         s.current match {
           case Some(c: BackSide) =>
+            Timer.start()
             s.estimateFalse
           case _ => s.backCurrent
         }
@@ -79,7 +93,9 @@ object ExamController extends ExamExtensions with ArgumentParser {
       case Event(Code.ENTER, s) =>
         s.current match {
           case Some(c: BackSide) =>
-            s.estimateTrue(0L)
+            val time = Timer.getTime
+            Timer.start()
+            s.estimateTrue(time)
 
           case _ => s.backCurrent
         }
@@ -100,11 +116,15 @@ object ExamController extends ExamExtensions with ArgumentParser {
     }
 
     val caseDrop: PartialFunction[Event, Deck] = {
-      case Event(Code.D, s) => s.drop
+      case Event(Code.D, s) =>
+        Timer.start()
+        s.drop
     }
 
     val caseDropAll: PartialFunction[Event, Deck] = {
-      case Event(Code.CTRL_D, s) => s.dropAll
+      case Event(Code.CTRL_D, s) =>
+        Timer.start()
+        s.dropAll
     }
 
     val wildcard: PartialFunction[Event, Deck] = {
@@ -166,8 +186,8 @@ object ExamController extends ExamExtensions with ArgumentParser {
       val cssHead = Foreground.color(237)
 
 
-      implicit class LocalStringExt(s:String) {
-        def colored:String = s match {
+      implicit class LocalStringExt(s: String) {
+        def colored: String = s match {
           case "-" => s.attr(Foreground.color(237))
           case _ => s.attr(Foreground.color(247))
         }
