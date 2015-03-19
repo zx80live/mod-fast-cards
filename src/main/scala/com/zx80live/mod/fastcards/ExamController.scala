@@ -183,7 +183,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
           progress(d) + renderExamples(c.data.examples)
 
         case c: BackSide =>
-          progress(d) + btn("enter", " ok ") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg) + " " +
+          progress(d) + btn("enter", " ok ") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg | Format.Blink) + " " +
             renderTranslations(c.data.translations)
 
         case c: Card =>
@@ -236,15 +236,26 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     val delim = "|".attr(Foreground.color(234) | cssCtxBg)
 
-    def progress(d:Deck):String =
-      //progressPercentText(d)
+    def progress(d: Deck): String =
+    //progressPercentText(d)
       progressCountText(d)
+    //progressBar(d)
 
     def progressPercentText(d: Deck): String = ("[" + (d.discard.length * 100 / d.deck.length) + "%] ").attr(ccsCtxFg | cssCtxBg)
 
     def progressCountText(d: Deck): String = {
-      val percents: Int = d.discard.length * 100 / d.deck.length
       ("[" + d.discard.length + "/" + d.deck.length + "] ").attr(ccsCtxFg | cssCtxBg)
+    }
+
+    def progressBar(d: Deck): String = {
+      val percents: Int = d.discard.length * 100 / d.deck.length
+      val barLength = 20
+
+      val currentLength = barLength * percents / 100
+      val symbol = "▉"
+      val space = " ".attr(Background.color(233))
+      val bar = ("" :: Nil).fill(symbol, currentLength).fill(space, barLength).mkString("")
+      ("" + bar + "").attr(ccsCtxFg | cssCtxBg) + (percents + "% ").attr(ccsCtxFg | cssCtxBg) + ""
     }
 
   }
