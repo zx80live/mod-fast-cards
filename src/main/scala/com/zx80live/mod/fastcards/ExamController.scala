@@ -180,14 +180,14 @@ object ExamController extends ExamExtensions with ArgumentParser {
       print("\r" + d.current.map {
 
         case c: InfoSide =>
-          renderExamples(c.data.examples)
+          progress(d) + renderExamples(c.data.examples)
 
         case c: BackSide =>
-          btn("enter", " ok ") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg) + " " +
+          progress(d) + btn("enter", " ok ") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg) + " " +
             renderTranslations(c.data.translations)
 
         case c: Card =>
-          btn("enter", "flip") + delim + btn("space", "flip ") + "" + " ▹".attr(Foreground.color(22) | cssCtxBg) + " " +
+          progress(d) + btn("enter", "flip") + delim + btn("space", "flip ") + "" + " ▹".attr(Foreground.color(22) | cssCtxBg) + " " +
             renderCardValue(c.data)
 
       }.getOrElse(renderNoneCard))
@@ -235,6 +235,18 @@ object ExamController extends ExamExtensions with ArgumentParser {
       name.attr(ccsCtxFg | cssCtxBg | Format.Bold) + s"-$text".attr(ccsCtxFg | cssCtxBg)
 
     val delim = "|".attr(Foreground.color(234) | cssCtxBg)
+
+    def progress(d:Deck):String =
+      //progressPercentText(d)
+      progressCountText(d)
+
+    def progressPercentText(d: Deck): String = ("[" + (d.discard.length * 100 / d.deck.length) + "%] ").attr(ccsCtxFg | cssCtxBg)
+
+    def progressCountText(d: Deck): String = {
+      val percents: Int = d.discard.length * 100 / d.deck.length
+      ("[" + d.discard.length + "/" + d.deck.length + "] ").attr(ccsCtxFg | cssCtxBg)
+    }
+
   }
 
 
