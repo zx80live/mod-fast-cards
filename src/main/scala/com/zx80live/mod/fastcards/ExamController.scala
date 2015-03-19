@@ -2,6 +2,8 @@ package com.zx80live.mod.fastcards
 
 import java.io.File
 
+import com.zx80live.mod.fastcards.util.CardsWriter
+
 import scala.tools.jline.console.{ConsoleReader => R}
 
 object ExamController extends ExamExtensions with ArgumentParser {
@@ -22,7 +24,19 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
       val state: Deck = exam(cards)
       printStatistic(state.statistic)
-      //todo write state
+
+
+      badFilePrefixOpt.foreach { name =>
+
+        val xsMid = state.statistic.middle
+        val xsBad = state.statistic.bad
+
+        if (xsMid.nonEmpty)
+          CardsWriter.write(xsMid, new File(name + ".mid"))
+
+        if (xsBad.nonEmpty)
+          CardsWriter.write(xsBad, new File(name + ".bad"))
+      }
     }
   }
 
