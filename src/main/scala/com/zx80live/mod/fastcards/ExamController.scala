@@ -160,7 +160,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
     }
 
     def renderExamples(xs: List[Example]): String =
-      xs.map(e => "* " + e.text.trim).mkString("|").attr(Foreground.color(107))
+      (if (xs.nonEmpty) xs.map(e => "* " + e.text.trim).mkString("|") else "<no-examples>").attr(Foreground.color(107))
 
     def renderTranslations(xs: List[String]): String =
       xs.mkString("|").attr(Foreground.color(103))
