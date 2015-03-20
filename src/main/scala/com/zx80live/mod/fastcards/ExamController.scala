@@ -5,7 +5,7 @@ import java.io.File
 import com.zx80live.mod.fastcards.util.CardsWriter
 
 import scala.tools.jline.console.{ConsoleReader => R}
-import scala.util.{Success, Failure}
+import scala.util.{Random, Success, Failure}
 
 object ExamController extends ExamExtensions with ArgumentParser {
 
@@ -19,7 +19,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
   def main(args: Array[String]): Unit = parseArgs(args).map { config =>
     this.config = config
 
-    readCards(config).map { cards =>
+    readCards(config).map(xs => Random.shuffle(xs)).map { cards =>
       renderConfig(config)
 
       val state: Deck = exam(cards, config.enRu)
