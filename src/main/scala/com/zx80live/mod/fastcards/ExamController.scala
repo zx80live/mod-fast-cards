@@ -23,7 +23,10 @@ object ExamController extends ExamExtensions with ArgumentParser {
       renderStartExam(badFilePrefixOpt)
 
       val state: Deck = exam(cards)
-      printStatistic(state.statistic)
+      renderEndExam(state)
+
+
+
 
 
       badFilePrefixOpt.foreach { name =>
@@ -193,6 +196,12 @@ object ExamController extends ExamExtensions with ArgumentParser {
       }.getOrElse(renderNoneCard))
     }
 
+    def renderEndExam(d: Deck): Unit = {
+      clearLine()
+      println("\nexam success".attr(Format.Bold | Foreground.color(70)) + "\n")
+      printStatistic(d.statistic)
+    }
+
     def printStatistic(s: Statistic): Unit = {
       val bestWords = s.best.map(_.data.value).sorted
       val midWords = s.middle.map(_.data.value).sorted
@@ -239,6 +248,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
     def progress(d: Deck): String =
     //progressPercentText(d)
       progressCountText(d)
+
     //progressBar(d)
 
     def progressPercentText(d: Deck): String = ("[" + (d.discard.length * 100 / d.deck.length) + "%] ").attr(ccsCtxFg | cssCtxBg)
