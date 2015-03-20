@@ -36,13 +36,15 @@ trait ArgumentParser {
   def parseArgs(args: Array[String]): Option[Config] = parser.parse(args, Config())
 
   def readCards(config: Config): Try[List[Card]] = {
-    val cards: List[Card] = config.files.map(CardsReader.read).flatten.toList
-    val filtered = if (config.filter.nonEmpty) {
-      val filter: Seq[Some[String]] = config.filter.map(Some(_))
-      cards.filter(c => filter.contains(c.data.kind))
-    } else cards
+    Try {
+      val cards: List[Card] = config.files.map(CardsReader.read).flatten.toList
+      val filtered = if (config.filter.nonEmpty) {
+        val filter: Seq[Some[String]] = config.filter.map(Some(_))
+        cards.filter(c => filter.contains(c.data.kind))
+      } else cards
 
-    Success(filtered)
+      filtered
+    }
   }
 
 }

@@ -5,6 +5,7 @@ import java.io.File
 import com.zx80live.mod.fastcards.util.CardsWriter
 
 import scala.tools.jline.console.{ConsoleReader => R}
+import scala.util.Failure
 
 object ExamController extends ExamExtensions with ArgumentParser {
 
@@ -33,6 +34,9 @@ object ExamController extends ExamExtensions with ArgumentParser {
         if (xsBad.nonEmpty)
           CardsWriter.write(xsBad, new File(name + ".bad"))
       }
+    } match {
+      case Failure(e) => println(e.toString.attr(Foreground.Red))
+      case _ => Unit
     }
   }
 
