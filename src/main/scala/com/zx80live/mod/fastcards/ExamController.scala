@@ -13,8 +13,11 @@ object ExamController extends ExamExtensions with ArgumentParser {
   import com.zx80live.mod.fastcards.ExamController.Renderer._
   import com.zx80live.mod.fastcards.util.CollectionUtils._
 
+  var config: Config = _
+
 
   def main(args: Array[String]): Unit = parseArgs(args).map { config =>
+    this.config = config
 
     readCards(config).map { cards =>
       renderConfig(config)
@@ -201,9 +204,12 @@ object ExamController extends ExamExtensions with ArgumentParser {
     }
 
     def printStatistic(s: Statistic): Unit = {
-      val bestWords = s.best.map(_.data.value).sorted
-      val midWords = s.middle.map(_.data.value).sorted
-      val badWords = s.bad.map(_.data.value).sorted
+
+      def value(c: Card): String = if (config.enRu) c.data.value else c.data.translations.headOption.getOrElse("<none>")
+
+      val bestWords = s.best.map(value).sorted
+      val midWords = s.middle.map(value).sorted
+      val badWords = s.bad.map(value).sorted
 
       val maxSize = List(bestWords.length, midWords.length, badWords.length).max
       val result: List[((String, String), String)] =
