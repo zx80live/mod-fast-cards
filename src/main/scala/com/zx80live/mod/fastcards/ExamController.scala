@@ -14,7 +14,8 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
 
   def main(args: Array[String]): Unit = parseArgs(args).map { config =>
-    renderFiles(config.files)
+    renderConfig(config)
+
 
     readCards(config).map { cards =>
       val badMode = config.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true }.length > 0
@@ -22,7 +23,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
       renderStartExam(badFilePrefixOpt)
 
-      val state: Deck = exam(cards)
+      val state: Deck = exam(cards, config.enRu)
       renderEndExam(state)
 
 
@@ -44,7 +45,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
   }
 
 
-  def exam(cards: List[Card]): Deck = {
+  def exam(cards: List[Card], enRu: Boolean = true): Deck = {
     val con = new R()
     var state = Deck(cards)
 
@@ -52,7 +53,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     Timer.start()
     while (!state.isInstanceOf[EmptyStock]) {
-      printState(state)
+      printState(state, enRu)
 
       state = transition(Event(con.readVirtualKey(), state))
     }
@@ -157,8 +158,10 @@ object ExamController extends ExamExtensions with ArgumentParser {
   object Renderer {
     val consoleWidth = 155
 
-    def renderFiles(xs: Seq[File]): Unit =
-      println("\n" + xs.map(_.getName).mkString(", ").attr(Foreground.color(237)))
+    def renderConfig(config: Config): Unit = {
+      println("\n" + config.files.map(_.getName).mkString(", ").attr(Foreground.color(237)))
+      println("\n" + (if (config.enRu) "en-ru" else "ru-en"))
+    }
 
     def renderStartExam(badFilePrefixOpt: Option[String]): Unit =
       println("\nstart exam".attr(Format.Bold | Foreground.color(70)) + badFilePrefixOpt.map(_ => "").getOrElse(" " + "repeat bad".attr(Foreground.color(22))) + "\n")
@@ -177,8 +180,10 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     def clearLine(): Unit = print("\r" + (for (i <- 0 until consoleWidth) yield " ").mkString(""))
 
-    def printState(d: Deck): Unit = {
+    def printState(d: Deck, enRu: Boolean = true): Unit = {
       clearLine()
+
+
 
       print("\r" + d.current.map {
 
@@ -186,12 +191,12 @@ object ExamController extends ExamExtensions with ArgumentParser {
           progress(d) + renderExamples(c.data.examples)
 
         case c: BackSide =>
-          progress(d) + btn("enter", " ok ") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg | Format.Blink) + " " +
-            renderTranslations(c.data.translations)
+          progress(d) + btn("enter", " ok ") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg | Format.Blink) + " " + (if (enRu) renderTranslations(c.data.translations) else renderCardValue(c.data))
+
 
         case c: Card =>
-          progress(d) + btn("enter", "flip") + delim + btn("space", "flip ") + "" + " ▹".attr(Foreground.color(22) | cssCtxBg) + " " +
-            renderCardValue(c.data)
+          progress(d) + btn("enter", "flip") + delim + btn("space", "flip ") + "" + " ▹".attr(Foreground.color(22) | cssCtxBg) + " " + (if (enRu) renderCardValue(c.data) else renderTranslations(c.data.translations))
+
 
       }.getOrElse(renderNoneCard))
     }

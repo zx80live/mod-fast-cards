@@ -9,5 +9,3 @@ todo проверять доступность файлов
 todo после завершения экзамена:
     - key to exit
     - key to repeat bad
-
-todo режим en-ru
