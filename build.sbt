@@ -4,7 +4,7 @@ assemblySettings
 
 jarName in assembly := "mod-fast-cards.jar"
 
-mainClass in assembly := Some("com.zx80live.mod.fastcards.Exam")
+mainClass in assembly := Some("com.zx80live.mod.fastcards.ExamController")
 
 excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
   cp filter {
