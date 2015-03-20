@@ -11,6 +11,13 @@ trait ArgumentParser {
 
   case class Config(files: Seq[File] = Seq(), enRu: Boolean = false, filter: Seq[String] = Seq())
 
+  implicit class ConfigExtensions(c: Config) {
+    def badMode = c.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true }.length > 0
+
+    def badFilePrefixOpt: Option[String] = if (!badMode) Some(c.files.map(_.getName).mkString("_")) else None
+  }
+
+
   val parser = new scopt.OptionParser[Config]("exam") {
     head("Fast-cards", "3.x")
     arg[Seq[File]]("<file>...") unbounded() action { (x, c) =>

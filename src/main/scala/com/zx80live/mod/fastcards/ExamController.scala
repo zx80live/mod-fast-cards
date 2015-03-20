@@ -18,19 +18,14 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
 
     readCards(config).map { cards =>
-      val badMode = config.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true }.length > 0
-      val badFilePrefixOpt: Option[String] = if (!badMode) Some(config.files.map(_.getName).mkString("_")) else None
 
-      renderStartExam(badFilePrefixOpt)
+      renderStartExam(config.badFilePrefixOpt)
 
       val state: Deck = exam(cards, config.enRu)
       renderEndExam(state)
 
 
-
-
-
-      badFilePrefixOpt.foreach { name =>
+      config.badFilePrefixOpt.foreach { name =>
 
         val xsMid = state.statistic.middle
         val xsBad = state.statistic.bad
