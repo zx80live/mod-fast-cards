@@ -14,12 +14,9 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
 
   def main(args: Array[String]): Unit = parseArgs(args).map { config =>
-    renderConfig(config)
-
 
     readCards(config).map { cards =>
-
-      renderStartExam(config.badFilePrefixOpt)
+      renderConfig(config)
 
       val state: Deck = exam(cards, config.enRu)
       renderEndExam(state)
@@ -154,12 +151,9 @@ object ExamController extends ExamExtensions with ArgumentParser {
     val consoleWidth = 155
 
     def renderConfig(config: Config): Unit = {
-      println("\n" + config.files.map(_.getName).mkString(", ").attr(Foreground.color(237)))
-      println("\n" + (if (config.enRu) "en-ru" else "ru-en"))
+      println("\n" + ((if (config.enRu) "en-ru" else "ru-en") + ": ").attr(Foreground.color(236)) + config.files.map(_.getName).mkString(", ").attr(Foreground.color(237)))
+      println("\n" + config.badFilePrefixOpt.map(_ => "start exam").getOrElse("start repeat bad").attr(Format.Bold | Foreground.color(70)) + "\n")
     }
-
-    def renderStartExam(badFilePrefixOpt: Option[String]): Unit =
-      println("\nstart exam".attr(Format.Bold | Foreground.color(70)) + badFilePrefixOpt.map(_ => "").getOrElse(" " + "repeat bad".attr(Foreground.color(22))) + "\n")
 
     def renderExamples(xs: List[Example]): String =
       xs.map(e => "* " + e.text.trim).mkString("|").attr(Foreground.color(107))
