@@ -2,7 +2,7 @@ get [гет] :verb:получить|сделать
     * get out:уйти|выметаться
 
 w0::перевод
-    * ex1 some text with words
+    * ex1 some `text` with words and `some words` abcd
     * ex2
     * ex3:перевод
     * ex4:перевод1`перевод2
