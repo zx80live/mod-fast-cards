@@ -17,7 +17,7 @@ object CardsReader {
 
 
   def read(file: File): List[Card] = {
-    val textContent = """\w\s|'\(\)\=\-а-яА-Я,\."""
+    val textContent = """\w\s|'\(\)\=\-а-яА-Я,\.`"""
     val wordPattern = ("""^([""" + textContent + """]+)(\s*\[[\w\sа-яА-Я]+\]\s*)*\:([\s\w]*)\:([""" + textContent + """]*)$""").r
     val examplePattern = ("""^\s*\*([""" + textContent + """]+)\s*\:*([""" + textContent + """]*)\s*$""").r
     var card: Option[Card] = None

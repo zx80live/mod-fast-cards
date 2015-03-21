@@ -14,3 +14,7 @@ todo язык разметки текста (везде):
     [some text] - подчеркивать
     - выделить в отдельный тег renderText
 
+todo zx80.regex.decorator
+    - decorateAll(pattern, left, right)
+    - decorateAll("[someWordPattern]", "**", "**")
+

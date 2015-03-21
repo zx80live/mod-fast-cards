@@ -3,6 +3,7 @@ package com.zx80live.mod.fastcards
 import java.io.File
 
 import com.zx80live.mod.fastcards.util.CardsWriter
+import com.zx80live.mod.fastcards.util.regex.RegexDecorator
 
 import scala.tools.jline.console.{ConsoleReader => R}
 import scala.util.{Random, Success, Failure}
@@ -155,6 +156,9 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
 
   object Renderer {
+
+    import RegexDecorator._
+
     val consoleWidth = 155
 
     def renderConfig(config: Config): Unit = {
@@ -163,12 +167,12 @@ object ExamController extends ExamExtensions with ArgumentParser {
     }
 
     def renderExamples(xs: List[Example]): String =
-      (if (xs.nonEmpty) xs.map(e => "* " + e.text.trim).mkString("|") else "<no-examples>").attr(Foreground.color(107))
+      (if (xs.nonEmpty) xs.map(e => "* " + text(e.text.trim)).mkString("|") else "<no-examples>").attr(Foreground.color(107))
 
     def renderTranslations(xs: List[String]): String =
-      xs.mkString("|").attr(Foreground.color(103))
+      text(xs.mkString("|")).attr(Foreground.color(103))
 
-    def renderCardValue(d: Data): String = d.value.attr(Format.Bold | Foreground.Cyan) +
+    def renderCardValue(d: Data): String = text(d.value).attr(Format.Bold | Foreground.Cyan) +
       d.transcript.map(t => ("[" + t + "]").foreground(24)).getOrElse("") + " " +
       d.kind.getOrElse("").attr(Foreground.Yellow)
 
@@ -271,6 +275,8 @@ object ExamController extends ExamExtensions with ArgumentParser {
       val bar = ("" :: Nil).fill(symbol, currentLength).fill(space, barLength).mkString("")
       ("" + bar + "").attr(ccsCtxFg | cssCtxBg) + (percents + "% ").attr(ccsCtxFg | cssCtxBg) + ""
     }
+
+    def text(s: String): String = s.decorateAll("`(.*?)`", "[", "]")
 
   }
 
