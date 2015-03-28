@@ -208,8 +208,10 @@ object ExamController extends ExamExtensions with ArgumentParser {
     }
 
     def printStatistic(s: Statistic): Unit = {
+      val normalizedLen = 20
+      def normalize(s: String): String = if (s.length < normalizedLen) s else s.substring(0, normalizedLen) + ".."
 
-      def value(c: Card): String = if (config.enRu) c.data.value else c.data.translations.headOption.getOrElse("<none>")
+      def value(c: Card): String = normalize(if (config.enRu) c.data.value else c.data.translations.headOption.getOrElse("<none>"))
 
       val bestWords = s.best.map(value).sorted
       val midWords = s.middle.map(value).sorted
