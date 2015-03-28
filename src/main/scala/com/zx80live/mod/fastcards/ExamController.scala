@@ -75,9 +75,12 @@ object ExamController extends ExamExtensions with ArgumentParser {
       val RIGHT = 6
       val SPACE = 32
       val ENTER = 10
-      val I = 105
-      val S = 115
-      val D = 100
+      val INFO = 105
+      val STATISTIC = 115
+      val DROP = 100
+      val PAUSE = 112
+      val SUGGEST = 0
+      val UNDO = 122
       val CTRL_D = scala.tools.jline.console.Key.CTRL_D.code
     }
 
@@ -120,7 +123,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
     }
 
     val caseInfo: PartialFunction[Event, Deck] = {
-      case Event(Code.I, s) =>
+      case Event(Code.INFO, s) =>
         s.current match {
           case Some(c: InfoSide) => s.reverseCurrent
           case _ => s.infoCurrent
@@ -128,13 +131,13 @@ object ExamController extends ExamExtensions with ArgumentParser {
     }
 
     val caseStatistic: PartialFunction[Event, Deck] = {
-      case Event(Code.S, s) =>
+      case Event(Code.STATISTIC, s) =>
         printStatistic(s.statistic)
         s
     }
 
     val caseDrop: PartialFunction[Event, Deck] = {
-      case Event(Code.D, s) =>
+      case Event(Code.DROP, s) =>
         Timer.start()
         s.drop
     }
@@ -145,13 +148,25 @@ object ExamController extends ExamExtensions with ArgumentParser {
         s.dropAll
     }
 
+    val casePause: PartialFunction[Event, Deck] = {
+      case Event(Code.PAUSE, s) => s //todo pause
+    }
+
+    val caseUndo: PartialFunction[Event, Deck] = {
+      case Event(Code.UNDO, s) => s //todo undo
+    }
+
+    val caseSuggest: PartialFunction[Event, Deck] = {
+      case Event(Code.SUGGEST, s) => s //todo suggest
+    }
+
     val wildcard: PartialFunction[Event, Deck] = {
       case Event(_, s) => s
     }
 
     def transition = caseRight orElse caseLeft orElse
       caseSpace orElse caseEnter orElse
-      caseInfo orElse caseStatistic orElse caseDrop orElse caseDropAll orElse wildcard
+      casePause orElse caseUndo orElse caseSuggest orElse caseInfo orElse caseStatistic orElse caseDrop orElse caseDropAll orElse wildcard
   }
 
 
