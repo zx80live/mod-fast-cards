@@ -31,6 +31,7 @@ todo режим подсказок:
 
 todo полноценная модель FSM с навигацией по состояниям (by types|by parameters):
     - @see akka FSM
+    - задавать граф переходов целиком?
     - undo current card estimate action
 
 todo второй заход перемешивать снова
