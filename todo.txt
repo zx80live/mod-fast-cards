@@ -21,3 +21,6 @@ todo zx80.regex.decorator
 todo комментарии к слову/фразе
 
 todo формула использования слова/фразы
+
+todo card model:
+    - card meta
