@@ -31,3 +31,5 @@ todo режим подсказок:
 
 todo undo action
     - undo pattern
+
+todo pause action
