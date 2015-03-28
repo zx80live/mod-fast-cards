@@ -30,3 +30,4 @@ todo режим подсказок:
     - подсказка из файла
 
 todo undo action
+    - undo pattern
