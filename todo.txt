@@ -30,6 +30,7 @@ todo режим подсказок:
     - подсказка из файла
 
 todo полноценная модель FSM с навигацией по состояниям (by types|by parameters):
+    - @see akka FSM
     - undo current card estimate action
 
 todo второй заход перемешивать снова
