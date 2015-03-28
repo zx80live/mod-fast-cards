@@ -29,8 +29,8 @@ todo режим подсказок:
     - первая буква
     - подсказка из файла
 
-todo undo action
-    - undo pattern
+todo полноценная модель FSM с навигацией по состояниям (by types|by parameters):
+    - undo current card estimate action
 
 todo второй заход перемешивать снова
 
