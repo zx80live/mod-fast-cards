@@ -78,7 +78,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
       val INFO = 105
       val STATISTIC = 115
       val DROP = 100
-      val PAUSE = 112
+      val RESET_TIMER = 112
       val SUGGEST = 0
       val UNDO = 122
       val CTRL_D = scala.tools.jline.console.Key.CTRL_D.code
@@ -148,8 +148,8 @@ object ExamController extends ExamExtensions with ArgumentParser {
         s.dropAll
     }
 
-    val casePause: PartialFunction[Event, Deck] = {
-      case Event(Code.PAUSE, s) => s //todo pause
+    val caseResetTimer: PartialFunction[Event, Deck] = {
+      case Event(Code.RESET_TIMER, s) => Timer.start(); s
     }
 
     val caseUndo: PartialFunction[Event, Deck] = {
@@ -166,7 +166,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     def transition = caseRight orElse caseLeft orElse
       caseSpace orElse caseEnter orElse
-      casePause orElse caseUndo orElse caseSuggest orElse caseInfo orElse caseStatistic orElse caseDrop orElse caseDropAll orElse wildcard
+      caseResetTimer orElse caseUndo orElse caseSuggest orElse caseInfo orElse caseStatistic orElse caseDrop orElse caseDropAll orElse wildcard
   }
 
 
