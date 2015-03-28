@@ -220,43 +220,43 @@ class ExamExtensionsSpec extends WordSpec with Matchers {
       }
 
       "frontCurrent" in {
-        Deck(List(c0, c1, c3), Nil).frontCurrent.current.get.isInstanceOf[BackSide] shouldEqual false
+        Deck(List(c0, c1, c3), Nil).frontSideCurrent.current.get.isInstanceOf[BackSide] shouldEqual false
 
         Deck(List(c0, c1, c3), Nil).current.get.isInstanceOf[BackSide] shouldEqual false
-        Deck(List(c0, c1, c3), Nil).reverseCurrent.current.get.isInstanceOf[BackSide] shouldEqual true
+        Deck(List(c0, c1, c3), Nil).reverseSideCurrent.current.get.isInstanceOf[BackSide] shouldEqual true
       }
 
       "backCurrent" in {
-        Deck(List(c0, c1, c3), Nil).backCurrent.current.get.isInstanceOf[BackSide] shouldEqual true
+        Deck(List(c0, c1, c3), Nil).backSideCurrent.current.get.isInstanceOf[BackSide] shouldEqual true
 
         Deck(List(c0, c1, c3), Nil).current.get.isInstanceOf[BackSide] shouldEqual false
-        Deck(List(c0, c1, c3), Nil).reverseCurrent.current.get.isInstanceOf[BackSide] shouldEqual true
+        Deck(List(c0, c1, c3), Nil).reverseSideCurrent.current.get.isInstanceOf[BackSide] shouldEqual true
       }
 
       "reverseCurrent" in {
         Deck(List(c0, c1, c3), Nil).current.get.isInstanceOf[BackSide] shouldEqual false
-        Deck(List(c0, c1, c3), Nil).reverseCurrent.current.get.isInstanceOf[BackSide] shouldEqual true
-        Deck(List(c0, c1, c3), Nil).reverseCurrent.reverseCurrent.current.get.isInstanceOf[BackSide] shouldEqual false
+        Deck(List(c0, c1, c3), Nil).reverseSideCurrent.current.get.isInstanceOf[BackSide] shouldEqual true
+        Deck(List(c0, c1, c3), Nil).reverseSideCurrent.reverseSideCurrent.current.get.isInstanceOf[BackSide] shouldEqual false
       }
     }
 
     "Card extensions" should {
       "front" in {
-        c0.front.isInstanceOf[BackSide] shouldBe false
-        c0.back.isInstanceOf[BackSide] shouldBe true
-        c0.back.front.isInstanceOf[BackSide] shouldBe false
+        c0.frontSide.isInstanceOf[BackSide] shouldBe false
+        c0.backSide.isInstanceOf[BackSide] shouldBe true
+        c0.backSide.frontSide.isInstanceOf[BackSide] shouldBe false
       }
 
       "back" in {
-        c0.back.isInstanceOf[BackSide] shouldBe true
-        c0.front.isInstanceOf[BackSide] shouldBe false
-        c0.front.back.isInstanceOf[BackSide] shouldBe true
+        c0.backSide.isInstanceOf[BackSide] shouldBe true
+        c0.frontSide.isInstanceOf[BackSide] shouldBe false
+        c0.frontSide.backSide.isInstanceOf[BackSide] shouldBe true
       }
 
       "reverse" in {
         c0.isInstanceOf[BackSide] shouldBe false
-        c0.reverse.isInstanceOf[BackSide] shouldBe true
-        c0.reverse.reverse.isInstanceOf[BackSide] shouldBe false
+        c0.reverseSide.isInstanceOf[BackSide] shouldBe true
+        c0.reverseSide.reverseSide.isInstanceOf[BackSide] shouldBe false
       }
 
       "addPass" in {

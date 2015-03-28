@@ -33,18 +33,18 @@ trait ExamExtensions {
       case _ => new Card(c.data, c.times) with InfoSide
     }
 
-    def front: Card = c match {
+    def frontSide: Card = c match {
       case _: BackSide => new Card(c.data, c.times)
       case _ => c
     }
 
-    def back: Card = c match {
+    def backSide: Card = c match {
       case _: BackSide => c
       case _ => new Card(c.data, c.times) with BackSide
     }
 
     //todo change test with InfoSide
-    def reverse: Card = c match {
+    def reverseSide: Card = c match {
       case _: BackSide with InfoSide => new Card(c.data, c.times) with BackSide
       case _: BackSide => new Card(c.data, c.times)
       case _: Card with InfoSide => new Card(c.data, c.times)
@@ -75,11 +75,11 @@ trait ExamExtensions {
     //todo test
     def infoCurrent: Deck = d.current.map(c => d.replaceCurrent(c.info)).getOrElse(d)
 
-    def frontCurrent: Deck = d.current.map(c => d.replaceCurrent(c.front)).getOrElse(d)
+    def frontSideCurrent: Deck = d.current.map(c => d.replaceCurrent(c.frontSide)).getOrElse(d)
 
-    def backCurrent: Deck = d.current.map(c => d.replaceCurrent(c.back)).getOrElse(d)
+    def backSideCurrent: Deck = d.current.map(c => d.replaceCurrent(c.backSide)).getOrElse(d)
 
-    def reverseCurrent: Deck = d.current.map(c => d.replaceCurrent(c.reverse)).getOrElse(d)
+    def reverseSideCurrent: Deck = d.current.map(c => d.replaceCurrent(c.reverseSide)).getOrElse(d)
 
     def asEmptyStock: Deck = if (d.stock.isEmpty) new Deck(d.stock, d.discard) with EmptyStock else d
 

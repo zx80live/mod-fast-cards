@@ -106,7 +106,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
           case Some(c: BackSide) =>
             Timer.start()
             s.estimateFalse
-          case _ => s.backCurrent
+          case _ => s.backSideCurrent
         }
     }
 
@@ -118,14 +118,14 @@ object ExamController extends ExamExtensions with ArgumentParser {
             Timer.start()
             s.estimateTrue(time)
 
-          case _ => s.backCurrent
+          case _ => s.backSideCurrent
         }
     }
 
     val caseInfo: PartialFunction[Event, Deck] = {
       case Event(Code.INFO, s) =>
         s.current match {
-          case Some(c: InfoSide) => s.reverseCurrent
+          case Some(c: InfoSide) => s.reverseSideCurrent
           case _ => s.infoCurrent
         }
     }
