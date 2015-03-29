@@ -11,6 +11,6 @@ case class Data(value: String,
 
 case class Example(text: String, translations: List[String] = Nil)
 
-case class Deck(stock: List[Card], discard: List[Card] = Nil)
+case class Deck(stock: List[Card], discard: List[Card] = Nil, answered: List[Card] = Nil)
 
 case class Statistic(best: List[Card], middle: List[Card], bad: List[Card])
