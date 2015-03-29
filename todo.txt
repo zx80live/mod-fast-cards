@@ -4,12 +4,9 @@ TODO поддерживать синонимы типов: adv=adverb, modal=mod
 
 TODO перенести в резюме опыт со всякими туннелированием портов, bridge2 и т.п.
 
-todo после завершения экзамена:
-    - key to exit
-    - key to repeat bad
+todo после завершения экзамена key to exit | key to repeat bad
 
-todo card model:
-    - card meta
+todo card model: card meta
 
 todo второй заход перемешивать снова
 
