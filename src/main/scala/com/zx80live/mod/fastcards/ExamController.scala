@@ -5,6 +5,7 @@ import java.io.File
 import com.zx80live.mod.fastcards.util.CardsWriter
 import com.zx80live.mod.fastcards.util.regex.RegexDecorator
 
+import scala.collection.mutable
 import scala.tools.jline.console.{ConsoleReader => R}
 import scala.util.{Random, Success, Failure}
 
@@ -20,7 +21,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
   def main(args: Array[String]): Unit = parseArgs(args).map { config =>
     this.config = config
 
-    readCards(config).map(xs => Random.shuffle(xs)).map { cards =>
+    readCards(config).map { xs => if (!config.noShuffle) Random.shuffle(xs) else xs }.map { cards =>
       renderConfig(config)
 
       val state: Deck = exam(cards, config.enRu)
@@ -48,6 +49,8 @@ object ExamController extends ExamExtensions with ArgumentParser {
   def exam(cards: List[Card], enRu: Boolean = true): Deck = {
     val con = new R()
     var state = Deck(cards)
+    implicit var history: mutable.Stack[Deck] = mutable.Stack[Deck]()
+
 
     import Actions.{Event, transition, Timer}
 
@@ -55,7 +58,8 @@ object ExamController extends ExamExtensions with ArgumentParser {
     while (!state.isInstanceOf[EmptyStock]) {
       printState(state, enRu)
 
-      state = transition(Event(con.readVirtualKey(), state))
+      val newState: Deck = transition(Event(con.readVirtualKey(), state))
+      state = newState
     }
     state
   }
@@ -71,8 +75,6 @@ object ExamController extends ExamExtensions with ArgumentParser {
     }
 
     object Code {
-      val LEFT = 2
-      val RIGHT = 6
       val SPACE = 32
       val ENTER = 10
       val INFO = 105
@@ -80,7 +82,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
       val DROP = 100
       val RESET_TIMER = 112
       val SUGGEST = 0
-      val UNDO = 122
+      val UNDO = 8
       val CTRL_D = scala.tools.jline.console.Key.CTRL_D.code
     }
 
@@ -88,87 +90,45 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     implicit val passLimit: Int = 2
 
-    val caseRight: PartialFunction[Event, Deck] = {
-      case Event(Code.RIGHT, s) =>
-        Timer.start()
-        s.resetCurrent.next
-    }
-
-    val caseLeft: PartialFunction[Event, Deck] = {
-      case Event(Code.LEFT, s) =>
-        Timer.start()
-        s.resetCurrent.prev
-    }
-
-    val caseSpace: PartialFunction[Event, Deck] = {
+    def transition(evt: Event)(implicit history: mutable.Stack[Deck]): Deck = evt match {
       case Event(Code.SPACE, s) =>
         s.current match {
           case Some(c: BackSide) =>
             Timer.start()
+            history.push(s)
             s.estimateFalse
           case _ => s.backSideCurrent
         }
-    }
-
-    val caseEnter: PartialFunction[Event, Deck] = {
       case Event(Code.ENTER, s) =>
         s.current match {
           case Some(c: BackSide) =>
             val time = Timer.getTime
             Timer.start()
+            history.push(s)
             s.estimateTrue(time)
 
           case _ => s.backSideCurrent
         }
-    }
-
-    val caseInfo: PartialFunction[Event, Deck] = {
       case Event(Code.INFO, s) =>
         s.current match {
           case Some(c: InfoSide) => s.reverseSideCurrent
           case _ => s.infoCurrent
         }
-    }
-
-    val caseStatistic: PartialFunction[Event, Deck] = {
       case Event(Code.STATISTIC, s) =>
         printStatistic(s.statistic)
         s
-    }
-
-    val caseDrop: PartialFunction[Event, Deck] = {
       case Event(Code.DROP, s) =>
         Timer.start()
         s.drop
-    }
-
-    val caseDropAll: PartialFunction[Event, Deck] = {
       case Event(Code.CTRL_D, s) =>
         Timer.start()
         s.dropAll
-    }
-
-    val caseResetTimer: PartialFunction[Event, Deck] = {
       case Event(Code.RESET_TIMER, s) => Timer.start(); s
-    }
-
-    val caseUndo: PartialFunction[Event, Deck] = {
-      case Event(Code.UNDO, s) => s //todo undo
-    }
-
-    val caseSuggest: PartialFunction[Event, Deck] = {
+      case Event(Code.UNDO, s) => if (history.nonEmpty) history.pop() else s
       case Event(Code.SUGGEST, s) => s //todo suggest
-    }
-
-    val wildcard: PartialFunction[Event, Deck] = {
       case Event(_, s) => s
     }
-
-    def transition = caseRight orElse caseLeft orElse
-      caseSpace orElse caseEnter orElse
-      caseResetTimer orElse caseUndo orElse caseSuggest orElse caseInfo orElse caseStatistic orElse caseDrop orElse caseDropAll orElse wildcard
   }
-
 
   object Renderer {
 
