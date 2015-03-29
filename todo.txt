@@ -8,8 +8,6 @@ todo после завершения экзамена:
     - key to exit
     - key to repeat bad
 
-todo если примеров нет - показывать слово + <no examples>
-
 todo card model:
     - card meta
 

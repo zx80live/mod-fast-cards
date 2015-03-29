@@ -141,8 +141,8 @@ object ExamController extends ExamExtensions with ArgumentParser {
       println("\n" + config.badFilePrefixOpt.map(_ => "start exam").getOrElse("start repeat bad").attr(Format.Bold | Foreground.color(70)) + "\n")
     }
 
-    def renderExamples(xs: List[Example]): String =
-      (if (xs.nonEmpty) xs.map(e => "* " + text(e.text.trim)).mkString("|") else "<no-examples>").attr(Foreground.color(107))
+    def renderExamples(c: Card): String =
+      (if (c.data.examples.nonEmpty) c.data.examples.map(e => "* " + text(e.text.trim)).mkString("|") else c.data.value + ": <no-examples>").attr(Foreground.color(107))
 
     def renderTranslations(xs: List[String]): String =
       text(xs.mkString("|")).attr(Foreground.color(103))
@@ -163,7 +163,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
       print("\r" + d.current.map {
 
         case c: InfoSide =>
-          progress(d) + renderExamples(c.data.examples)
+          progress(d) + renderExamples(c)
 
         case c: BackSide =>
           progress(d) + btn("enter", " ok ") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg | Format.Blink) + " " + (if (enRu) renderTranslations(c.data.translations) else renderCardValue(c.data))
