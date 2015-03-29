@@ -1,0 +1,4 @@
+todo refactoring model:
+    - deck (stock, answeredStock, discard)
+
+todo progress bar: current pass/discard pass
