@@ -95,7 +95,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
         s.current match {
           case Some(c: BackSide) =>
             Timer.start()
-            history.push(s)
+            history.push(s.resetCurrent)
             s.estimateFalse
           case _ => s.backSideCurrent
         }
@@ -104,7 +104,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
           case Some(c: BackSide) =>
             val time = Timer.getTime
             Timer.start()
-            history.push(s)
+            history.push(s.resetCurrent)
             s.estimateTrue(time)
 
           case _ => s.backSideCurrent

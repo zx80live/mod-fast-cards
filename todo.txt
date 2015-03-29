@@ -10,30 +10,12 @@ todo после завершения экзамена:
 
 todo если примеров нет - показывать слово + <no examples>
 
-todo язык разметки текста (везде):
-    [some text] - подчеркивать
-    - выделить в отдельный тег renderText
-
-todo zx80.regex.decorator
-    - decorateAll(pattern, left, right)
-    - decorateAll("[someWordPattern]", "**", "**")
-
-todo комментарии к слову/фразе
-
-todo формула использования слова/фразы
-
 todo card model:
     - card meta
 
 todo режим подсказок:
     - первая буква
     - подсказка из файла
-
-todo полноценная модель FSM с навигацией по состояниям (by types|by parameters):
-    - @see akka FSM
-    - задавать граф переходов целиком?
-        -- @see ТА:СКУ,СВФ http://alice.pnzgu.ru/007/books/ke/text/
-    - undo current card estimate action
 
 todo второй заход перемешивать снова
 
