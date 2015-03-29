@@ -81,7 +81,6 @@ object ExamController extends ExamExtensions with ArgumentParser {
       val STATISTIC = 115
       val DROP = 100
       val RESET_TIMER = 112
-      val SUGGEST = 0
       val UNDO = 8
       val CTRL_D = scala.tools.jline.console.Key.CTRL_D.code
     }
@@ -125,7 +124,6 @@ object ExamController extends ExamExtensions with ArgumentParser {
         s.dropAll
       case Event(Code.RESET_TIMER, s) => Timer.start(); s
       case Event(Code.UNDO, s) => if (history.nonEmpty) history.pop() else s
-      case Event(Code.SUGGEST, s) => s //todo suggest
       case Event(_, s) => s
     }
   }
