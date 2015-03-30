@@ -230,9 +230,8 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     def progress(d: Deck): String =
     //progressPercentText(d)
-      progressCountText(d)
-
-    //progressBar(d)
+    //progressCountText(d)
+      progressBar(d)
 
     def progressPercentText(d: Deck): String = ("[" + (d.discard.length * 100 / d.deck.length) + "%] ").attr(ccsCtxFg | cssCtxBg)
 
