@@ -11,7 +11,7 @@ trait ArgumentParser {
   import java.io.File
 
 
-  case class Config(files: Seq[File] = Seq(), enRu: Boolean = false, filter: Seq[String] = Seq(), noShuffle: Boolean = false, passCount: Int = 2, randomWords: Option[Int] = None)
+  case class Config(files: Seq[File] = Seq(), enRu: Boolean = false, filter: Seq[String] = Seq(), noShuffle: Boolean = false, passCount: Int = 2, randomWords: Option[Int] = None, noMakeBads: Boolean = false)
 
   @deprecated
   implicit class ConfigExtensions(c: Config) {
@@ -49,6 +49,9 @@ trait ArgumentParser {
     }
     opt[Int]('r', "random-words") action { (v, c) =>
       c.copy(randomWords = Some(v))
+    }
+    opt[Unit]("no-make-bads") action { (v, c) =>
+      c.copy(noMakeBads = true)
     }
     opt[Seq[String]]('f', "filter") valueName "<type1>,<type2>..." action { (x, c) =>
       c.copy(filter = x)

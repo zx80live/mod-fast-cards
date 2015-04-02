@@ -29,24 +29,28 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     renderConfig(config, successSources)
 
-    val cards: List[Card] = successSources.map { case (_, xs) => xs }.flatten.toList
+    val cards: List[Card] = {
+      val list = successSources.map { case (_, xs) => xs }.flatten.toList
+      val shuffled = if (config.noShuffle) list else Random.shuffle(list)
+      config.randomWords.map(Random.shuffle(shuffled).take).getOrElse(shuffled)
+    }
 
     implicit val cfg: Config = config
     val state: Deck = exam(cards)
     renderEndExam(state)
 
+    if (!config.noMakeBads) {
+      successSources.map(_._1).badFilePrefixOpt.foreach { name =>
+        val xsMid = state.statistic.middle
+        val xsBad = state.statistic.bad
 
-    successSources.map(_._1).badFilePrefixOpt.foreach { name =>
-      val xsMid = state.statistic.middle
-      val xsBad = state.statistic.bad
+        if (xsMid.nonEmpty)
+          CardsWriter.write(xsMid, new File(name + ".mid"))
 
-      if (xsMid.nonEmpty)
-        CardsWriter.write(xsMid, new File(name + ".mid"))
-
-      if (xsBad.nonEmpty)
-        CardsWriter.write(xsBad, new File(name + ".bad"))
+        if (xsBad.nonEmpty)
+          CardsWriter.write(xsBad, new File(name + ".bad"))
+      }
     }
-
     Unit
   }
 
@@ -145,7 +149,8 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     def renderConfig(config: Config, successSources: Seq[(File, List[Card])]): Unit = {
       println("\n" + ((if (config.enRu) "en-ru" else "ru-en") + ": ").attr(Foreground.color(236)) + successSources.map(_._1.getName).mkString(", ").attr(Foreground.color(237)))
-      config.randomWords.foreach(value => println("\nrandom-words: " + value))
+      //config.randomWords.foreach(value => println("\nrandom-words: " + value))
+      //println("\n " + config.noMakeBads)
       println("\n" + successSources.map(_._1).badFilePrefixOpt.map(_ => "start exam").getOrElse("start repeat bad").attr(Format.Bold | Foreground.color(70)) + "\n")
     }
 
