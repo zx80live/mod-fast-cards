@@ -88,7 +88,7 @@ trait ArgumentParser {
   def readCards(config: Config): Seq[(File, Try[List[Card]])] = {
     config.files.map { file =>
       val triedCards: Try[List[Card]] = Try {
-        val xs: List[Card] = CardsReader.read(file)
+        val xs: List[Card] = CardsReader.read(file, config.verboseParse)
         if (config.filter.nonEmpty) {
           val filter: Seq[Some[String]] = config.filter.map(Some(_))
           xs.filter(c => filter.contains(c.data.kind))
