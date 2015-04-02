@@ -19,8 +19,8 @@ trait ExamExtensions {
 
 
   val BAD_TIME_IN_MS: Long = 1000 * 60L
-  val limitBadMs: Long = 8000
-  val limitBestMs: Long = 3000
+  val limitBadMs: Long = 10000
+  val limitBestMs: Long = 5000
 
   implicit class CardExtensions(c: Card) {
 
