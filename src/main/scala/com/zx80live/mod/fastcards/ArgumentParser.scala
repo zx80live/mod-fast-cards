@@ -11,10 +11,17 @@ trait ArgumentParser {
 
   case class Config(files: Seq[File] = Seq(), enRu: Boolean = false, filter: Seq[String] = Seq(), noShuffle: Boolean = false, passCount: Int = 2)
 
+  @deprecated
   implicit class ConfigExtensions(c: Config) {
     def badMode = c.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true }.length > 0
 
     def badFilePrefixOpt: Option[String] = if (!badMode) Some(c.files.map(_.getName).mkString("_")) else None
+  }
+
+  implicit class FileListExtensions(files: Seq[File]) {
+    def badMode = files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true }.length > 0
+
+    def badFilePrefixOpt: Option[String] = if (!badMode) Some(files.map(_.getName).mkString("_")) else None
   }
 
 
@@ -48,16 +55,16 @@ trait ArgumentParser {
 
   def parseArgs(args: Array[String]): Option[Config] = parser.parse(args, Config())
 
-  def readCards(config: Config): Try[List[Card]] = {
-    Try {
-      val cards: List[Card] = config.files.map(CardsReader.read).flatten.toList
-      val filtered = if (config.filter.nonEmpty) {
-        val filter: Seq[Some[String]] = config.filter.map(Some(_))
-        cards.filter(c => filter.contains(c.data.kind))
-      } else cards
-
-      filtered
-    }
-  }
+  def readCards(config: Config): Seq[(File, List[Card])] =
+    config.files.map { file =>
+      Try {
+        val xs: List[Card] = CardsReader.read(file)
+        val cards: List[Card] = if (config.filter.nonEmpty) {
+          val filter: Seq[Some[String]] = config.filter.map(Some(_))
+          xs.filter(c => filter.contains(c.data.kind))
+        } else xs
+        if (cards.nonEmpty) Some(file, cards) else None
+      }.getOrElse(None)
+    }.flatten
 
 }

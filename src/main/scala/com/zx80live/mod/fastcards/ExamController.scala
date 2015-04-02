@@ -21,29 +21,32 @@ object ExamController extends ExamExtensions with ArgumentParser {
   def main(args: Array[String]): Unit = parseArgs(args).map { config =>
     this.config = config
 
-    readCards(config).map { xs => if (!config.noShuffle) Random.shuffle(xs) else xs }.map { cards =>
-      renderConfig(config)
 
-      implicit val cfg: Config = config
-      val state: Deck = exam(cards)
-      renderEndExam(state)
+    val src: Seq[(File, List[Card])] = readCards(config)
+    val cards: List[Card] = src.map { case (_, list) => list }.flatten.toList
+
+    //{{ render config
+    println("\n" + ((if (config.enRu) "en-ru" else "ru-en") + ": ").attr(Foreground.color(236)) + src.map(_._1.getName).mkString(", ").attr(Foreground.color(237)))
+    println("\n" + config.badFilePrefixOpt.map(_ => "start exam").getOrElse("start repeat bad").attr(Format.Bold | Foreground.color(70)) + "\n")
+    //}}
+
+    implicit val cfg: Config = config
+    val state: Deck = exam(cards)
+    renderEndExam(state)
 
 
-      config.badFilePrefixOpt.foreach { name =>
+    src.map { case (file, _) => file }.badFilePrefixOpt.foreach { name =>
+      val xsMid = state.statistic.middle
+      val xsBad = state.statistic.bad
 
-        val xsMid = state.statistic.middle
-        val xsBad = state.statistic.bad
+      if (xsMid.nonEmpty)
+        CardsWriter.write(xsMid, new File(name + ".mid"))
 
-        if (xsMid.nonEmpty)
-          CardsWriter.write(xsMid, new File(name + ".mid"))
-
-        if (xsBad.nonEmpty)
-          CardsWriter.write(xsBad, new File(name + ".bad"))
-      }
-    } match {
-      case Success(_) => Unit
-      case Failure(e) => println(e.toString.attr(Foreground.Red))
+      if (xsBad.nonEmpty)
+        CardsWriter.write(xsBad, new File(name + ".bad"))
     }
+
+    Unit
   }
 
 
@@ -139,10 +142,6 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     val consoleWidth = 155
 
-    def renderConfig(config: Config): Unit = {
-      println("\n" + ((if (config.enRu) "en-ru" else "ru-en") + ": ").attr(Foreground.color(236)) + config.files.map(_.getName).mkString(", ").attr(Foreground.color(237)))
-      println("\n" + config.badFilePrefixOpt.map(_ => "start exam").getOrElse("start repeat bad").attr(Format.Bold | Foreground.color(70)) + "\n")
-    }
 
     def renderExamples(c: Card): String =
       (if (c.data.examples.nonEmpty) c.data.examples.map(e => "* " + text(e.text.trim)).mkString("|") else c.data.value + ": <no-examples>").attr(Foreground.color(107))
