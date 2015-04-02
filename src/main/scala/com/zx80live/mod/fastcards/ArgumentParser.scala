@@ -11,7 +11,7 @@ trait ArgumentParser {
   import java.io.File
 
 
-  case class Config(files: Seq[File] = Seq(), enRu: Boolean = false, filter: Seq[String] = Seq(), noShuffle: Boolean = false, passCount: Int = 2)
+  case class Config(files: Seq[File] = Seq(), enRu: Boolean = false, filter: Seq[String] = Seq(), noShuffle: Boolean = false, passCount: Int = 2, randomWords: Option[Int] = None)
 
   @deprecated
   implicit class ConfigExtensions(c: Config) {
@@ -47,7 +47,9 @@ trait ArgumentParser {
     opt[Int]('p', "pass-count") action { (v, c) =>
       c.copy(passCount = v)
     }
-
+    opt[Int]('r', "random-words") action { (v, c) =>
+      c.copy(randomWords = Some(v))
+    }
     opt[Seq[String]]('f', "filter") valueName "<type1>,<type2>..." action { (x, c) =>
       c.copy(filter = x)
     } text "filter cards by type (verb, noun, etc)"

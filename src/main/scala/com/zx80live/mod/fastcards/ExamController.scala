@@ -145,13 +145,14 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     def renderConfig(config: Config, successSources: Seq[(File, List[Card])]): Unit = {
       println("\n" + ((if (config.enRu) "en-ru" else "ru-en") + ": ").attr(Foreground.color(236)) + successSources.map(_._1.getName).mkString(", ").attr(Foreground.color(237)))
+      config.randomWords.foreach(value => println("\nrandom-words: " + value))
       println("\n" + successSources.map(_._1).badFilePrefixOpt.map(_ => "start exam").getOrElse("start repeat bad").attr(Format.Bold | Foreground.color(70)) + "\n")
     }
 
     def renderLoaderErrors(xs: Seq[(File, Failure[_])]): Unit = {
-      xs.groupBy{case(_, Failure(e)) => e.getClass }.foreach {
+      xs.groupBy { case (_, Failure(e)) => e.getClass }.foreach {
         case (clazz, list) =>
-          println(clazz.getSimpleName.attr(Foreground.color(237)|Format.Bold))
+          println(clazz.getSimpleName.attr(Foreground.color(237) | Format.Bold))
 
           list foreach {
             case (f, _) =>
