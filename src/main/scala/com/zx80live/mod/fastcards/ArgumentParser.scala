@@ -1,8 +1,10 @@
 package com.zx80live.mod.fastcards
 
+import java.io.File
+
 import com.zx80live.mod.fastcards.util.CardsReader
 
-import scala.util.{Success, Try}
+import scala.util.{Failure, Success, Try}
 
 trait ArgumentParser {
 
@@ -26,14 +28,14 @@ trait ArgumentParser {
 
 
   val parser = new scopt.OptionParser[Config]("exam") {
-    head("Fast-cards", "3.x")
+    head("Fast-cards", "1.0")
     arg[Seq[File]]("<file>...") unbounded() action { (x, c) =>
 
       val partition: (Seq[File], Seq[File]) = x.partition(_.isDirectory)
 
-      val xs = (partition._1.map(d => d.listFiles().filter(_.isFile).toList).flatten ++: partition._2).distinct
+      val xs = partition._1.map(d => d.listFiles().filter(_.isFile).toList).flatten ++: partition._2
 
-      c.copy(files = xs)
+      c.copy(files = (c.files ++: xs).map(_.getCanonicalFile).distinct)
 
     } text "optional unbounded args"
     opt[Unit]("en-ru") action { (_, c) =>
@@ -55,16 +57,22 @@ trait ArgumentParser {
 
   def parseArgs(args: Array[String]): Option[Config] = parser.parse(args, Config())
 
-  def readCards(config: Config): Seq[(File, List[Card])] =
+
+  def readCards(config: Config): Seq[(File, Try[List[Card]])] = {
     config.files.map { file =>
-      Try {
+      val triedCards: Try[List[Card]] = Try {
         val xs: List[Card] = CardsReader.read(file)
-        val cards: List[Card] = if (config.filter.nonEmpty) {
+        if (config.filter.nonEmpty) {
           val filter: Seq[Some[String]] = config.filter.map(Some(_))
           xs.filter(c => filter.contains(c.data.kind))
         } else xs
-        if (cards.nonEmpty) Some(file, cards) else None
-      }.getOrElse(None)
-    }.flatten
-
+      } match {
+        case Success(Nil) => Failure(new CardsNotFoundException(file))
+        case r@_ => r
+      }
+      (file, triedCards)
+    }
+  }
 }
+
+class CardsNotFoundException(file: File) extends IllegalArgumentException

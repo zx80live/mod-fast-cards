@@ -7,7 +7,7 @@ import com.zx80live.mod.fastcards.util.regex.RegexDecorator
 
 import scala.collection.mutable
 import scala.tools.jline.console.{ConsoleReader => R}
-import scala.util.{Random, Success, Failure}
+import scala.util.{Try, Random, Success, Failure}
 
 object ExamController extends ExamExtensions with ArgumentParser {
 
@@ -21,21 +21,22 @@ object ExamController extends ExamExtensions with ArgumentParser {
   def main(args: Array[String]): Unit = parseArgs(args).map { config =>
     this.config = config
 
+    val src: Seq[(File, Try[List[Card]])] = readCards(config)
+    val failureSources: Seq[(File, Failure[_])] = src.collect { case (f, e@Failure(_)) => (f, e) }
+    val successSources: Seq[(File, List[Card])] = src.collect { case (f, Success(xs)) => (f, xs) }
 
-    val src: Seq[(File, List[Card])] = readCards(config)
-    val cards: List[Card] = src.map { case (_, list) => list }.flatten.toList
+    renderLoaderErrors(failureSources)
 
-    //{{ render config
-    println("\n" + ((if (config.enRu) "en-ru" else "ru-en") + ": ").attr(Foreground.color(236)) + src.map(_._1.getName).mkString(", ").attr(Foreground.color(237)))
-    println("\n" + config.badFilePrefixOpt.map(_ => "start exam").getOrElse("start repeat bad").attr(Format.Bold | Foreground.color(70)) + "\n")
-    //}}
+    renderConfig(config, successSources)
+
+    val cards: List[Card] = successSources.map { case (_, xs) => xs }.flatten.toList
 
     implicit val cfg: Config = config
     val state: Deck = exam(cards)
     renderEndExam(state)
 
 
-    src.map { case (file, _) => file }.badFilePrefixOpt.foreach { name =>
+    successSources.map(_._1).badFilePrefixOpt.foreach { name =>
       val xsMid = state.statistic.middle
       val xsBad = state.statistic.bad
 
@@ -142,6 +143,22 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     val consoleWidth = 155
 
+    def renderConfig(config: Config, successSources: Seq[(File, List[Card])]): Unit = {
+      println("\n" + ((if (config.enRu) "en-ru" else "ru-en") + ": ").attr(Foreground.color(236)) + successSources.map(_._1.getName).mkString(", ").attr(Foreground.color(237)))
+      println("\n" + successSources.map(_._1).badFilePrefixOpt.map(_ => "start exam").getOrElse("start repeat bad").attr(Format.Bold | Foreground.color(70)) + "\n")
+    }
+
+    def renderLoaderErrors(xs: Seq[(File, Failure[_])]): Unit = {
+      xs.groupBy{case(_, Failure(e)) => e.getClass }.foreach {
+        case (clazz, list) =>
+          println(clazz.getSimpleName.attr(Foreground.color(237)|Format.Bold))
+
+          list foreach {
+            case (f, _) =>
+              println(("   " + f).attr(Foreground.color(237)))
+          }
+      }
+    }
 
     def renderExamples(c: Card): String =
       (if (c.data.examples.nonEmpty) c.data.examples.map(e => "* " + text(e.text.trim)).mkString("|") else c.data.value + ": <no-examples>").attr(Foreground.color(107))
