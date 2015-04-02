@@ -17,7 +17,8 @@ trait ArgumentParser {
                     noShuffle: Boolean = false,
                     passCount: Int = 2,
                     randomWords: Option[Int] = None,
-                    noMakeBads: Boolean = false)
+                    noMakeBads: Boolean = false,
+                    verboseParse: Boolean = false)
 
   @deprecated
   implicit class ConfigExtensions(c: Config) {
@@ -70,6 +71,9 @@ trait ArgumentParser {
     }
     opt[Unit]("no-make-bads") action { (v, c) =>
       c.copy(noMakeBads = true)
+    }
+    opt[Unit]("verbose-parse") action { (v, c) =>
+      c.copy(verboseParse = true)
     }
     opt[Seq[String]]('f', "filter") valueName "<type1>,<type2>..." action { (x, c) =>
       c.copy(filter = x)
