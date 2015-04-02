@@ -29,7 +29,7 @@ trait ArgumentParser {
     opt[Unit]("no-shuffle") action { (_, c) =>
       c.copy(noShuffle = true)
     }
-    opt[Int]("pass-count") action { (v, c) =>
+    opt[Int]('p', "pass-count") action { (v, c) =>
       c.copy(passCount = v)
     }
 
