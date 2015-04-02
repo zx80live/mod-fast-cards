@@ -1,6 +1,6 @@
 todo выводить необработанный текст из прочитанных файлов
 todo загружать все файлы по маске .|*.*
-todo поиск дубликатов|синонимов значений|переводов
-todo случайный набор из N слов.
-todo arguments: --pass-count
+todo поиск дубликатов|синонимов значений|переводов --group-by keys|values
+todo случайный набор из N слов. --random-words N
+todo arguments: --pass-count N
 todo dropTrue|dropFalse - для быстрого теста с одним проходом
