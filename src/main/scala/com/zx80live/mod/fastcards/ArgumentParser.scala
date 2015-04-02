@@ -21,7 +21,13 @@ trait ArgumentParser {
   val parser = new scopt.OptionParser[Config]("exam") {
     head("Fast-cards", "3.x")
     arg[Seq[File]]("<file>...") unbounded() action { (x, c) =>
-      c.copy(files = c.files.++:(x))
+
+      val partition: (Seq[File], Seq[File]) = x.partition(_.isDirectory)
+
+      val xs = (partition._1.map(d => d.listFiles().filter(_.isFile).toList).flatten ++: partition._2).distinct
+
+      c.copy(files = xs)
+
     } text "optional unbounded args"
     opt[Unit]("en-ru") action { (_, c) =>
       c.copy(enRu = true)
