@@ -11,7 +11,13 @@ trait ArgumentParser {
   import java.io.File
 
 
-  case class Config(files: Seq[File] = Seq(), enRu: Boolean = false, filter: Seq[String] = Seq(), noShuffle: Boolean = false, passCount: Int = 2, randomWords: Option[Int] = None, noMakeBads: Boolean = false)
+  case class Config(files: Seq[File] = Seq(),
+                    enRu: Boolean = false,
+                    filter: Seq[String] = Seq(),
+                    noShuffle: Boolean = false,
+                    passCount: Int = 2,
+                    randomWords: Option[Int] = None,
+                    noMakeBads: Boolean = false)
 
   @deprecated
   implicit class ConfigExtensions(c: Config) {
