@@ -1,6 +1,6 @@
 package com.zx80live.mod.fastcards
 
-import java.io.File
+import java.io.{FilenameFilter, File}
 
 import com.zx80live.mod.fastcards.util.CardsReader
 
@@ -31,11 +31,23 @@ trait ArgumentParser {
     head("Fast-cards", "1.0")
     arg[Seq[File]]("<file>...") unbounded() action { (x, c) =>
 
-      val partition: (Seq[File], Seq[File]) = x.partition(_.isDirectory)
+      // prepare *.bad
+      val midBadPartition: (Seq[File], Seq[File]) = x.partition(f => List("*.bad", "*.mid").contains(f.getName))
+
+      val midBadFiles: Seq[File] = midBadPartition._1.map { f =>
+        new File(".").listFiles(new FilenameFilter() {
+          override def accept(dir: File, name: String): Boolean = name.endsWith(f.getName.takeRight(3))
+        })
+      }.flatten
+
+
+      val partition: (Seq[File], Seq[File]) = midBadPartition._2.partition(_.isDirectory)
 
       val xs = partition._1.map(d => d.listFiles().filter(_.isFile).toList).flatten ++: partition._2
 
-      c.copy(files = (c.files ++: xs).map(_.getCanonicalFile).distinct)
+      val resultFiles: Seq[File] = (c.files ++: xs ++: midBadFiles).map(_.getCanonicalFile).distinct
+
+      c.copy(files = resultFiles)
 
     } text "optional unbounded args"
     opt[Unit]("en-ru") action { (_, c) =>
