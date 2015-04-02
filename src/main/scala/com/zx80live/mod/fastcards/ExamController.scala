@@ -24,7 +24,8 @@ object ExamController extends ExamExtensions with ArgumentParser {
     readCards(config).map { xs => if (!config.noShuffle) Random.shuffle(xs) else xs }.map { cards =>
       renderConfig(config)
 
-      val state: Deck = exam(cards, config.enRu)
+      implicit val cfg: Config = config
+      val state: Deck = exam(cards)
       renderEndExam(state)
 
 
@@ -46,10 +47,12 @@ object ExamController extends ExamExtensions with ArgumentParser {
   }
 
 
-  def exam(cards: List[Card], enRu: Boolean = true): Deck = {
+  def exam(cards: List[Card])(implicit config: Config): Deck = {
+    val enRu = config.enRu
     val con = new R()
     var state = Deck(cards)
     implicit var history: mutable.Stack[Deck] = mutable.Stack[Deck]()
+    implicit val passCount: Int = config.passCount
 
 
     import Actions.{Event, transition, Timer}
@@ -87,15 +90,17 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     case class Event(code: Int, state: Deck)
 
-    implicit val passLimit: Int = 2
-
-    def transition(evt: Event)(implicit history: mutable.Stack[Deck]): Deck = evt match {
+    def transition(evt: Event)(implicit history: mutable.Stack[Deck], passCount: Int): Deck = evt match {
       case Event(Code.SPACE, s) =>
         s.current match {
           case Some(c: BackSide) =>
             Timer.start()
             history.push(s.resetCurrent)
-            s.estimateFalse
+            if (passCount > 0)
+              s.estimateFalse
+            else
+              s.estimateFalseAndDrop
+
           case _ => s.backSideCurrent
         }
       case Event(Code.ENTER, s) =>

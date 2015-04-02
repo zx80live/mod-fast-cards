@@ -114,6 +114,10 @@ trait ExamExtensions {
       d.replaceCurrent(c.addPass()).next
     }.getOrElse(d).asEmptyStock
 
+    def estimateFalseAndDrop: Deck = d.stock.headOption.map { c =>
+      d.replaceCurrent(c.addPass()).drop
+    }.getOrElse(d).asEmptyStock
+
     def deck: List[Card] = d.stock ::: d.discard
 
     def bestCards: List[Card] = deck.filter(c => c.averagePassTime.getOrElse(BAD_TIME_IN_MS.toDouble) < limitBestMs)

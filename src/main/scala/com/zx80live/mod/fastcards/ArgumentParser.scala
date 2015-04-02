@@ -9,7 +9,7 @@ trait ArgumentParser {
   import java.io.File
 
 
-  case class Config(files: Seq[File] = Seq(), enRu: Boolean = false, filter: Seq[String] = Seq(), noShuffle: Boolean = false)
+  case class Config(files: Seq[File] = Seq(), enRu: Boolean = false, filter: Seq[String] = Seq(), noShuffle: Boolean = false, passCount: Int = 2)
 
   implicit class ConfigExtensions(c: Config) {
     def badMode = c.files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true }.length > 0
@@ -29,6 +29,10 @@ trait ArgumentParser {
     opt[Unit]("no-shuffle") action { (_, c) =>
       c.copy(noShuffle = true)
     }
+    opt[Int]("pass-count") action { (v, c) =>
+      c.copy(passCount = v)
+    }
+
     opt[Seq[String]]('f', "filter") valueName "<type1>,<type2>..." action { (x, c) =>
       c.copy(filter = x)
     } text "filter cards by type (verb, noun, etc)"
