@@ -1,4 +1,5 @@
 ## Linux console flash-cards
+![Snapshot](https://raw.githubusercontent.com/zx80live/mod-fast-cards/master/snapshot.png)
 
 ####Setup:
 1. Assembly project: `> sbt assembly`
