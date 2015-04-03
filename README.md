@@ -8,7 +8,7 @@
 1. Create cards file ([see example](https://github.com/zx80live/mod-fast-cards/blob/master/words.txt)):
 2. Start program:
 
-`java -jar ./target/scala-2.11/mod-fast-cards.jar words.txt`
+`java -jar ./target/scala-2.11/mod-fast-cards.jar <cards_file_name>`
 
 or use script: `exam`:
 `exam words.txt`
