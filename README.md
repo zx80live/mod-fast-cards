@@ -10,8 +10,10 @@
 
 `java -jar ./target/scala-2.11/mod-fast-cards.jar words.txt`
 
-or use script: `exam` [script source](https://github.com/zx80live/mod-fast-cards/blob/master/exam):
+or use script: `exam`:
 `exam words.txt`
+
+[see script source](https://github.com/zx80live/mod-fast-cards/blob/master/exam)
 
 for help enter command:
 `exam --help`
