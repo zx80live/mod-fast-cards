@@ -27,7 +27,7 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     config.split match {
       case Some(n) =>
-        successSources.map(_._1).badFilePrefixOpt foreach { prefix =>
+        successSources.map(_._1).filePrefixOpt foreach { prefix =>
           println("split mode: " + n + ", " + prefix)
 
           successSources.map(_._2).flatten.grouped(n).zipWithIndex.foreach { case (xs, index) =>

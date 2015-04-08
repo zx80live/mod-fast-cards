@@ -32,6 +32,8 @@ trait ArgumentParser {
     def badMode = files.map(getFileExtension).collect { case Some("bad") | Some("mid") => true }.length > 0
 
     def badFilePrefixOpt: Option[String] = if (!badMode) Some(files.map(_.getName).mkString("_")) else None
+
+    def filePrefixOpt: Option[String] = Some(files.map(_.getName).mkString("_"))
   }
 
 
