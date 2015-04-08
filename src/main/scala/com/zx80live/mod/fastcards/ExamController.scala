@@ -180,6 +180,8 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
     def clearLine(): Unit = print("\r" + (for (i <- 0 until consoleWidth) yield " ").mkString(""))
 
+    def renderIrregulars(xs: List[String]): String = "[" + xs.mkString("|") + "]"
+
     def printState(d: Deck, enRu: Boolean = true): Unit = {
       clearLine()
 
