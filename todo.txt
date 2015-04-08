@@ -1,3 +1,1 @@
 todo поиск дубликатов|синонимов значений|переводов --group-by keys|values
-todo first-non-shuffled words
-todo --split N -> формирует n-файлов по N-слов

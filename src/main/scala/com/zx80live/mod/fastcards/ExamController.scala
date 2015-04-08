@@ -25,32 +25,46 @@ object ExamController extends ExamExtensions with ArgumentParser {
     val failureSources: Seq[(File, Failure[_])] = src.collect { case (f, e@Failure(_)) => (f, e) }
     val successSources: Seq[(File, List[Card])] = src.collect { case (f, Success(xs)) => (f, xs) }
 
-    renderLoaderErrors(failureSources)
+    config.split match {
+      case Some(n) =>
+        successSources.map(_._1).badFilePrefixOpt foreach { prefix =>
+          println("split mode: " + n + ", " + prefix)
 
-    renderConfig(config, successSources)
+          successSources.map(_._2).flatten.grouped(n).zipWithIndex.foreach { case (xs, index) =>
+            CardsWriter.write(xs.toList, new File(prefix + "_" + index))
+          }
+        }
 
-    val cards: List[Card] = {
-      val list = successSources.map { case (_, xs) => xs }.flatten.toList
-      val shuffled = if (config.noShuffle) list else Random.shuffle(list)
-      config.randomWords.map(Random.shuffle(shuffled).take).getOrElse(shuffled)
+
+      case _ =>
+        renderLoaderErrors(failureSources)
+
+        renderConfig(config, successSources)
+
+        val cards: List[Card] = {
+          val list = successSources.map { case (_, xs) => xs }.flatten.toList
+          val shuffled = if (config.noShuffle) list else Random.shuffle(list)
+          config.randomWords.map(Random.shuffle(shuffled).take).getOrElse(shuffled)
+        }
+
+        implicit val cfg: Config = config
+        val state: Deck = exam(cards)
+        renderEndExam(state)
+
+        if (!config.noMakeBads) {
+          successSources.map(_._1).badFilePrefixOpt.foreach { name =>
+            val xsMid = state.statistic.middle
+            val xsBad = state.statistic.bad
+
+            if (xsMid.nonEmpty)
+              CardsWriter.write(xsMid, new File(name + ".mid"))
+
+            if (xsBad.nonEmpty)
+              CardsWriter.write(xsBad, new File(name + ".bad"))
+          }
+        }
     }
 
-    implicit val cfg: Config = config
-    val state: Deck = exam(cards)
-    renderEndExam(state)
-
-    if (!config.noMakeBads) {
-      successSources.map(_._1).badFilePrefixOpt.foreach { name =>
-        val xsMid = state.statistic.middle
-        val xsBad = state.statistic.bad
-
-        if (xsMid.nonEmpty)
-          CardsWriter.write(xsMid, new File(name + ".mid"))
-
-        if (xsBad.nonEmpty)
-          CardsWriter.write(xsBad, new File(name + ".bad"))
-      }
-    }
     Unit
   }
 
