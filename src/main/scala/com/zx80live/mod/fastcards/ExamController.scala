@@ -194,11 +194,8 @@ object ExamController extends ExamExtensions with ArgumentParser {
 
         case c: BackSide =>
           progress(d) + btn("enter", " ok ") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg | Format.Blink) + " " +
-            (if (enRu) {
-              renderTranslations(c.data.translations)
-            } else {
-              renderCardValue(c.data)
-            })
+            (if (enRu) renderTranslations(c.data.translations) else renderCardValue(c.data)) +
+            (if (c.data.irregular.nonEmpty) " " + renderIrregulars(c.data.irregular) else "")
 
 
         case c: Card =>
