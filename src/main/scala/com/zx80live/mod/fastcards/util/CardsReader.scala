@@ -14,9 +14,10 @@ object CardsReader {
   }
 
   def read(file: File, verboseParse: Boolean = false): List[Card] = {
-    val textContent = """\w\s|'\(\)\=\-а-яА-Я,\.`"""
+    val textContent = """\d\w\s|'\(\)\=\-а-яА-Я,\.`"""
     val wordPattern = ("""^([""" + textContent + """]+)(\s*\[[\w\sа-яА-Я]+\]\s*)*\:([\s\w]*)\:([""" + textContent + """]*)$""").r
     val examplePattern = ("""^\s*\*([""" + textContent + """]+)\s*\:*([""" + textContent + """]*)\s*$""").r
+    val irregularVerbPattern = ("""^\s*\$([""" + textContent + """]+)""").r
     var card: Option[Card] = None
     var xs: List[Card] = Nil
 
@@ -36,9 +37,16 @@ object CardsReader {
             card = Some(Card(c.data.copy(examples = e :: c.data.examples))) //Some(c.copy(examples = e :: c.examples))
           case _ => Unit
         }
-      case text:String =>
-        if(verboseParse) {
-          if(text.trim.length > 0)
+
+      case irregularVerbPattern(text) =>
+        card match {
+          case Some(c) =>
+            card = Some(Card(c.data.copy(irregular = text.trim :: c.data.irregular)))
+          case _ => Unit
+        }
+      case text: String =>
+        if (verboseParse) {
+          if (text.trim.length > 0)
             println(text)
         }
         Unit

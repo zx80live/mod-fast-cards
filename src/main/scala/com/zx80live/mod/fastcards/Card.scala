@@ -6,7 +6,8 @@ case class Data(value: String,
                 kind: Option[String] = None,
                 translations: List[String],
                 examples: List[Example] = Nil,
-                transcript: Option[String] = None)
+                transcript: Option[String] = None,
+                irregular: List[String] = Nil)
 
 
 case class Example(text: String, translations: List[String] = Nil)
