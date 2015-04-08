@@ -193,11 +193,21 @@ object ExamController extends ExamExtensions with ArgumentParser {
           progress(d) + renderExamples(c)
 
         case c: BackSide =>
-          progress(d) + btn("enter", " ok ") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg | Format.Blink) + " " + (if (enRu) renderTranslations(c.data.translations) else renderCardValue(c.data))
+          progress(d) + btn("enter", " ok ") + delim + btn("space", "false") + "" + " ▸".attr(Foreground.color(22) | cssCtxBg | Format.Blink) + " " +
+            (if (enRu) {
+              renderTranslations(c.data.translations)
+            } else {
+              renderCardValue(c.data)
+            })
 
 
         case c: Card =>
-          progress(d) + btn("enter", "flip") + delim + btn("space", "flip ") + "" + " ▹".attr(Foreground.color(22) | cssCtxBg) + " " + (if (enRu) renderCardValue(c.data) else renderTranslations(c.data.translations))
+          progress(d) + btn("enter", "flip") + delim + btn("space", "flip ") + "" + " ▹".attr(Foreground.color(22) | cssCtxBg) + " " +
+            (if (enRu) {
+              renderCardValue(c.data)
+            } else {
+              renderTranslations(c.data.translations)
+            })
 
 
       }.getOrElse(renderNoneCard))
