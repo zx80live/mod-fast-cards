@@ -6,9 +6,11 @@ trait Exam {
 
   type Time = Long
 
-  case class Card(front: String, back: String, estimates: List[Option[Time]] = Nil, isFront: Boolean = true) {
+  case class Card(data: CardData, estimates: List[Option[Time]] = Nil, isFront: Boolean = true) {
     def isBack: Boolean = !isFront
   }
+
+  case class CardData()
 
   case class Deck(stock: List[Card], passes: Int, estimated: List[Card] = Nil, discard: List[Card] = Nil)
 
@@ -51,7 +53,7 @@ trait Exam {
 
     def hasCompletedPass: Boolean = d.stock.isEmpty
 
-    def repeat(implicit shuffle: Boolean = false): Option[Deck] = if (d.hasCompletedPass) {
+    def newPass(implicit shuffle: Boolean = false): Option[Deck] = if (d.hasCompletedPass) {
       Some(if (shuffle) d.copy(stock = Random.shuffle(d.estimated)) else d.copy(stock = d.estimated))
     } else None
   }
