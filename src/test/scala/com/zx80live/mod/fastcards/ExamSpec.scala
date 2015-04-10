@@ -12,11 +12,19 @@ class ExamSpec extends WordSpec with Matchers {
   val c1 = Card(Data(1))
   val c2 = Card(Data(2))
   val c3 = Card(Data(3))
+
+  val c0estimated = Card(c0.data, List(None))
+  val c1estimated = Card(c1.data, List(Some(1000)))
+  val c2estimated = Card(c2.data, List(Some(2000)))
+  val c3estimated = Card(c3.data, List(Some(3000)))
+
   val deck = Deck(List(c0, c1, c2, c3))
   val someCards = List(Card(Data(100)), Card(Data(200)), Card(Data(300)))
   val deckWithCompletedPassWithEmptyDiscard = Deck(Nil, List(c0, c1, c2, c3), Nil)
   val deckWithCompletedPassWithDiscard = Deck(Nil, List(c0, c1), List(c2, c3))
   val deckWithCompletedExam = Deck(Nil, Nil, List(c0, c1, c2, c3))
+
+  val deckWithOnePass: Exam.Deck = Deck(List(c0estimated, c1estimated, c2estimated, c3estimated))
 
 
   "Exam" when {
@@ -210,7 +218,34 @@ class ExamSpec extends WordSpec with Matchers {
         d3.get.estimated.map(c => (c.data, c.isBack)) shouldEqual deck.stock.map(c => (c.data, c.isBack))
         d3.get.discard shouldEqual deck.discard
 
-        // estimate for card with completed estimates
+
+      }
+
+      "estimateCurrent: estimate true for trued estimated card" in {
+        val d = deckWithOnePass
+        d.hasCompletedExam shouldEqual false
+        d.hasCompletedPass shouldEqual false
+        ???
+      }
+
+      "estimateCurrent: estimate true for false estimated card" in {
+        val d = deckWithOnePass
+        d.hasCompletedExam shouldEqual false
+        d.hasCompletedPass shouldEqual false
+        ???
+      }
+
+      "estimateCurrent: estimate false for true estimated card" in {
+        val d = deckWithOnePass
+        d.hasCompletedExam shouldEqual false
+        d.hasCompletedPass shouldEqual false
+        ???
+      }
+
+      "estimateCurrent: estimate false for false estimated card" in {
+        val d = deckWithOnePass
+        d.hasCompletedExam shouldEqual false
+        d.hasCompletedPass shouldEqual false
         ???
       }
 
