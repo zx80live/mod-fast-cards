@@ -1,2 +1,4 @@
 todo поиск дубликатов|синонимов значений|переводов --group-by keys|values
 todo сортировать карточки после каждого прохода
+todo kiss: chain monads: CardsReader|Writer -> CardsCollectionApi -> Exam
+todo exam --join - объединяет файлы в один
