@@ -55,7 +55,16 @@ class ExamSpec extends WordSpec with Matchers {
       }
 
       "estimate" in {
-        ???
+        c0.estimates shouldEqual Nil
+
+        // test immutability
+        c0.estimate().isBack shouldEqual c0.isBack
+        c0.estimate().isFront shouldEqual c0.isFront
+        c0.estimate().data shouldEqual c0.data
+
+        c0.estimate().estimates shouldEqual List(None)
+        c0.estimate(1000).estimates shouldEqual List(Some(1000))
+        c0.estimate(1000).estimate().estimate(2000).estimates shouldEqual List(Some(1000), None, Some(2000))
       }
     }
   }

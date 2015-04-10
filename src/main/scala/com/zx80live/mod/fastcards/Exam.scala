@@ -1,5 +1,6 @@
 package com.zx80live.mod.fastcards
 
+import scala.language.implicitConversions
 import scala.util.Random
 
 trait Exam {
@@ -14,6 +15,10 @@ trait Exam {
 
   case class Deck(stock: List[Card], estimated: List[Card] = Nil, discard: List[Card] = Nil)
 
+  implicit def intTimeToOption(time: Int): Option[Time] = longTimeToOption(time)
+
+  implicit def longTimeToOption(time: Long): Option[Time] = if (time >= 0) Some(time) else None
+
   implicit class CardExtensions(c: Card) {
     def backSide: Card = if (c.isFront) c.copy(isFront = false) else c
 
@@ -21,7 +26,7 @@ trait Exam {
 
     def reverseSide: Card = c.copy(isFront = !c.isFront)
 
-    def estimate(time: Option[Time] = None): Card = c.copy(estimates = time :: c.estimates)
+    def estimate(time: Option[Time] = None): Card = c.copy(estimates = c.estimates :+ time)
   }
 
   implicit class DeckExtensions(d: Deck) {
@@ -57,6 +62,7 @@ trait Exam {
       Some(if (shuffle) d.copy(stock = Random.shuffle(d.estimated)) else d.copy(stock = d.estimated))
     } else None
   }
+
 }
 
 object Exam extends Exam
