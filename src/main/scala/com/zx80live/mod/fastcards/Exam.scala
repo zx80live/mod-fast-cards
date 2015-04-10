@@ -10,7 +10,7 @@ trait Exam {
     def isBack: Boolean = !isFront
   }
 
-  case class CardData()
+  trait CardData
 
   case class Deck(stock: List[Card], estimated: List[Card] = Nil, discard: List[Card] = Nil)
 
@@ -57,5 +57,6 @@ trait Exam {
       Some(if (shuffle) d.copy(stock = Random.shuffle(d.estimated)) else d.copy(stock = d.estimated))
     } else None
   }
-
 }
+
+object Exam extends Exam
