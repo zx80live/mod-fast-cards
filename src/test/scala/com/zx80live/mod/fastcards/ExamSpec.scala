@@ -117,6 +117,17 @@ class ExamSpec extends WordSpec with Matchers {
       }
 
       "discardCurrent" in {
+        // for empty stock
+        Deck(Nil).discardCurrent shouldBe None
+
+        val deck2: Option[Exam.Deck] = deck.discardCurrent
+        deck2 should not be empty
+        deck2.get.current shouldEqual Some(c1)
+        deck2.get.stock shouldEqual deck.stock.tail
+        deck2.get.discard shouldEqual deck.stock.head :: deck.discard
+      }
+
+      "estimateCurrent" in {
         ???
       }
     }
