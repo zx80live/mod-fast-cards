@@ -1,6 +1,6 @@
 package com.zx80live.mod.fastcards
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest._
 
 class ExamSpec extends WordSpec with Matchers {
 
@@ -69,6 +69,12 @@ class ExamSpec extends WordSpec with Matchers {
     }
 
     "DeckExtensions" should {
+      "current" in {
+        // for empty stock
+        Deck(Nil).current shouldBe None
+        deck.current shouldBe Some(c0)
+      }
+
       "replaceCurrent" in {
         val replacement: Exam.Card = Card(Data(10))
         val replaced: Exam.Deck = deck.replaceCurrent(replacement)
@@ -78,6 +84,40 @@ class ExamSpec extends WordSpec with Matchers {
 
         replaced.stock shouldEqual List(replacement, c1, c2, c3)
         replaced.current shouldEqual Some(replacement)
+      }
+
+      "backSideCurrent" in {
+
+        deck.current.get.isBack shouldEqual false
+        deck.current.get shouldEqual c0
+
+        val deck2: Option[Exam.Deck] = deck.backSideCurrent
+        deck2 should not be empty
+        deck2.get.stock.tail shouldEqual deck.stock.tail
+        deck2.get.estimated shouldEqual deck.estimated
+        deck2.get.discard shouldEqual deck.discard
+        deck2.get.current.get.isBack shouldEqual true
+
+
+        //for empty stock
+        Deck(Nil).backSideCurrent shouldEqual None
+      }
+
+      "frontSideCurrent" in {
+        deck.current.get.isFront shouldEqual true
+        deck.current.get shouldEqual c0
+
+        val deck2: Option[Exam.Deck] = deck.backSideCurrent.get.frontSideCurrent
+        deck2.get shouldEqual deck
+      }
+
+      "reverseSideCurrent" in {
+        deck shouldEqual deck.reverseSideCurrent.get.reverseSideCurrent.get
+        deck.backSideCurrent.get shouldEqual deck.reverseSideCurrent.get
+      }
+
+      "discardCurrent" in {
+        ???
       }
     }
   }
