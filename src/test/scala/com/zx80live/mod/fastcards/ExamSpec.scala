@@ -154,7 +154,7 @@ class ExamSpec extends WordSpec with Matchers {
 
         deck.current.get.estimates shouldEqual Nil
 
-        // one estimate
+        // once estimate
         deck.estimateCurrent() should not be empty
         deck.estimateCurrent().get.current shouldBe Some(c1)
         deck.estimateCurrent().get.estimated shouldEqual deck.current.get.estimate() :: deck.estimated
