@@ -222,40 +222,56 @@ class ExamSpec extends WordSpec with Matchers {
       }
 
       "estimateCurrent: estimate true for trued estimated card" in {
-        implicit val passes:Int = 0
+        implicit val passes: Int = 2
         val d = deckWithOnePass.discardCurrent.get
         d.hasCompletedExam shouldEqual false
         d.hasCompletedPass shouldEqual false
 
+        // final estimate - should be moved to discard
         val estimated: Option[Exam.Deck] = d.estimateCurrent(1000)
         estimated should not be empty
-        estimated.get.discard shouldEqual (d.discard :+ d.current.get.estimate(1000))
+        estimated.get.discard shouldEqual d.discard :+ d.current.get.estimate(1000)
         estimated.get.estimated shouldEqual d.estimated
       }
 
-//      "estimateCurrent: estimate true for false estimated card" in {
-//        implicit val passes:Int = 2
-//        val d = deckWithOnePass
-//        d.hasCompletedExam shouldEqual false
-//        d.hasCompletedPass shouldEqual false
-//        ???
-//      }
-//
-//      "estimateCurrent: estimate false for true estimated card" in {
-//        implicit val passes:Int = 2
-//        val d = deckWithOnePass
-//        d.hasCompletedExam shouldEqual false
-//        d.hasCompletedPass shouldEqual false
-//        ???
-//      }
-//
-//      "estimateCurrent: estimate false for false estimated card" in {
-//        implicit val passes:Int = 2
-//        val d = deckWithOnePass
-//        d.hasCompletedExam shouldEqual false
-//        d.hasCompletedPass shouldEqual false
-//        ???
-//      }
+      "estimateCurrent: estimate true for false estimated card" in {
+        implicit val passes: Int = 2
+        val d = deckWithOnePass
+        d.hasCompletedExam shouldEqual false
+        d.hasCompletedPass shouldEqual false
+
+        // estimate - should be moved to estimates
+        val estimated: Option[Exam.Deck] = d.estimateCurrent(1000)
+        estimated should not be empty
+        estimated.get.discard shouldEqual d.discard
+        estimated.get.estimated shouldEqual d.estimated :+ d.current.get.estimate(1000)
+      }
+
+      "estimateCurrent: estimate false for true estimated card" in {
+        implicit val passes: Int = 2
+        val d = deckWithOnePass.discardCurrent.get
+        d.hasCompletedExam shouldEqual false
+        d.hasCompletedPass shouldEqual false
+
+        // estimate - should be moved to estimates
+        val estimated: Option[Exam.Deck] = d.estimateCurrent(None)
+        estimated should not be empty
+        estimated.get.discard shouldEqual d.discard
+        estimated.get.estimated shouldEqual d.estimated :+ d.current.get.estimate(None)
+      }
+
+      "estimateCurrent: estimate false for false estimated card" in {
+        implicit val passes: Int = 2
+        val d = deckWithOnePass
+        d.hasCompletedExam shouldEqual false
+        d.hasCompletedPass shouldEqual false
+
+        // estimate - should be moved to estimates
+        val estimated: Option[Exam.Deck] = d.estimateCurrent(None)
+        estimated should not be empty
+        estimated.get.discard shouldEqual d.discard
+        estimated.get.estimated shouldEqual d.estimated :+ d.current.get.estimate(None)
+      }
 
       "newPass" in {
         // for empty deck
