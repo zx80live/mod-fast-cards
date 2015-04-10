@@ -209,6 +209,9 @@ class ExamSpec extends WordSpec with Matchers {
         d3.get.stock shouldEqual Nil
         d3.get.estimated.map(c => (c.data, c.isBack)) shouldEqual deck.stock.map(c => (c.data, c.isBack))
         d3.get.discard shouldEqual deck.discard
+
+        // estimate for card with completed estimates
+        ???
       }
 
       "newPass" in {
