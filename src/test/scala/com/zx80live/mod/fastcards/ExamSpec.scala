@@ -222,32 +222,42 @@ class ExamSpec extends WordSpec with Matchers {
       }
 
       "estimateCurrent: estimate true for trued estimated card" in {
-        val d = deckWithOnePass
+        implicit val passes:Int = 1
+        val d = deckWithOnePass.discardCurrent.get
         d.hasCompletedExam shouldEqual false
         d.hasCompletedPass shouldEqual false
-        ???
+
+        println(d)
+
+        val estimated: Option[Exam.Deck] = d.estimateCurrent(1000)
+        estimated should not be empty
+        estimated.get.discard shouldEqual (d.discard :+ d.current.get.estimate(1000))
+        estimated.get.estimated shouldEqual d.estimated
       }
 
-      "estimateCurrent: estimate true for false estimated card" in {
-        val d = deckWithOnePass
-        d.hasCompletedExam shouldEqual false
-        d.hasCompletedPass shouldEqual false
-        ???
-      }
-
-      "estimateCurrent: estimate false for true estimated card" in {
-        val d = deckWithOnePass
-        d.hasCompletedExam shouldEqual false
-        d.hasCompletedPass shouldEqual false
-        ???
-      }
-
-      "estimateCurrent: estimate false for false estimated card" in {
-        val d = deckWithOnePass
-        d.hasCompletedExam shouldEqual false
-        d.hasCompletedPass shouldEqual false
-        ???
-      }
+//      "estimateCurrent: estimate true for false estimated card" in {
+//        implicit val passes:Int = 2
+//        val d = deckWithOnePass
+//        d.hasCompletedExam shouldEqual false
+//        d.hasCompletedPass shouldEqual false
+//        ???
+//      }
+//
+//      "estimateCurrent: estimate false for true estimated card" in {
+//        implicit val passes:Int = 2
+//        val d = deckWithOnePass
+//        d.hasCompletedExam shouldEqual false
+//        d.hasCompletedPass shouldEqual false
+//        ???
+//      }
+//
+//      "estimateCurrent: estimate false for false estimated card" in {
+//        implicit val passes:Int = 2
+//        val d = deckWithOnePass
+//        d.hasCompletedExam shouldEqual false
+//        d.hasCompletedPass shouldEqual false
+//        ???
+//      }
 
       "newPass" in {
         // for empty deck

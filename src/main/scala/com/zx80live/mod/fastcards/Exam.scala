@@ -3,17 +3,27 @@ package com.zx80live.mod.fastcards
 import scala.language.implicitConversions
 import scala.util.Random
 
+//todo implicit event listener
 trait Exam {
 
   type Time = Long
 
   case class Card(data: CardData, estimates: List[Option[Time]] = Nil, isFront: Boolean = true) {
     def isBack: Boolean = !isFront
+
+    override def toString: String = s"""Card {$data, ${if (isFront) "front" else "back"}, [${estimates.map(e => e.getOrElse("-")).mkString(", ")}]}"""
   }
 
   trait CardData
 
-  case class Deck(stock: List[Card], estimated: List[Card] = Nil, discard: List[Card] = Nil)
+  case class Deck(stock: List[Card], estimated: List[Card] = Nil, discard: List[Card] = Nil) {
+    override def toString: String = {
+      "Deck {" +
+        "\n  stock:\n    " + stock.mkString("\n    ") +
+        "\n  estimated:\n    " + estimated.mkString("\n    ") +
+        "\n  discard:\n    " + discard.mkString("\n    ") + "\n}"
+    }
+  }
 
   implicit def intTimeToOption(time: Int): Option[Time] = longTimeToOption(time)
 
