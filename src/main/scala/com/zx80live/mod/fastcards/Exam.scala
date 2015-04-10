@@ -58,11 +58,11 @@ trait Exam {
     def estimateCurrent(time: Option[Time] = None)(implicit passes: Int): Option[Deck] = current.map { c =>
       val estimated = c.estimate(time)
       if (estimated.estimates.count(_.nonEmpty) < passes) {
-        // estimate
+        // move to estimated
         d.copy(stock = d.stock.tail, estimated = d.estimated :+ estimated)
       } else {
-        // discard
-        d.copy(stock = d.stock.tail, estimated = d.discard :+ estimated)
+        // move to discard
+        d.copy(stock = d.stock.tail, discard = d.discard :+ estimated)
       }
     }
 

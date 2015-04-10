@@ -222,12 +222,10 @@ class ExamSpec extends WordSpec with Matchers {
       }
 
       "estimateCurrent: estimate true for trued estimated card" in {
-        implicit val passes:Int = 1
+        implicit val passes:Int = 0
         val d = deckWithOnePass.discardCurrent.get
         d.hasCompletedExam shouldEqual false
         d.hasCompletedPass shouldEqual false
-
-        println(d)
 
         val estimated: Option[Exam.Deck] = d.estimateCurrent(1000)
         estimated should not be empty
