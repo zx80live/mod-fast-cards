@@ -13,7 +13,10 @@ class ExamSpec extends WordSpec with Matchers {
   val c2 = Card(Data(2))
   val c3 = Card(Data(3))
   val deck = Deck(List(c0, c1, c2, c3))
-  val somecards = List(c0, c1, c2)
+  val someCards = List(Card(Data(100)), Card(Data(200)), Card(Data(300)))
+  val deckWithCompletedPassWithEmptyDiscard = Deck(Nil, List(c0, c1, c2, c3), Nil)
+  val deckWithCompletedPassWithDiscard = Deck(Nil, List(c0, c1), List(c2, c3))
+  val deckWithCompletedExam = Deck(Nil, Nil, List(c0, c1, c2, c3))
 
 
   "Exam" when {
@@ -131,45 +134,45 @@ class ExamSpec extends WordSpec with Matchers {
       "hasCompletedPass" in {
         deck.hasCompletedPass shouldEqual false
         Deck(Nil, Nil, Nil).hasCompletedPass shouldEqual true
-        Deck(somecards, Nil, Nil).hasCompletedPass shouldEqual false
-        Deck(somecards, somecards, Nil).hasCompletedPass shouldEqual false
-        Deck(somecards, Nil, somecards).hasCompletedPass shouldEqual false
-        Deck(Nil, somecards, somecards).hasCompletedPass shouldEqual true
-        Deck(Nil, Nil, somecards).hasCompletedPass shouldEqual true
+        Deck(someCards, Nil, Nil).hasCompletedPass shouldEqual false
+        Deck(someCards, someCards, Nil).hasCompletedPass shouldEqual false
+        Deck(someCards, Nil, someCards).hasCompletedPass shouldEqual false
+        Deck(Nil, someCards, someCards).hasCompletedPass shouldEqual true
+        Deck(Nil, Nil, someCards).hasCompletedPass shouldEqual true
       }
 
       "hasCompleteExam" in {
-        deck.hasCompleteExam shouldEqual false
-        Deck(Nil, Nil, Nil).hasCompleteExam shouldEqual true
-        Deck(somecards, Nil, Nil).hasCompleteExam shouldEqual false
-        Deck(somecards, somecards, Nil).hasCompleteExam shouldEqual false
-        Deck(somecards, Nil, somecards).hasCompleteExam shouldEqual false
-        Deck(Nil, somecards, somecards).hasCompleteExam shouldEqual false
-        Deck(Nil, Nil, somecards).hasCompleteExam shouldEqual true
+        deck.hasCompletedExam shouldEqual false
+        Deck(Nil, Nil, Nil).hasCompletedExam shouldEqual true
+        Deck(someCards, Nil, Nil).hasCompletedExam shouldEqual false
+        Deck(someCards, someCards, Nil).hasCompletedExam shouldEqual false
+        Deck(someCards, Nil, someCards).hasCompletedExam shouldEqual false
+        Deck(Nil, someCards, someCards).hasCompletedExam shouldEqual false
+        Deck(Nil, Nil, someCards).hasCompletedExam shouldEqual true
       }
 
       "isEmpty" in {
         Deck(Nil).isEmpty shouldEqual true
         Deck(Nil, Nil, Nil).isEmpty shouldEqual true
-        Deck(somecards, Nil, Nil).isEmpty shouldEqual false
-        Deck(Nil, somecards, Nil).isEmpty shouldEqual false
-        Deck(somecards, somecards, Nil).isEmpty shouldEqual false
-        Deck(Nil, Nil, somecards).isEmpty shouldEqual false
-        Deck(somecards, Nil, somecards).isEmpty shouldEqual false
-        Deck(Nil, somecards, somecards).isEmpty shouldEqual false
-        Deck(somecards, somecards, somecards).isEmpty shouldEqual false
+        Deck(someCards, Nil, Nil).isEmpty shouldEqual false
+        Deck(Nil, someCards, Nil).isEmpty shouldEqual false
+        Deck(someCards, someCards, Nil).isEmpty shouldEqual false
+        Deck(Nil, Nil, someCards).isEmpty shouldEqual false
+        Deck(someCards, Nil, someCards).isEmpty shouldEqual false
+        Deck(Nil, someCards, someCards).isEmpty shouldEqual false
+        Deck(someCards, someCards, someCards).isEmpty shouldEqual false
       }
 
       "nonEmpty" in {
         Deck(Nil).nonEmpty shouldEqual false
         Deck(Nil, Nil, Nil).nonEmpty shouldEqual false
-        Deck(somecards, Nil, Nil).nonEmpty shouldEqual true
-        Deck(Nil, somecards, Nil).nonEmpty shouldEqual true
-        Deck(somecards, somecards, Nil).nonEmpty shouldEqual true
-        Deck(Nil, Nil, somecards).nonEmpty shouldEqual true
-        Deck(somecards, Nil, somecards).nonEmpty shouldEqual true
-        Deck(Nil, somecards, somecards).nonEmpty shouldEqual true
-        Deck(somecards, somecards, somecards).nonEmpty shouldEqual true
+        Deck(someCards, Nil, Nil).nonEmpty shouldEqual true
+        Deck(Nil, someCards, Nil).nonEmpty shouldEqual true
+        Deck(someCards, someCards, Nil).nonEmpty shouldEqual true
+        Deck(Nil, Nil, someCards).nonEmpty shouldEqual true
+        Deck(someCards, Nil, someCards).nonEmpty shouldEqual true
+        Deck(Nil, someCards, someCards).nonEmpty shouldEqual true
+        Deck(someCards, someCards, someCards).nonEmpty shouldEqual true
       }
 
       "estimateCurrent" in {
@@ -213,9 +216,24 @@ class ExamSpec extends WordSpec with Matchers {
         Deck(Nil).newPass shouldEqual None
 
         // for non-completed pass
-        deck.hasCompletedPass shouldEqual true
-        deck.hasCompleteExam shouldEqual true
+        deck.hasCompletedPass shouldEqual false
+        deck.hasCompletedExam shouldEqual false
         deck.newPass shouldEqual None
+
+        // for completed pass and empty discard
+        deckWithCompletedPassWithEmptyDiscard.hasCompletedPass shouldEqual true
+        deckWithCompletedPassWithEmptyDiscard.hasCompletedExam shouldEqual false
+        val pass: Option[Exam.Deck] = deckWithCompletedPassWithEmptyDiscard.newPass(shuffle = false)
+        pass should not be empty
+        pass.get shouldEqual Deck(
+          deckWithCompletedPassWithEmptyDiscard.estimated.map(c => c.copy(estimates = Nil, isFront = true)),
+          Nil,
+          deckWithCompletedPassWithEmptyDiscard.discard)
+
+        // for completed pass and non-empty discard
+
+        // for completed exam
+
       }
     }
   }
