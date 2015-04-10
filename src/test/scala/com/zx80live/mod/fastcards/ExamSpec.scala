@@ -13,6 +13,7 @@ class ExamSpec extends WordSpec with Matchers {
   val c2 = Card(Data(2))
   val c3 = Card(Data(3))
   val deck = Deck(List(c0, c1, c2, c3))
+  val somecards = List(c0, c1, c2)
 
 
   "Exam" when {
@@ -128,8 +129,25 @@ class ExamSpec extends WordSpec with Matchers {
       }
 
       "hasCompletedPass" in {
-        ???
+        deck.hasCompletedPass shouldEqual false
+        Deck(Nil, Nil, Nil).hasCompletedPass shouldEqual true
+        Deck(somecards, Nil, Nil).hasCompletedPass shouldEqual false
+        Deck(somecards, somecards, Nil).hasCompletedPass shouldEqual false
+        Deck(somecards, Nil, somecards).hasCompletedPass shouldEqual false
+        Deck(Nil, somecards, somecards).hasCompletedPass shouldEqual true
+        Deck(Nil, Nil, somecards).hasCompletedPass shouldEqual true
       }
+
+      "hasCompleteExam" in {
+        deck.hasCompleteExam shouldEqual false
+        Deck(Nil, Nil, Nil).hasCompleteExam shouldEqual true
+        Deck(somecards, Nil, Nil).hasCompleteExam shouldEqual false
+        Deck(somecards, somecards, Nil).hasCompleteExam shouldEqual false
+        Deck(somecards, Nil, somecards).hasCompleteExam shouldEqual false
+        Deck(Nil, somecards, somecards).hasCompleteExam shouldEqual false
+        Deck(Nil, Nil, somecards).hasCompleteExam shouldEqual true
+      }
+
 
       "estimateCurrent" in {
         implicit val passes: Int = 2
