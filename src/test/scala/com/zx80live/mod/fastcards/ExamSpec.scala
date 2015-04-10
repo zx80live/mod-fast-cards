@@ -148,6 +148,29 @@ class ExamSpec extends WordSpec with Matchers {
         Deck(Nil, Nil, somecards).hasCompleteExam shouldEqual true
       }
 
+      "isEmpty" in {
+        Deck(Nil).isEmpty shouldEqual true
+        Deck(Nil, Nil, Nil).isEmpty shouldEqual true
+        Deck(somecards, Nil, Nil).isEmpty shouldEqual false
+        Deck(Nil, somecards, Nil).isEmpty shouldEqual false
+        Deck(somecards, somecards, Nil).isEmpty shouldEqual false
+        Deck(Nil, Nil, somecards).isEmpty shouldEqual false
+        Deck(somecards, Nil, somecards).isEmpty shouldEqual false
+        Deck(Nil, somecards, somecards).isEmpty shouldEqual false
+        Deck(somecards, somecards, somecards).isEmpty shouldEqual false
+      }
+
+      "nonEmpty" in {
+        Deck(Nil).nonEmpty shouldEqual false
+        Deck(Nil, Nil, Nil).nonEmpty shouldEqual false
+        Deck(somecards, Nil, Nil).nonEmpty shouldEqual true
+        Deck(Nil, somecards, Nil).nonEmpty shouldEqual true
+        Deck(somecards, somecards, Nil).nonEmpty shouldEqual true
+        Deck(Nil, Nil, somecards).nonEmpty shouldEqual true
+        Deck(somecards, Nil, somecards).nonEmpty shouldEqual true
+        Deck(Nil, somecards, somecards).nonEmpty shouldEqual true
+        Deck(somecards, somecards, somecards).nonEmpty shouldEqual true
+      }
 
       "estimateCurrent" in {
         implicit val passes: Int = 2
@@ -183,6 +206,16 @@ class ExamSpec extends WordSpec with Matchers {
         d3.get.stock shouldEqual Nil
         d3.get.estimated.map(c => (c.data, c.isBack)) shouldEqual deck.stock.map(c => (c.data, c.isBack))
         d3.get.discard shouldEqual deck.discard
+      }
+
+      "newPass" in {
+        // for empty deck
+        Deck(Nil).newPass shouldEqual None
+
+        // for non-completed pass
+        deck.hasCompletedPass shouldEqual true
+        deck.hasCompleteExam shouldEqual true
+        deck.newPass shouldEqual None
       }
     }
   }

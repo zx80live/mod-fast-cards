@@ -56,9 +56,13 @@ trait Exam {
       }
     }
 
+    def isEmpty: Boolean = d.stock.isEmpty && d.estimated.isEmpty && d.discard.isEmpty
+
+    def nonEmpty: Boolean = !isEmpty
+
     def hasCompletedPass: Boolean = d.stock.isEmpty
 
-    def hasCompleteExam: Boolean = d.stock.isEmpty && d.estimated.isEmpty
+    def hasCompleteExam: Boolean = d.hasCompletedPass && d.estimated.isEmpty
 
     def newPass(implicit shuffle: Boolean = false): Option[Deck] = if (d.hasCompletedPass) {
       val stock = d.estimated.map(c => c.copy(isFront = true))
