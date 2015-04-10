@@ -223,17 +223,27 @@ class ExamSpec extends WordSpec with Matchers {
         // for completed pass and empty discard
         deckWithCompletedPassWithEmptyDiscard.hasCompletedPass shouldEqual true
         deckWithCompletedPassWithEmptyDiscard.hasCompletedExam shouldEqual false
-        val pass: Option[Exam.Deck] = deckWithCompletedPassWithEmptyDiscard.newPass(shuffle = false)
-        pass should not be empty
-        pass.get shouldEqual Deck(
+        val pass1: Option[Exam.Deck] = deckWithCompletedPassWithEmptyDiscard.newPass(shuffle = false)
+        pass1 should not be empty
+        pass1.get shouldEqual Deck(
           deckWithCompletedPassWithEmptyDiscard.estimated.map(c => c.copy(estimates = Nil, isFront = true)),
           Nil,
           deckWithCompletedPassWithEmptyDiscard.discard)
 
         // for completed pass and non-empty discard
+        deckWithCompletedPassWithDiscard.hasCompletedPass shouldEqual true
+        deckWithCompletedPassWithDiscard.hasCompletedExam shouldEqual false
+        val pass2: Option[Exam.Deck] = deckWithCompletedPassWithDiscard.newPass(shuffle = false)
+        pass2 should not be empty
+        pass2.get shouldEqual Deck(
+          deckWithCompletedPassWithDiscard.estimated.map(c => c.copy(estimates = Nil, isFront = true)),
+          Nil,
+          deckWithCompletedPassWithDiscard.discard)
 
         // for completed exam
-
+        deckWithCompletedExam.hasCompletedPass shouldEqual true
+        deckWithCompletedExam.hasCompletedExam shouldEqual true
+        deckWithCompletedExam.newPass(shuffle = false) shouldEqual None
       }
     }
   }
