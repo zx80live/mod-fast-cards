@@ -127,8 +127,44 @@ class ExamSpec extends WordSpec with Matchers {
         deck2.get.discard shouldEqual deck.stock.head :: deck.discard
       }
 
-      "estimateCurrent" in {
+      "hasCompletedPass" in {
         ???
+      }
+
+      "estimateCurrent" in {
+        implicit val passes: Int = 2
+
+        deck.current.get.estimates shouldEqual Nil
+
+        // one estimate
+        deck.estimateCurrent() should not be empty
+        deck.estimateCurrent().get.current shouldBe Some(c1)
+        deck.estimateCurrent().get.estimated shouldEqual deck.current.get.estimate() :: deck.estimated
+        deck.estimateCurrent().get.discard shouldEqual deck.discard
+
+        deck.estimateCurrent(1000) should not be empty
+        deck.estimateCurrent(1000).get.current shouldBe Some(c1)
+        deck.estimateCurrent(1000).get.estimated shouldEqual deck.current.get.estimate(1000) :: deck.estimated
+        deck.estimateCurrent(1000).get.discard shouldEqual deck.discard
+
+        // a lot of estimates for complete pass
+        val d0: Option[Exam.Deck] = deck.estimateCurrent()
+        d0 should not be empty
+        d0.get.hasCompletedPass shouldEqual false
+        val d1: Option[Exam.Deck] = d0.get.estimateCurrent(1000)
+        d1 should not be empty
+        d1.get.hasCompletedPass shouldEqual false
+        val d2: Option[Exam.Deck] = d1.get.estimateCurrent(2000)
+        d2 should not be empty
+        d2.get.hasCompletedPass shouldEqual false
+        val d3: Option[Exam.Deck] = d2.get.estimateCurrent(3000)
+        d3 should not be empty
+        d3.get.hasCompletedPass shouldEqual true
+        d3.get.estimateCurrent() shouldEqual None
+
+        d3.get.stock shouldEqual Nil
+        d3.get.estimated.map(c => (c.data, c.isBack)) shouldEqual deck.stock.map(c => (c.data, c.isBack))
+        d3.get.discard shouldEqual deck.discard
       }
     }
   }

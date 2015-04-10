@@ -49,17 +49,18 @@ trait Exam {
       val estimated = c.estimate(time)
       if (estimated.estimates.count(_.nonEmpty) < passes) {
         // estimate
-        d.copy(stock = d.stock.tail, estimated = estimated :: d.estimated)
+        d.copy(stock = d.stock.tail, estimated = d.estimated :+ estimated)
       } else {
         // discard
-        d.copy(stock = d.stock.tail, estimated = estimated :: d.discard)
+        d.copy(stock = d.stock.tail, estimated = d.discard :+ estimated)
       }
     }
 
     def hasCompletedPass: Boolean = d.stock.isEmpty
 
     def newPass(implicit shuffle: Boolean = false): Option[Deck] = if (d.hasCompletedPass) {
-      Some(if (shuffle) d.copy(stock = Random.shuffle(d.estimated)) else d.copy(stock = d.estimated))
+      val stock = d.estimated.map(c => c.copy(isFront = true))
+      Some(if (shuffle) d.copy(stock = Random.shuffle(stock)) else d.copy(stock = stock))
     } else None
   }
 
