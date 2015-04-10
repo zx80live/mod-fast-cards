@@ -67,5 +67,18 @@ class ExamSpec extends WordSpec with Matchers {
         c0.estimate(1000).estimate().estimate(2000).estimates shouldEqual List(Some(1000), None, Some(2000))
       }
     }
+
+    "DeckExtensions" should {
+      "replaceCurrent" in {
+        val replacement: Exam.Card = Card(Data(10))
+        val replaced: Exam.Deck = deck.replaceCurrent(replacement)
+
+        replaced.estimated shouldEqual deck.estimated
+        replaced.discard shouldEqual deck.discard
+
+        replaced.stock shouldEqual List(replacement, c1, c2, c3)
+        replaced.current shouldEqual Some(replacement)
+      }
+    }
   }
 }
