@@ -32,11 +32,26 @@ class ExamSpec extends WordSpec with Matchers {
       }
 
       "frontSide" in {
-        ???
+        c0.isFront shouldEqual true
+        c0.isBack shouldEqual false
+
+        val front: Exam.Card = c0.frontSide
+        front shouldEqual c0
+
+        c0.backSide.frontSide shouldEqual c0
       }
 
       "reverseSide" in {
-        ???
+        c0 shouldEqual c0.reverseSide.reverseSide
+
+        val back: Exam.Card = c0.backSide
+
+        back.isBack shouldEqual true
+        back.isFront shouldEqual false
+        back.data shouldEqual c0.data
+        back.estimates shouldEqual c0.estimates
+
+        back.reverseSide shouldEqual c0
       }
 
       "estimate" in {
